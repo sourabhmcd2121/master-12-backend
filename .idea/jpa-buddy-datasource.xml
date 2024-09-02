@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpbDataSourceConfig">
+    <data-sources>
+      <data-source id="1039bb20-d2de-4a0a-90c0-504190b8a20d" name="master12-backend" url="jdbc:postgresql://localhost:5432/sdmc_local" driverClass="org.postgresql.Driver" />
+    </data-sources>
+  </component>
+</project>
