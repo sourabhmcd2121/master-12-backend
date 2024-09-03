@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "status", "message", "masterGeoCountryList","countryNameList"})
@@ -21,5 +22,5 @@ import java.util.List;
 public class MasterGeoCountryResponse extends BaseResponse {
     @JsonIgnore
     private List<GeoCountryMaster> geoCountryList;
-    private List<String> countryNameList;
+    private Map<String, String> countryNameList;
 }

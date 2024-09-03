@@ -3,16 +3,15 @@ package com.master.app.pims.controller.master;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
-import com.master.app.pims.entities.schemas.master.GeoState;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.models.response.MasterGeoCountryResponse;
 import com.master.app.pims.repositories.DesignationAppointmentTypeRepository;
-import com.master.app.pims.repositories.MasterGeoCountryRepository;
+import com.master.app.pims.repositories.master.GeoCountryMasterRepo;
 import com.master.app.pims.repositories.master.GeoDistrictRepo;
-import com.master.app.pims.repositories.master.GeoStateRepo;
+import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.utils.Util;
-import com.master.app.pims.validators.CommonValidator;
+import com.master.app.pims.validators.ValidatorImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/web/master")
@@ -37,46 +35,46 @@ import java.util.stream.Collectors;
 public class MasterGeoController {
 
     @Autowired
-    private MasterGeoCountryRepository masterGeoCountryRepository;
+    private GeoCountryMasterRepo geoCountryMasterRepo;
 
     @Autowired
     private DesignationAppointmentTypeRepository designationAppointmentTypeRepository;
 
     @Autowired
-    private CommonValidator commonValidator;
+    private ValidatorImpl validatorImpl;
 
     @Autowired
     private GeoDistrictRepo geoDistrictRepo;
 
     @Autowired
-    private GeoStateRepo geoStateRepo;
+    private GeoStateMasterRepository geoStateMasterRepository;
 
-
-    //get all data from country according to page and size
-    @GetMapping("/getMasterGeoCountryList")
-    public ResponseEntity<BaseResponse> getMasterGeoCountryList(@RequestParam(required = true, name = "page") int page, @RequestParam(required = true, name = "size") int size, @RequestParam(defaultValue = "countryNameEn", required = false) String sortBy) {
-        BaseResponse response = new BaseResponse();
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<GeoCountryMaster> countryPage = masterGeoCountryRepository.findAll(pageable);
-        response.setMessage("success");
-        response.setStatus(true);
-        response.setTotalDataCount(masterGeoCountryRepository.findAll().size());
-        response.setData(countryPage.toList());
-        return ResponseEntity.ok(response);
-    }
+// master schema
+//    //get all data from country according to page and size
+//    @GetMapping("/getMasterGeoCountryList")
+//    public ResponseEntity<BaseResponse> getMasterGeoCountryList(@RequestParam(required = true, name = "page") int page, @RequestParam(required = true, name = "size") int size, @RequestParam(defaultValue = "countryNameEn", required = false) String sortBy) {
+//        BaseResponse response = new BaseResponse();
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+//        Page<GeoCountryMaster> countryPage = masterGeoCountryRepository.findAll(pageable);
+//        response.setMessage("success");
+//        response.setStatus(true);
+//        response.setTotalDataCount(masterGeoCountryRepository.findAll().size());
+//        response.setData(countryPage.toList());
+//        return ResponseEntity.ok(response);
+//    }
 
     // fetch data from another table in dropdown  in column and save data in cache 
     @GetMapping("/getCountryNameList")
     public ResponseEntity<MasterGeoCountryResponse> getCountryList() {
         MasterGeoCountryResponse response = new MasterGeoCountryResponse();
         try {
-            List<GeoCountryMaster> countryList = masterGeoCountryRepository.findAllByOrderByCountryNameEn();
-            if (countryList.isEmpty()) {
+            Map<String, String> countryMap = geoCountryMasterRepo.getGeoMasterCountryList();
+            if (countryMap.isEmpty()) {
                 throw new ResourceNotFoundException("No countries found");
             }
             response.setMessage("success");
             response.setStatus(true);
-            response.setCountryNameList(countryList.stream().map(GeoCountryMaster::getCountryNameEn).collect(Collectors.toList()));
+            response.setCountryNameList(countryMap);
             return ResponseEntity.ok(response);
         } catch (ResourceNotFoundException ex) {
             response.setMessage(ex.getMessage());
@@ -113,8 +111,8 @@ public class MasterGeoController {
             country.setCountryNameHi(!Util.isNullOrEmpty(country.getCountryNameHi()) ? country.getCountryNameHi().trim() : null);
             country.setCountryNameRl(!Util.isNullOrEmpty(country.getCountryNameRl()) ? country.getCountryNameRl().trim() : null);
 
-            resultData = commonValidator.validateMasterCountry(country);
-            if (resultData != null && resultData.getStatus()) masterGeoCountryRepository.save(country);
+            resultData = validatorImpl.validateMasterCountry(country);
+            if (resultData != null && resultData.getStatus()) geoCountryMasterRepo.save(country);
         }
         log.info("Record SaveOrUpdate Successfully");
         return resultData;
@@ -124,7 +122,7 @@ public class MasterGeoController {
     @PutMapping("/{countryMasterGuid}")
     public BaseResponse updateCountry(@PathVariable String countryMasterGuid, @RequestBody GeoCountryMaster updatedCountry, HttpServletRequest request) {
         BaseResponse resultData = null;
-        Optional<GeoCountryMaster> optionalCountry = masterGeoCountryRepository.findById(countryMasterGuid);
+        Optional<GeoCountryMaster> optionalCountry = geoCountryMasterRepo.findById(countryMasterGuid);
 
         if (optionalCountry.isPresent()) {
             GeoCountryMaster existingCountry = optionalCountry.get();
@@ -143,7 +141,7 @@ public class MasterGeoController {
             existingCountry.setIsModified(true);
             existingCountry.setModifiedDate(new Date());
 
-            masterGeoCountryRepository.save(existingCountry);
+            geoCountryMasterRepo.save(existingCountry);
             log.info("Record updated successfully");
             resultData = new BaseResponse();
             resultData.setStatus(true);
@@ -161,15 +159,15 @@ public class MasterGeoController {
     //delete data from country
     @DeleteMapping("/deleteMasterGeoCountry/{countryMasterGuid}")
     public ResponseEntity<Void> deleteMasterGeoCountry(@PathVariable("countryMasterGuid") String countryMasterGuid) {
-        GeoCountryMaster geoCountry = masterGeoCountryRepository.findById(countryMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMasterGuid : " + countryMasterGuid));
-        masterGeoCountryRepository.delete(geoCountry);
+        GeoCountryMaster geoCountry = geoCountryMasterRepo.findById(countryMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMasterGuid : " + countryMasterGuid));
+        geoCountryMasterRepo.delete(geoCountry);
         return ResponseEntity.noContent().build();
     }
 
     //get all data 
     @GetMapping("/getMasterGeoCountryByGuid/{countryMasterGuid}")
     public ResponseEntity<GeoCountryMaster> getMasterGeoCountryByGuid(@PathVariable("countryMasterGuid") String countryMasterGuid) {
-        GeoCountryMaster geoCountry = masterGeoCountryRepository.findById(countryMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMasterGuid : " + countryMasterGuid));
+        GeoCountryMaster geoCountry = geoCountryMasterRepo.findById(countryMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMasterGuid : " + countryMasterGuid));
         return new ResponseEntity<>(geoCountry, HttpStatus.OK);
     }
 
@@ -212,7 +210,7 @@ public class MasterGeoController {
             designationAppointmentType.setDesignationAppointmentTypeCode(!Util.isNullOrEmpty(designationAppointmentType.getDesignationAppointmentTypeCode()) ? designationAppointmentType.getDesignationAppointmentTypeCode().toUpperCase().trim() : null);
             designationAppointmentType.setDesignationAppointmentTypeName(!Util.isNullOrEmpty(designationAppointmentType.getDesignationAppointmentTypeName()) ? designationAppointmentType.getDesignationAppointmentTypeName().toUpperCase().trim() : null);
 
-            resultData = commonValidator.validateDesignationAppointmentType(designationAppointmentType);
+            resultData = validatorImpl.validateDesignationAppointmentType(designationAppointmentType);
             if (resultData != null && resultData.getStatus())
                 designationAppointmentTypeRepository.save(designationAppointmentType);
         }
@@ -457,60 +455,60 @@ public class MasterGeoController {
 
     ////////////////////////////////////////////////State  End///////////////////////////////////////////
 
-    // district master geo
-    @GetMapping("/getDistrictList")
-    public ResponseEntity<BaseResponse> getDistrict(@RequestParam(required = true, name = "page") int page,
-                                                    @RequestParam(required = true, name = "size") int size,
-                                                    @RequestParam(defaultValue = "districtNameEn", required = false) String sortBy) {
-        BaseResponse response = new BaseResponse();
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<GeoDistrict> districtPage = geoDistrictRepo.findAll(pageable);
-        response.setMessage("success");
-        response.setStatus(true);
-        response.setTotalDataCount(geoDistrictRepo.findAll().size());
-        response.setDistrictList(districtPage.toList());
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/submitMasterDistrict")
-    public BaseResponse submitMasterDistrict(@RequestBody GeoDistrict district, HttpServletRequest request) {
-        BaseResponse resultData = null;
-
-        if (district.getDistrictMasterGuid() == null || district.getDistrictMasterGuid().isEmpty()) {
-            district.setDistrictMasterGuid(UUID.randomUUID().toString());
-            district.setCreatedDate(new Date());
-            // district.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
-            // district.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
-        } else {
-            //district.setModifierIp(HttpSessionHelper.getClientIPAddress(request));
-            district.setIsModified(true);
-            // district.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
-            district.setModifiedDate(new Date());
-        }
-        if (district.getIsRecordActive() == null)
-            district.setIsRecordActive(false);
-        if (district.getState() != null && !district.getState().isEmpty()) {
-            GeoState geostate = new GeoState();
-            geostate.setStateMasterGuid(district.getState());
-            district.setGeoStateMasterGuid(geostate);
-        }
-        district.setDistrictCode(!Util.isNullOrEmpty(district.getDistrictCode())
-                ? district.getDistrictCode().toUpperCase().trim()
-                : null);
-        district.setDistrictNameEn(!Util.isNullOrEmpty(district.getDistrictNameEn())
-                ? district.getDistrictNameEn().toUpperCase().trim()
-                : null);
-        district.setDistrictNameHi(
-                !Util.isNullOrEmpty(district.getDistrictNameHi()) ? district.getDistrictNameHi().trim()
-                        : null);
-        district.setDistrictNameRl(
-                !Util.isNullOrEmpty(district.getDistrictNameRl()) ? district.getDistrictNameRl().trim()
-                        : null);
-        resultData = commonValidator.validateDistrict(district);
-        if (resultData != null && resultData.getStatus())
-            geoDistrictRepo.save(district);
-        log.info("Record SaveOrUpdate Successfully");
-        return resultData;
-    }
+//    // district master geo
+//    @GetMapping("/getDistrictList")
+//    public ResponseEntity<BaseResponse> getDistrict(@RequestParam(required = true, name = "page") int page,
+//                                                    @RequestParam(required = true, name = "size") int size,
+//                                                    @RequestParam(defaultValue = "districtNameEn", required = false) String sortBy) {
+//        BaseResponse response = new BaseResponse();
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+//        Page<GeoDistrict> districtPage = geoDistrictRepo.findAll(pageable);
+//        response.setMessage("success");
+//        response.setStatus(true);
+//        response.setTotalDataCount(geoDistrictRepo.findAll().size());
+//        response.setDistrictList(districtPage.toList());
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    @PostMapping("/submitMasterDistrict")
+//    public BaseResponse submitMasterDistrict(@RequestBody GeoDistrict district, HttpServletRequest request) {
+//        BaseResponse resultData = null;
+//
+//        if (district.getDistrictMasterGuid() == null || district.getDistrictMasterGuid().isEmpty()) {
+//            district.setDistrictMasterGuid(UUID.randomUUID().toString());
+//            district.setCreatedDate(new Date());
+//            // district.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//            // district.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+//        } else {
+//            //district.setModifierIp(HttpSessionHelper.getClientIPAddress(request));
+//            district.setIsModified(true);
+//            // district.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
+//            district.setModifiedDate(new Date());
+//        }
+//        if (district.getIsRecordActive() == null)
+//            district.setIsRecordActive(false);
+//        if (district.getState() != null && !district.getState().isEmpty()) {
+//            GeoState geostate = new GeoState();
+//            geostate.setStateMasterGuid(district.getState());
+//            district.setGeoStateMasterGuid(geostate);
+//        }
+//        district.setDistrictCode(!Util.isNullOrEmpty(district.getDistrictCode())
+//                ? district.getDistrictCode().toUpperCase().trim()
+//                : null);
+//        district.setDistrictNameEn(!Util.isNullOrEmpty(district.getDistrictNameEn())
+//                ? district.getDistrictNameEn().toUpperCase().trim()
+//                : null);
+//        district.setDistrictNameHi(
+//                !Util.isNullOrEmpty(district.getDistrictNameHi()) ? district.getDistrictNameHi().trim()
+//                        : null);
+//        district.setDistrictNameRl(
+//                !Util.isNullOrEmpty(district.getDistrictNameRl()) ? district.getDistrictNameRl().trim()
+//                        : null);
+//        resultData = validatorImpl.validateDistrict(district);
+//        if (resultData != null && resultData.getStatus())
+//            geoDistrictRepo.save(district);
+//        log.info("Record SaveOrUpdate Successfully");
+//        return resultData;
+//    }
 
 }

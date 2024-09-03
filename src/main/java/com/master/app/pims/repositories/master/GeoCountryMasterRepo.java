@@ -1,13 +1,16 @@
-package com.master.app.pims.repositories;
+package com.master.app.pims.repositories.master;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import com.master.app.pims.models.common.response.SelectOption;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
+import org.springframework.data.jpa.repository.Query;
 
-public interface MasterGeoCountryRepository extends JpaRepository<GeoCountryMaster, String> {
+public interface GeoCountryMasterRepo extends JpaRepository<GeoCountryMaster, String> {
 	// For country code validation
 	boolean existsByCountryCodeIgnoreCaseAndCountryMasterGuidNot(String countryCode, String countryMasterGuid);
 
@@ -38,4 +41,18 @@ public interface MasterGeoCountryRepository extends JpaRepository<GeoCountryMast
 
 	List<GeoCountryMaster> findAllByOrderByCountryNameEn();
 
+	@Query("SELECT g.countryMasterGuid, g.countryNameEn " +
+			"FROM GeoCountryMaster g " +
+			"WHERE g.isRecordActive = true " +
+			"ORDER BY g.countryNameEn")
+	List<Object[]> getGeoMasterCountryListRaw();
+
+	default HashMap<String, String> getGeoMasterCountryList() {
+		List<Object[]> results = getGeoMasterCountryListRaw();
+		HashMap<String, String> map = new HashMap<>();
+		for (Object[] result : results) {
+			map.put((String) result[0], (String) result[1]);
+		}
+		return map;
+	}
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
+import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.List;
 public class BaseResponse {
     boolean status;
     String message;
-    private List<GeoCountryMaster> data;
+    private List<GeoCountryMst> data;
     private List<DesignationAppointmentType> designation;
     private Integer totalDataCount;
     List<GeoDistrict> districtList;
@@ -44,11 +45,11 @@ public class BaseResponse {
         return status;
     }
 
-    public List<GeoCountryMaster> getData() {
+    public List<GeoCountryMst> getData() {
         return data;
     }
 
-    public void setData(List<GeoCountryMaster> data) {
+    public void setData(List<GeoCountryMst> data) {
         this.data = data;
     }
 
