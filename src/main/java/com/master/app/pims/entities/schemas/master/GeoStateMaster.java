@@ -6,23 +6,24 @@
 package com.master.app.pims.entities.schemas.master;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Date;
-
+//Need to check Not Complete
 
 /**
- *
- * @author hp
+ * @author Sourbh
  */
 @Entity
-@Table(name = "geo_state", schema="master")
-@NamedQueries({
-    @NamedQuery(name = "GeoState.findAll", query = "SELECT g FROM GeoState g")})
-public class GeoState implements Serializable {
+@Table(name = "geo_state", schema = "master")
+//@XmlRootElement
+//@NamedQueries({
+//    @NamedQuery(name = "GeoState.findAll", query = "SELECT g FROM GeoState g")})
+public class GeoStateMaster implements Serializable {
     private static final long serialVersionUID = 1L;
-/*    @Basic(optional = false)
-  @Column(name = "state_master_id")
-    private long stateMasterId;*/
+    /*    @Basic(optional = false)
+      @Column(name = "state_master_id")
+        private long stateMasterId;*/
     @Id
     @Basic(optional = false)
     @Column(name = "state_master_guid")
@@ -36,12 +37,12 @@ public class GeoState implements Serializable {
     @Column(name = "state_name_rl")
     private String stateNameRl;
     @Transient
-    private String  country;
+    private String country;
     @Column(name = "is_record_active")
     private Boolean isRecordActive;
     @Column(name = "state_description")
     private String stateDescription;
-	@Basic(optional = false)
+    @Basic(optional = false)
     @Column(name = "from_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fromDate;
@@ -113,25 +114,26 @@ public class GeoState implements Serializable {
     private String attesterUri;
     @Column(name = "supporting_uri")
     private String supportingUri;
-   
+
     @JoinColumn(name = "country_master_guid", referencedColumnName = "country_master_guid")
     @ManyToOne(optional = false)
     private GeoCountryMaster countryMasterGuid;
+    // private GeoCountry countryMasterGuid;
     @Transient
-    private String  countryGuid;
+    private String countryGuid;
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "stateMasterGuid")
 //    private List<GeoDistrict> geoDistrictList;
-    
-    public GeoState() {
+
+    public GeoStateMaster() {
     }
 
-    public GeoState(String stateMasterGuid) {
+    public GeoStateMaster(String stateMasterGuid) {
         this.stateMasterGuid = stateMasterGuid;
     }
 
-    public GeoState(String stateMasterGuid, long stateMasterId, Date fromDate, Date createdDate, boolean isVerified, boolean isModified, boolean isAttested) {
+    public GeoStateMaster(String stateMasterGuid, long stateMasterId, Date fromDate, Date createdDate, boolean isVerified, boolean isModified, boolean isAttested) {
         this.stateMasterGuid = stateMasterGuid;
-       // this.stateMasterId = stateMasterId;
+        // this.stateMasterId = stateMasterId;
         this.fromDate = fromDate;
         this.createdDate = createdDate;
         this.isVerified = isVerified;
@@ -428,7 +430,6 @@ public class GeoState implements Serializable {
 //        this.geoDistrictList = geoDistrictList;
 //    }
 
-   
 
     public GeoCountryMaster getCountryMasterGuid() {
         return countryMasterGuid;
@@ -437,16 +438,16 @@ public class GeoState implements Serializable {
     public void setCountryMasterGuid(GeoCountryMaster countryMasterGuid) {
         this.countryMasterGuid = countryMasterGuid;
     }
-   
+
     public String getCountry() {
-		return country;
-	}
+        return country;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         int hash = 0;
         hash += (stateMasterGuid != null ? stateMasterGuid.hashCode() : 0);
@@ -456,10 +457,10 @@ public class GeoState implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof GeoState)) {
+        if (!(object instanceof GeoStateMaster)) {
             return false;
         }
-        GeoState other = (GeoState) object;
+        GeoStateMaster other = (GeoStateMaster) object;
         if ((this.stateMasterGuid == null && other.stateMasterGuid != null) || (this.stateMasterGuid != null && !this.stateMasterGuid.equals(other.stateMasterGuid))) {
             return false;
         }
@@ -471,36 +472,36 @@ public class GeoState implements Serializable {
         return "entity.GeoState[ stateMasterGuid=" + stateMasterGuid + " ]";
     }
 
-	public String getCountryGuid() {
-		return countryGuid;
-	}
+    public String getCountryGuid() {
+        return countryGuid;
+    }
 
-	public void setCountryGuid(String countryGuid) {
-		this.countryGuid = countryGuid;
-	}
+    public void setCountryGuid(String countryGuid) {
+        this.countryGuid = countryGuid;
+    }
 
-	public String getStateNameEn() {
-		return stateNameEn;
-	}
+    public String getStateNameEn() {
+        return stateNameEn;
+    }
 
-	public void setStateNameEn(String stateNameEn) {
-		this.stateNameEn = stateNameEn;
-	}
+    public void setStateNameEn(String stateNameEn) {
+        this.stateNameEn = stateNameEn;
+    }
 
-	public String getStateNameHi() {
-		return stateNameHi;
-	}
+    public String getStateNameHi() {
+        return stateNameHi;
+    }
 
-	public void setStateNameHi(String stateNameHi) {
-		this.stateNameHi = stateNameHi;
-	}
+    public void setStateNameHi(String stateNameHi) {
+        this.stateNameHi = stateNameHi;
+    }
 
-	public String getStateNameRl() {
-		return stateNameRl;
-	}
+    public String getStateNameRl() {
+        return stateNameRl;
+    }
 
-	public void setStateNameRl(String stateNameRl) {
-		this.stateNameRl = stateNameRl;
-	}
-    
+    public void setStateNameRl(String stateNameRl) {
+        this.stateNameRl = stateNameRl;
+    }
+
 }
