@@ -119,7 +119,7 @@ public class GeoDistrict implements Serializable {
     private String supportingUri;
     @JoinColumn(name = "state_master_guid", referencedColumnName = "state_master_guid")
     @ManyToOne(optional = false)
-    private GeoState geoStateMasterGuid;
+    private GeoStateMaster geoStateMasterGuid;
     @Transient
     private String stateMasterGuid;
 
@@ -420,11 +420,11 @@ public class GeoDistrict implements Serializable {
         this.supportingUri = supportingUri;
     }
 
-    public GeoState getGeoStateMasterGuid() {
+    public GeoStateMaster getGeoStateMasterGuid() {
         return geoStateMasterGuid;
     }
 
-    public void setGeoStateMasterGuid(GeoState geoStateMasterGuid) {
+    public void setGeoStateMasterGuid(GeoStateMaster geoStateMasterGuid) {
         this.geoStateMasterGuid = geoStateMasterGuid;
     }
 

@@ -4,8 +4,8 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
+import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
-import com.master.app.pims.repositories.mst.GeoStateMasterRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -62,7 +61,7 @@ public class MasterControllerMCDGeo {
     @GetMapping("/getGeoCountryMstList")
     public ResponseEntity<BaseResponse> getGeoCountryMstList() {
         BaseResponse response = new BaseResponse();
-       // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         List<GeoCountryMst> list = geoCountryMstRepository.findAll();
         response.setMessage("success");
         response.setStatus(true);

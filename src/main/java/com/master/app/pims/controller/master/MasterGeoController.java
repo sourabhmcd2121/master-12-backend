@@ -46,8 +46,8 @@ public class MasterGeoController {
     @Autowired
     private GeoDistrictRepo geoDistrictRepo;
 
-    @Autowired
-    private GeoStateMasterRepository geoStateMasterRepository;
+//    @Autowired
+//    private GeoStateMasterRepository geoStateMasterRepository;
 
 // master schema
 //    //get all data from country according to page and size
