@@ -5,9 +5,9 @@ import org.apache.commons.logging.LogFactory;
 
 
 public class LoggerUtil {
-	static {
-		IS_LOG_ENABLED = PropertyReader.getAppConstant("app.logger.enable").equals("1") ? true : false;		
-	}	
+//	static {
+//		IS_LOG_ENABLED = PropertyReader.getAppConstant("app.logger.enable").equals("1") ? true : false;
+//	}
 	public static Boolean IS_LOG_ENABLED; 
 	public static String PRE_HANDLER = "PRE_HANDLER";
 	public static String POST_HANDLER = "POST_HANDLER";

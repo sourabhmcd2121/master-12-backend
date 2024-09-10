@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
+import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,9 +22,14 @@ import java.util.List;
 public class BaseResponse {
     boolean status;
     String message;
-    private List<GeoCountryMst> data;
-    private List<DesignationAppointmentType> designation;
     private Integer totalDataCount;
+    private List<GeoCountryMst> data;
+    private List<GeoCountryMaster> masterCountry;
+    private List<GeoStateMaster> masterState;
+    private List<GeoColonyCategory> colonyCategory;
+    
+    private List<DesignationAppointmentType> designation;
+   
     List<GeoDistrict> districtList;
 
     public List<GeoDistrict> getDistrictList() {
