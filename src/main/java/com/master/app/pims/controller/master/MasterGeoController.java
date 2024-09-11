@@ -1,33 +1,20 @@
 package com.master.app.pims.controller.master;
 
-import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
-import com.master.app.pims.entities.schemas.master.GeoDistrict;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.models.response.MasterGeoCountryResponse;
 import com.master.app.pims.repositories.DesignationAppointmentTypeRepository;
 import com.master.app.pims.repositories.master.GeoCountryMasterRepo;
 import com.master.app.pims.repositories.master.GeoDistrictRepo;
-import com.master.app.pims.repositories.master.GeoStateMasterRepository;
-import com.master.app.pims.utils.Util;
-import com.master.app.pims.validators.ValidatorImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/web/master")
@@ -40,9 +27,6 @@ public class MasterGeoController {
 
     @Autowired
     private DesignationAppointmentTypeRepository designationAppointmentTypeRepository;
-
-    @Autowired
-    private ValidatorImpl validatorImpl;
 
     @Autowired
     private GeoDistrictRepo geoDistrictRepo;
@@ -63,7 +47,7 @@ public class MasterGeoController {
 //        response.setData(countryPage.toList());
 //        return ResponseEntity.ok(response);
 //    }
-    
+
     //get all data from table
     @GetMapping("/getAllGeoCountryList")
     public ResponseEntity<BaseResponse> getAllGeoCountryList() {
@@ -186,6 +170,5 @@ public class MasterGeoController {
         return new ResponseEntity<>(geoCountry, HttpStatus.OK);
     }
 
- 
 
 }
