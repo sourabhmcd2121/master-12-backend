@@ -77,6 +77,7 @@ public class MasterControllerMCDGeo {
         return ResponseEntity.ok(response);
     }
 
+    // Create New Data And Update
     @PostMapping("/submitOrUpdateMstCountry")
     public BaseResponse submitOrUpdateMstCountry(@RequestBody GeoCountryMst country, HttpServletRequest request) {
         BaseResponse resultData = new BaseResponse();
@@ -149,12 +150,30 @@ public class MasterControllerMCDGeo {
     }
 
     //delete data from table
+//    @DeleteMapping("/deleteMstCountry/{countryMstGuid}")
+//    public ResponseEntity<Void> deleteMstCountry(@PathVariable("countryMstGuid") String countryMstGuid) {
+//        GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid).orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMstGuid : " + countryMstGuid));
+//        geoCountryMstRepository.delete(geoCountry);
+//        return ResponseEntity.noContent().build();
+//    }
+    
+ // Delete data from table and return success message
     @DeleteMapping("/deleteMstCountry/{countryMstGuid}")
-    public ResponseEntity<Void> deleteMstCountry(@PathVariable("countryMstGuid") String countryMstGuid) {
-        GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid).orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMstGuid : " + countryMstGuid));
+    public ResponseEntity<BaseResponse> deleteMstCountry(@PathVariable("countryMstGuid") String countryMstGuid) {
+        BaseResponse response = new BaseResponse();
+        
+        GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMstGuid: " + countryMstGuid));
+        
         geoCountryMstRepository.delete(geoCountry);
-        return ResponseEntity.noContent().build();
+        
+        response.setMessage("Data deleted successfully");
+        response.setStatus(true);
+        response.setTotalDataCount(0);  // No data to return after delete
+        
+        return ResponseEntity.ok(response);
     }
+
 
     //get data by id
     @GetMapping("/getMstCountryByGuid/{countryMstGuid}")
@@ -162,23 +181,29 @@ public class MasterControllerMCDGeo {
         GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with countryMstGuid : " + countryMstGuid));
         return new ResponseEntity<>(geoCountry, HttpStatus.OK);
     }
+    
+ // Get data by ID with a custom response
+//    @GetMapping("/getMstCountryByGuid/{countryMstGuid}")
+//    public ResponseEntity<BaseResponse> getMstCountryByGuid(@PathVariable("countryMstGuid") String countryMstGuid) {
+//        BaseResponse response = new BaseResponse();
+//        
+//        GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid)
+//                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with countryMstGuid: " + countryMstGuid));
+//        
+//        response.setMessage("Data retrieved successfully");
+//        response.setStatus(true);
+//        response.setTotalDataCount(1);  // Since we are returning one record
+//        response.setData(geoCountry);   // Set the data to the retrieved entity
+//        
+//        return ResponseEntity.ok(response);
+//    }
+
     /////////////////////////////////////GeoCountry Mst End///////////////////////////////////
 
 
     //////////////////////////////////////////MasterState Start/////////////////////////////////
     
-    //get all data  according to page and size
-    @GetMapping("/getGeoStateMasterByPage")
-    public ResponseEntity<BaseResponse> getGeoStateMasterByPage(@RequestParam(required = true, name = "page") int page, @RequestParam(required = true, name = "size") int size, @RequestParam(defaultValue = "stateNameEn", required = false) String sortBy) {
-        BaseResponse response = new BaseResponse();
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<GeoStateMaster> statePage = geoStateMasterRepository.findAll(pageable);
-        response.setMessage("success");
-        response.setStatus(true);
-        response.setTotalDataCount(geoStateMasterRepository.findAll().size());
-        response.setMasterState(statePage.toList());
-        return ResponseEntity.ok(response);
-    }
+   
     
     //get all data from table
     @GetMapping("/getMasterStateList")
@@ -192,6 +217,7 @@ public class MasterControllerMCDGeo {
         response.setMasterState(list);
         return ResponseEntity.ok(response);
     }
+    
    
     @PostMapping("/submitOrUpdateMasterState")
     public BaseResponse submitOrUpdateMasterState(@RequestBody GeoStateMaster state, HttpServletRequest request) {
@@ -268,6 +294,13 @@ public class MasterControllerMCDGeo {
         }
 
         return resultData;
+    }
+    
+    //get data by id
+    @GetMapping("/getMasterStateByGuid/{stateMasterGuid}")
+    public ResponseEntity<GeoStateMaster> getMasterStateByGuid(@PathVariable("stateMasterGuid") String stateMasterGuid) {
+    	GeoStateMaster masterState = geoStateMasterRepository.findById(stateMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with stateMasterGuid : " + stateMasterGuid));
+        return new ResponseEntity<>(masterState, HttpStatus.OK);
     }
     
     

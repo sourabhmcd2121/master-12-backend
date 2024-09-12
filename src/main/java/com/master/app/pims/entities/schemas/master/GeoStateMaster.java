@@ -6,14 +6,22 @@
 package com.master.app.pims.entities.schemas.master;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
 //Need to check Not Complete
 
+import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+
 /**
  * @author Sourbh
  */
+@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "geo_state", schema = "master")
 //@XmlRootElement
@@ -28,6 +36,10 @@ public class GeoStateMaster implements Serializable {
     @Basic(optional = false)
     @Column(name = "state_master_guid")
     private String stateMasterGuid;
+    
+    @Transient
+	private String masterCountry;
+    
     @Column(name = "state_code")
     private String stateCode;
     @Column(name = "state_name_en")
@@ -36,8 +48,7 @@ public class GeoStateMaster implements Serializable {
     private String stateNameHi;
     @Column(name = "state_name_rl")
     private String stateNameRl;
-    @Transient
-    private String country;
+    
     @Column(name = "is_record_active")
     private Boolean isRecordActive;
     @Column(name = "state_description")
@@ -114,15 +125,14 @@ public class GeoStateMaster implements Serializable {
     private String attesterUri;
     @Column(name = "supporting_uri")
     private String supportingUri;
-
-    @JoinColumn(name = "country_master_guid", referencedColumnName = "country_master_guid")
-    @ManyToOne(optional = false)
-    private GeoCountryMaster countryMasterGuid;
-    // private GeoCountry countryMasterGuid;
+    
     @Transient
-    private String countryGuid;
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "stateMasterGuid")
-//    private List<GeoDistrict> geoDistrictList;
+	private String countryMasterGuid;
+	
+	@JoinColumn(name = "country_master_guid", referencedColumnName = "country_master_guid")
+    @ManyToOne(optional = false)
+    private GeoCountryMaster masterGeoCountryMaster;
+   
 
     public GeoStateMaster() {
     }
@@ -431,21 +441,11 @@ public class GeoStateMaster implements Serializable {
 //    }
 
 
-    public GeoCountryMaster getCountryMasterGuid() {
-        return countryMasterGuid;
-    }
+  
 
-    public void setCountryMasterGuid(GeoCountryMaster countryMasterGuid) {
-        this.countryMasterGuid = countryMasterGuid;
-    }
+  
 
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
+  
 
     @Override
     public int hashCode() {
@@ -472,13 +472,7 @@ public class GeoStateMaster implements Serializable {
         return "entity.GeoState[ stateMasterGuid=" + stateMasterGuid + " ]";
     }
 
-    public String getCountryGuid() {
-        return countryGuid;
-    }
 
-    public void setCountryGuid(String countryGuid) {
-        this.countryGuid = countryGuid;
-    }
 
     public String getStateNameEn() {
         return stateNameEn;
