@@ -4,6 +4,7 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import jakarta.transaction.Transactional;
@@ -19,6 +20,9 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
     private GeoStateMasterRepository geoStateMasterRepository;
+    
+    @Autowired
+    private GeoColonyCategoryRepository geoColonyCategoryRepository;
 
     @Override
     public GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst) {
@@ -33,24 +37,25 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public GeoStateMaster saveGeoStateMaster(GeoStateMaster geoStateMaster) {
 		// TODO Auto-generated method stub
-		return null;
+		return geoStateMasterRepository.save(geoStateMaster);
 	}
 
 	@Override
 	public GeoStateMaster getGeoStateMasterById(String id) {
 		// TODO Auto-generated method stub
-		return null;
+		
+        return geoStateMasterRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
 	}
 
 	@Override
 	public GeoColonyCategory saveGeoColonyCategory(GeoColonyCategory geoColonyCategory) {
-		// TODO Auto-generated method stub
-		return null;
+		 return geoColonyCategoryRepository.save(geoColonyCategory);
 	}
 
 	@Override
 	public GeoColonyCategory getGeoColonyCategoryById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+        return geoColonyCategoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
 	}
 }

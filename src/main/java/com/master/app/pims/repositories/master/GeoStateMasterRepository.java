@@ -19,5 +19,8 @@ public interface GeoStateMasterRepository extends JpaRepository<GeoStateMaster, 
     @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM GeoStateMaster s WHERE s.stateNameRl = :stateNameRl AND s.stateMasterGuid <> :stateMasterGuid")
     boolean isExistStateNameRl(@Param("stateNameRl") String stateNameRl, @Param("stateMasterGuid") String stateMasterGuid);
 
+    @Query("SELECT s FROM GeoStateMaster s WHERE s.stateMasterGuid = :stateMasterGuid")
+    GeoStateMaster findByStateMasterGuid(@Param("stateMasterGuid") String stateMasterGuid);
+
 
 }
