@@ -2,9 +2,11 @@ package com.master.app.pims.validators;
 
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.utils.PropertyReader;
 import com.master.app.pims.utils.Util;
@@ -23,8 +25,13 @@ public class CommonMasterValidator implements Validator {
 
     @Autowired
     private GeoStateMasterRepository geoStateMasterRepository;
+    
+    
+    @Autowired
+    private GeoColonyCategoryRepository geoColonyCategoryRepository;
 
-
+    
+    //mst country validation
     @Override
     public BaseResponse validateMstCountry(GeoCountryMst country) {
         BaseResponse resultData = new BaseResponse();
@@ -85,6 +92,7 @@ public class CommonMasterValidator implements Validator {
         return resultData;
     }
 
+    //master state validation
     @Override
     public BaseResponse validateMasterState(GeoStateMaster state) {
         BaseResponse resultData = new BaseResponse();
@@ -121,5 +129,61 @@ public class CommonMasterValidator implements Validator {
         }
         return resultData;
     }
+
+    
+    //colony category validation
+	@Override
+	public BaseResponse validateColonyCategory(GeoColonyCategory colonyCategory) {
+		 BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+				if (Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryCode.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode())
+						&& geoColonyCategoryRepository.isExistGeoColonyCategoryCode(colonyCategory.getColonyCategoryCode(),
+								colonyCategory.getColonyCategoryGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryCode.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameEn())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryNameEn.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameEn())
+						&& geoColonyCategoryRepository.isExistGeoColonyCategoryNameEn(
+								colonyCategory.getColonyCategoryNameEn(), colonyCategory.getColonyCategoryGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(
+							PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryNameEn.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameHi())
+						&& geoColonyCategoryRepository.isExistGeoColonyCategoryNameHi(
+								colonyCategory.getColonyCategoryNameHi(), colonyCategory.getColonyCategoryGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(
+							PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryNameHi.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameRl())
+						&& geoColonyCategoryRepository.isExistGeoColonyCategoryNameRl(
+								colonyCategory.getColonyCategoryNameRl(), colonyCategory.getColonyCategoryGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(
+							PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryNameRl.unique"));
+					return resultData;
+				}
+			} catch (Exception e) {
+				 resultData.setStatus(false);
+	            resultData.setMessage("Error validating country: " + e.getMessage());
+			}
+			return resultData;
+	}
 
 }

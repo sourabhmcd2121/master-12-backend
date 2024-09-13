@@ -309,93 +309,97 @@ public class MasterControllerMCDGeo {
     ///////////////////////////////////////GeoColonyCategory Start//////////////////////////////////////////////
  
  	 //get all data from table
-//    @GetMapping("/getGeoColonyCategoryList")
-//    public ResponseEntity<BaseResponse> getGeoColonyCategoryList() {
-//        BaseResponse response = new BaseResponse();
-//        // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-//        List<GeoColonyCategory> list = geoColonyCategoryRepository.findAll();
-//        response.setMessage("success");
-//        response.setStatus(true);
-//        response.setTotalDataCount(list.size());
-//        response.setColonyCategory(list);
-//        return ResponseEntity.ok(response);
-//    }
+    @GetMapping("/getGeoColonyCategoryList")
+    public ResponseEntity<BaseResponse> getGeoColonyCategoryList() {
+        BaseResponse response = new BaseResponse();
+        // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        List<GeoColonyCategory> list = geoColonyCategoryRepository.findAll();
+        response.setMessage("success");
+        response.setStatus(true);
+        response.setTotalDataCount(list.size());
+        response.setColonyCategory(list);
+        return ResponseEntity.ok(response);
+    }
     
-//    @PostMapping("/submitOrUpdateGeoColonyCategory")
-//    public BaseResponse submitOrUpdateGeoColonyCategory(@RequestBody GeoColonyCategory colonyCategory, HttpServletRequest request) {
-//        BaseResponse resultData = new BaseResponse();
-//
-//        // Check if guid is provided (indicating an update)
-//        if (colonyCategory.getColonyCategoryGuid() == null || colonyCategory.getColonyCategoryGuid().isEmpty()) {
-//            // Add new data
-//        	colonyCategory.setCreaterIp(request.getRemoteAddr());
-//        	colonyCategory.setColonyCategoryGuid(UUID.randomUUID().toString());
-//        	colonyCategory.setCreatedDate(new Date());
-//        	colonyCategory.setModifierIp(null);
-//        	colonyCategory.setModifiedByGuid(null);
-//        	colonyCategory.setModifiedDate(null);
-////			colonyCategory.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
-////			colonyCategory.setCreaterRemarks(userSessionParam.getUserFullName());
-//            //colonyCategory.setCreaterMacId(HttpSessionHelper.getMacAddress());
-//            //colonyCategory.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
-//        		
-//        	
-//        } else {
-//            // Update existing data
-//        	GeoColonyCategory existingColony = commonMasterService.getGeoColonyCategoryById(colonyCategory.getColonyCategoryGuid());
-//
-//            if (existingColony != null) {
-//            	existingColony.setColonyCategoryCode(!Util.isNullOrEmpty(existingColony.getColonyCategoryCode()) ? existingColony.getColonyCategoryCode().toUpperCase().trim() : null);
-//            	existingColony.setColonyCategoryNameEn(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameEn()) ? existingColony.getColonyCategoryNameEn().toUpperCase().trim() : null);
-//
-//            	existingColony.setColonyCategoryNameHi(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameHi()) ? existingColony.getColonyCategoryNameHi().toUpperCase().trim() : null);
-//                existingColony.setColonyCategoryNameRl(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameRl()) ? existingColony.getColonyCategoryNameRl().trim() : null);
-//                existingColony.setColonyCategoryDesc(!Util.isNullOrEmpty(existingColony.getColonyCategoryDesc()) ? existingColony.getColonyCategoryDesc().trim() : null);
-//
-//             
-//                existingColony.setIsActive(existingColony.getIsActive() != null ? existingColony.getIsActive() : existingColony.getIsActive());
-//
-//                existingColony.setModifierIp(request.getRemoteAddr());
-//                existingColony.setModifiedDate(new Date());
-//                //existingCountry.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
-//                //existingCountry.setModifierMacId(HttpSessionHelper.getMacAddress());
-//                colonyCategory = existingColony; // Use the updated existing country object
-//            } else {
-//                log.error("Colony Category not found");
-//                resultData.setStatus(false);
-//                resultData.setMessage("Colony Category not found");
-//                return resultData;
-//            }
-//        }
-//
-//        // Validation
-//        resultData = validator.validateMstCountry(country);
-//        if (resultData != null && !resultData.getStatus()) {
-//            log.error("Validation failed: {}", resultData.getMessage());
-//            return resultData;
-//        }
-//
-//        // If validation passes, proceed to save or update
-//        if (country.getIsRecordActive() == null) country.setIsRecordActive(false);
-//        country.setCountryCode(!Util.isNullOrEmpty(country.getCountryCode()) ? country.getCountryCode().toUpperCase().trim() : null);
-//        country.setCountryNameEn(!Util.isNullOrEmpty(country.getCountryNameEn()) ? country.getCountryNameEn().toUpperCase().trim() : null);
-//        country.setCountryNameHi(!Util.isNullOrEmpty(country.getCountryNameHi()) ? country.getCountryNameHi().trim() : null);
-//        country.setCountryNameRl(!Util.isNullOrEmpty(country.getCountryNameRl()) ? country.getCountryNameRl().trim() : null);
-//        country.setCountryMobileCode(!Util.isNullOrEmpty(country.getCountryMobileCode()) ? country.getCountryMobileCode().trim() : null);
-//
-//        try {
-//            geoCountryMstRepository.save(country);
-//            log.info("Record SaveOrUpdate Successfully");
-//            resultData.setStatus(true);
-//            resultData.setMessage("Record saved or updated successfully");
-//        } catch (Exception e) {
-//            log.error("Error saving or updating record: {}", e.getMessage());
-//            resultData.setStatus(false);
-//            resultData.setMessage("Error saving or updating record: " + e.getMessage());
-//        }
-//
-//        return resultData;
-//    }
+    // Create New Data And Update
+    @PostMapping("/submitOrUpdateGeoColonyCategory")
+    public BaseResponse submitOrUpdateGeoColonyCategory(@RequestBody GeoColonyCategory colonyCategory, HttpServletRequest request) {
+        BaseResponse resultData = new BaseResponse();
+
+        // Check if guid is provided (indicating an update)
+        if (colonyCategory.getColonyCategoryGuid() == null || colonyCategory.getColonyCategoryGuid().isEmpty()) {
+            // Add new data
+        	colonyCategory.setCreaterIp(request.getRemoteAddr());
+        	colonyCategory.setColonyCategoryGuid(UUID.randomUUID().toString());
+        	colonyCategory.setCreatedDate(new Date());
+        	colonyCategory.setModifierIp(null);
+        	colonyCategory.setModifiedByGuid(null);
+        	colonyCategory.setModifiedDate(null);
+//			colonyCategory.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//			colonyCategory.setCreaterRemarks(userSessionParam.getUserFullName());
+            //colonyCategory.setCreaterMacId(HttpSessionHelper.getMacAddress());
+            //colonyCategory.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+        		
+        	
+        } else {
+            // Update existing data
+        	GeoColonyCategory existingColony = commonMasterService.getGeoColonyCategoryById(colonyCategory.getColonyCategoryGuid());
+
+            if (existingColony != null) {
+            	existingColony.setColonyCategoryCode(!Util.isNullOrEmpty(existingColony.getColonyCategoryCode()) ? existingColony.getColonyCategoryCode().toUpperCase().trim() : null);
+            	existingColony.setColonyCategoryNameEn(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameEn()) ? existingColony.getColonyCategoryNameEn().toUpperCase().trim() : null);
+
+            	existingColony.setColonyCategoryNameHi(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameHi()) ? existingColony.getColonyCategoryNameHi().toUpperCase().trim() : null);
+                existingColony.setColonyCategoryNameRl(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameRl()) ? existingColony.getColonyCategoryNameRl().trim() : null);
+                existingColony.setColonyCategoryDesc(!Util.isNullOrEmpty(existingColony.getColonyCategoryDesc()) ? existingColony.getColonyCategoryDesc().trim() : null);
+
+             
+                existingColony.setIsActive(existingColony.getIsActive() != null ? existingColony.getIsActive() : existingColony.getIsActive());
+
+                existingColony.setModifierIp(request.getRemoteAddr());
+                existingColony.setModifiedDate(new Date());
+                //existingCountry.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
+                //existingCountry.setModifierMacId(HttpSessionHelper.getMacAddress());
+                colonyCategory = existingColony; // Use the updated existing country object
+            } else {
+                log.error("Colony Category not found");
+                resultData.setStatus(false);
+                resultData.setMessage("Colony Category not found");
+                return resultData;
+            }
+        }
+
+        // Validation
+        resultData = validator.validateColonyCategory(colonyCategory);
+        if (resultData != null && !resultData.getStatus()) {
+            log.error("Validation failed: {}", resultData.getMessage());
+            return resultData;
+        }
+
+        // If validation passes, proceed to save or update
+        if (colonyCategory.getIsActive() == null) colonyCategory.setIsActive(false);
+        colonyCategory.setColonyCategoryCode(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode()) ? colonyCategory.getColonyCategoryCode().toUpperCase().trim() : null);
+        colonyCategory.setColonyCategoryNameEn(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameEn()) ? colonyCategory.getColonyCategoryNameEn().toUpperCase().trim() : null);
+        colonyCategory.setColonyCategoryNameHi(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameHi()) ? colonyCategory.getColonyCategoryNameHi().trim() : null);
+        colonyCategory.setColonyCategoryNameRl(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameRl()) ? colonyCategory.getColonyCategoryNameRl().trim() : null);
+        colonyCategory.setColonyCategoryDesc(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryDesc()) ? colonyCategory.getColonyCategoryDesc().trim() : null);
+
+
+     
+
+        try {
+            geoColonyCategoryRepository.save(colonyCategory);
+            log.info("Record SaveOrUpdate Successfully");
+            resultData.setStatus(true);
+            resultData.setMessage("Record saved or updated successfully");
+        } catch (Exception e) {
+            log.error("Error saving or updating record: {}", e.getMessage());
+            resultData.setStatus(false);
+            resultData.setMessage("Error saving or updating record: " + e.getMessage());
+        }
+
+        return resultData;
+    }
 
  	
  	
