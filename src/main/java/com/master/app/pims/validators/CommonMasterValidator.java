@@ -2,9 +2,11 @@ package com.master.app.pims.validators;
 
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.models.common.response.BaseResponse;
+import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
@@ -29,6 +31,9 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private GeoColonyCategoryRepository geoColonyCategoryRepository;
+    
+    @Autowired
+    private ApplicationMasterRepository applicationMasterRepository;
 
     
     //mst country validation
@@ -182,6 +187,67 @@ public class CommonMasterValidator implements Validator {
 			} catch (Exception e) {
 				 resultData.setStatus(false);
 	            resultData.setMessage("Error validating country: " + e.getMessage());
+			}
+			return resultData;
+	}
+
+	@Override
+	public BaseResponse validateApplicationMaster(ApplicationMaster appMaster) {
+		 BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+	        	if (Util.isNullOrEmpty(appMaster.getApplicationMasterCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.applicationMaster.code.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(appMaster.getApplicationMasterCode()) && applicationMasterRepository
+						.isExistApplicationMasterCode(appMaster.getApplicationMasterCode(), appMaster.getApplicationMasterGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.applicationMaster.code.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(appMaster.getApplicationMasterName())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.applicationMaster.NameEn.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(appMaster.getApplicationMasterName()) && applicationMasterRepository
+						.isExistApplicationMasterName(appMaster.getApplicationMasterName(), appMaster.getApplicationMasterGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.applicationMaster.NameEn.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(appMaster.getApplicationMasterIp4())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.applicationMaster.IPv4.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(appMaster.getApplicationMasterIp4()) && applicationMasterRepository
+						.isExistApplicationMasterIp4(appMaster.getApplicationMasterIp4(), appMaster.getApplicationMasterGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.applicationMaster.IPv4.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(appMaster.getApplicationMasterUrl())) {
+					resultData.setStatus(false);
+					resultData.setMessage(
+							PropertyReader.getFormMessage("master.applicationMaster.applicationMasterUrl.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(appMaster.getApplicationMasterUrl()) && applicationMasterRepository
+						.isExistApplicationMasterUrl(appMaster.getApplicationMasterUrl(), appMaster.getApplicationMasterGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(
+							PropertyReader.getFormMessage("master.applicationMaster.applicationMasterUrl.unique"));
+					return resultData;
+				}
+				
+			
+			} catch (Exception e) {
+				 resultData.setStatus(false);
+	            resultData.setMessage("Error validating applicationMaster: " + e.getMessage());
 			}
 			return resultData;
 	}

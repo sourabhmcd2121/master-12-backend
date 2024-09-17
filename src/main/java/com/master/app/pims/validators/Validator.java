@@ -1,6 +1,7 @@
 package com.master.app.pims.validators;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.models.common.response.BaseResponse;
@@ -15,6 +16,11 @@ public interface Validator {
     
     //validate Colony Category
     BaseResponse validateColonyCategory(GeoColonyCategory colonyCategory);
+    
+    
+    //ApplicationMaster validation
+    BaseResponse validateApplicationMaster(ApplicationMaster appMaster);
+
 
     
   

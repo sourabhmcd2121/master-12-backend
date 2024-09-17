@@ -1,22 +1,40 @@
-//package com.master.app.pims.repositories;
-//
-//import org.springframework.data.jpa.repository.JpaRepository;
-//
-//import com.master.app.pims.entities.commonmaster.ApplicationMaster;
-//
-//public interface ApplicationMasterRepository extends JpaRepository<ApplicationMaster, String> {
-//	//Unique ApplicationMasterCode
-//	 boolean existsByApplicationMasterCodeIgnoreCaseAndApplicationMasterGuidNot(String applicationMasterCode, String applicationMasterGuid);
-//
-//	 //unique ApplicationMasterName
-//	 boolean existsByApplicationMasterNameIgnoreCaseAndApplicationMasterGuidNot(String applicationMasterName, String applicationMasterGuid);
-//
-//	 
-//	 //unique ApplicationMasterIp4
-//	 boolean existsByApplicationMasterIp4IgnoreCaseAndApplicationMasterGuidNot(String applicationMasterIp4, String applicationMasterGuid);
-//
-//	//unique ApplicationMasterUrl
-//	 boolean existsByApplicationMasterUrlIgnoreCaseAndApplicationMasterGuidNot(String applicationMasterUrl, String applicationMasterGuid);
-//
-//
-//}
+package com.master.app.pims.repositories;
+
+import java.sql.SQLException;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
+@Repository
+public interface ApplicationMasterRepository extends JpaRepository<ApplicationMaster, String> {
+	
+
+	    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM ApplicationMaster a " +
+	           "WHERE a.applicationMasterCode = :applicationMasterCode " +
+	           "AND a.applicationMasterGuid <> :applicationMasterGuid")
+	    boolean isExistApplicationMasterCode(@Param("applicationMasterCode") String applicationMasterCode, 
+	                                         @Param("applicationMasterGuid") String applicationMasterGuid) throws SQLException;
+
+	    
+	    
+	    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM ApplicationMaster a " +
+	           "WHERE a.applicationMasterName = :applicationMasterName " +
+	           "AND a.applicationMasterGuid <> :applicationMasterGuid")
+	    boolean isExistApplicationMasterName(@Param("applicationMasterName") String applicationMasterName, 
+	                                         @Param("applicationMasterGuid") String applicationMasterGuid) throws SQLException;
+
+	    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM ApplicationMaster a " +
+	           "WHERE a.applicationMasterIp4 = :applicationMasterIp4 " +
+	           "AND a.applicationMasterGuid <> :applicationMasterGuid")
+	    boolean isExistApplicationMasterIp4(@Param("applicationMasterIp4") String applicationMasterIp4, 
+	                                        @Param("applicationMasterGuid") String applicationMasterGuid) throws SQLException;
+
+	    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM ApplicationMaster a " +
+	           "WHERE a.applicationMasterUrl = :applicationMasterUrl " +
+	           "AND a.applicationMasterGuid <> :applicationMasterGuid")
+	    boolean isExistApplicationMasterUrl(@Param("applicationMasterUrl") String applicationMasterUrl, 
+	                                        @Param("applicationMasterGuid") String applicationMasterGuid) throws SQLException;
+	}

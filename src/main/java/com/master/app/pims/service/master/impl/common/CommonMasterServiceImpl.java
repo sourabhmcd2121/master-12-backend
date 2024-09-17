@@ -1,8 +1,10 @@
 package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
@@ -23,7 +25,10 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
     private GeoColonyCategoryRepository geoColonyCategoryRepository;
-
+    
+    @Autowired
+    private ApplicationMasterRepository applicationMasterRepository;
+    
     @Override
     public GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst) {
         return geoCountryMstRepository.save(geoCountryMst);
@@ -56,6 +61,18 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public GeoColonyCategory getGeoColonyCategoryById(String id) {
         return geoColonyCategoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public ApplicationMaster saveApplicationMaster(ApplicationMaster appMaster) {
+		 return applicationMasterRepository.save(appMaster);
+
+	}
+
+	@Override
+	public ApplicationMaster getApplicationMasterById(String id) {
+        return applicationMasterRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 }
