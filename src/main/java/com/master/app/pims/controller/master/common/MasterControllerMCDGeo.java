@@ -402,7 +402,12 @@ public class MasterControllerMCDGeo {
     }
 
  	
- 	
+    //get data by id
+    @GetMapping("/getColonyCategoryByGuid/{colonyCategoryGuid}")
+    public ResponseEntity<GeoColonyCategory> getColonyCategoryByGuid(@PathVariable("colonyCategoryGuid") String colonyCategoryGuid) {
+    	GeoColonyCategory colonyCategory = geoColonyCategoryRepository.findById(colonyCategoryGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with stateMasterGuid : " + colonyCategoryGuid));
+        return new ResponseEntity<>(colonyCategory, HttpStatus.OK);
+    }
  	
  	//////////////////////////////////////////////////GeoColonyCategory End///////////////////////////////////////////
  	
