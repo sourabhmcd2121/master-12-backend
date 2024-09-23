@@ -2,9 +2,13 @@ package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
+import com.master.app.pims.entities.schemas.mst.AssessmentYear;
+import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
+import com.master.app.pims.repositories.AssessmentYearRepository;
+import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
@@ -27,7 +31,16 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     private GeoColonyCategoryRepository geoColonyCategoryRepository;
     
     @Autowired
+    private AssessmentYearRepository assessmentYearRepository;
+    
+    
+    @Autowired
     private ApplicationMasterRepository applicationMasterRepository;
+    
+    @Autowired
+    private AssociatedChargesInfoRepository associatedChargesInfoRepository;
+    
+    
     
     @Override
     public GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst) {
@@ -73,6 +86,28 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public ApplicationMaster getApplicationMasterById(String id) {
         return applicationMasterRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public AssessmentYear saveAssessmentYear(AssessmentYear assessmentYear) {
+		 return assessmentYearRepository.save(assessmentYear);
+	}
+
+	@Override
+	public AssessmentYear getAssessmentYearById(String id) {
+        return assessmentYearRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public AssociatedChargesInfo saveAssociatedChargesInfo(AssociatedChargesInfo associatedChargesInfo) {
+		 return associatedChargesInfoRepository.save(associatedChargesInfo);
+	}
+
+	@Override
+	public AssociatedChargesInfo getAssociatedChargesInfoById(String id) {
+        return associatedChargesInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 }

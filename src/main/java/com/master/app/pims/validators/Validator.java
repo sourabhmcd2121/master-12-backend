@@ -2,6 +2,8 @@ package com.master.app.pims.validators;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
+import com.master.app.pims.entities.schemas.mst.AssessmentYear;
+import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.models.common.response.BaseResponse;
@@ -20,6 +22,12 @@ public interface Validator {
     
     //ApplicationMaster validation
     BaseResponse validateApplicationMaster(ApplicationMaster appMaster);
+    
+    //AssessmentYear validation
+    BaseResponse validateAssessmentYear(AssessmentYear assessmentYear);
+    
+    //AssociatedChargesInfo validation
+    BaseResponse validateAssociatedChargesInfo(AssociatedChargesInfo associatedChargesInfo);
 
 
     

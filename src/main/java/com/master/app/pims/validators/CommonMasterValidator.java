@@ -3,10 +3,14 @@ package com.master.app.pims.validators;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
+import com.master.app.pims.entities.schemas.mst.AssessmentYear;
+import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
+import com.master.app.pims.repositories.AssessmentYearRepository;
+import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
@@ -34,6 +38,12 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private ApplicationMasterRepository applicationMasterRepository;
+    
+    @Autowired
+    private AssessmentYearRepository assessmentYearRepository;
+    
+    @Autowired
+    private AssociatedChargesInfoRepository associatedChargesInfoRepository;
 
     
     //mst country validation
@@ -250,6 +260,90 @@ public class CommonMasterValidator implements Validator {
 	            resultData.setMessage("Error validating applicationMaster: " + e.getMessage());
 			}
 			return resultData;
+	}
+
+	@Override
+	public BaseResponse validateAssessmentYear(AssessmentYear assessmentYear) {
+		 BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+	        	if (Util.isNullOrEmpty(assessmentYear.getAssessmentYearCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.assessmentYearCode.name.required"));
+				}
+				if (!Util.isNullOrEmpty(assessmentYear.getAssessmentYearCode())
+						&& assessmentYearRepository.isExistAssessmentCode(assessmentYear.getAssessmentYearCode(),
+								assessmentYear.getAssessmentYearGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.assessmentYearCode.name.unique"));
+					return resultData;
+				}
+	        	
+				
+			
+			} catch (Exception e) {
+				 resultData.setStatus(false);
+	            resultData.setMessage("Error validating assessmentYear: " + e.getMessage());
+			}
+			return resultData;
+	}
+
+	@Override
+	public BaseResponse validateAssociatedChargesInfo(AssociatedChargesInfo associatedChargesInfo) {
+	    BaseResponse resultData = new BaseResponse();
+        resultData.setStatus(true);
+        resultData.setMessage("Record SaveOrUpdate Successfully");
+        try {
+//        	if (Util.isNullOrEmpty(AssociatedChargesInfo.getChargeCode())) {
+//				resultData.setStatus(false);
+//				resultData
+//						.setMessage(PropertyReader.getFormMessage("master.associatedChargesInfo.chargeCode.required"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeCode())
+//					&& associatedChargesInfoRepository.isExistAssociatedChargesInfoCode(AssociatedChargesInfo.getChargeCode(),
+//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.associatedChargesInfo.chargeCode.unique"));
+//				return resultData;
+//			}
+//			if (Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameEn())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(
+//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameEn.required"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameEn()) && associatedChargesInfoRepository
+//					.isExistAssociatedChargesInfoNameEn(AssociatedChargesInfo.getChargeNameEn(),
+//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(
+//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameEn.unique"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameHi()) && associatedChargesInfoRepository
+//					.isExistAssociatedChargesInfoNameHi(AssociatedChargesInfo.getChargeNameHi(),
+//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(
+//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameHi.unique"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameRl()) && associatedChargesInfoRepository
+//					.isExistAssociatedChargesInfoNameRl(AssociatedChargesInfo.getChargeNameRl(),
+//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(
+//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameRl.unique"));
+//				return resultData;
+//			}
+           
+        } catch (Exception e) {
+            resultData.setStatus(false);
+            resultData.setMessage("Error validating  associate chargeInfo: " + e.getMessage());
+        }
+        return resultData;
 	}
 
 }

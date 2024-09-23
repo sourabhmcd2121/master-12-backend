@@ -6,6 +6,8 @@ import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
+import com.master.app.pims.entities.schemas.mst.AssessmentYear;
+import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,8 @@ public class BaseResponse {
     private List<GeoStateMaster> masterState;
     private List<GeoColonyCategory> colonyCategory;
     private List<ApplicationMaster> applicationMaster;
+    private List<AssessmentYear> assessmentYear;
+    private List<AssociatedChargesInfo> associatedChargesInfo;
     
     private List<DesignationAppointmentType> designation;
    
