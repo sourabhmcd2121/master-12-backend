@@ -229,7 +229,8 @@ public class MasterControllerMCDGeo {
         	state.setCreaterIp(request.getRemoteAddr());
         	state.setStateMasterGuid(UUID.randomUUID().toString());
         	state.setCreatedDate(new Date());
-        	
+            if(state.getIsRecordActive()==null)
+                state.setIsRecordActive(false);
 //			state.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			state.setCreaterRemarks(userSessionParam.getUserFullName());
 //			state.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
@@ -335,6 +336,8 @@ public class MasterControllerMCDGeo {
         	colonyCategory.setModifierIp(null);
         	colonyCategory.setModifiedByGuid(null);
         	colonyCategory.setModifiedDate(null);
+            if (colonyCategory.getIsActive() == null)
+                colonyCategory.setIsActive(false);
 //			colonyCategory.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			colonyCategory.setCreaterRemarks(userSessionParam.getUserFullName());
             //colonyCategory.setCreaterMacId(HttpSessionHelper.getMacAddress());
@@ -358,8 +361,11 @@ public class MasterControllerMCDGeo {
 
                 existingColony.setModifierIp(request.getRemoteAddr());
                 existingColony.setModifiedDate(new Date());
-                //existingCountry.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
-                //existingCountry.setModifierMacId(HttpSessionHelper.getMacAddress());
+                if (existingColony.getIsActive() == null)
+                    existingColony.setIsActive(false);
+                // for now setting some dummy value to test
+                existingColony.setModifiedByGuid(UUID.randomUUID().toString());
+                existingColony.setModifierMacId(UUID.randomUUID().toString());
                 colonyCategory = existingColony; // Use the updated existing country object
             } else {
                 log.error("Colony Category not found");

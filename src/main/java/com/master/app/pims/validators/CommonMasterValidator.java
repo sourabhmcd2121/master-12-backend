@@ -116,7 +116,7 @@ public class CommonMasterValidator implements Validator {
         try {
             if (Util.isNullOrEmpty(state.getStateCode())) {
                 resultData.setStatus(false);
-                resultData.setMessage(PropertyReader.getFormMessage("master.state.state.code.required"));
+                resultData.setMessage(PropertyReader.getFormMessage("master.state.code.required"));
             }
             if (!Util.isNullOrEmpty(state.getStateCode()) && geoStateMasterRepository.isExistStateCode(state.getStateCode(), state.getStateMasterGuid())) {
                 resultData.setStatus(false);
@@ -155,14 +155,14 @@ public class CommonMasterValidator implements Validator {
 	        try {
 				if (Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode())) {
 					resultData.setStatus(false);
-					resultData.setMessage(PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryCode.required"));
+					resultData.setMessage(PropertyReader.getFormMessage("master.geoColonyCategory.required"));
 					return resultData;
 				}
 				if (!Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode())
 						&& geoColonyCategoryRepository.isExistGeoColonyCategoryCode(colonyCategory.getColonyCategoryCode(),
 								colonyCategory.getColonyCategoryGuid())) {
 					resultData.setStatus(false);
-					resultData.setMessage(PropertyReader.getFormMessage("master.geoColonyCategory.geoColonyCategoryCode.unique"));
+					resultData.setMessage(PropertyReader.getFormMessage("master.geoColonyCategory.unique"));
 					return resultData;
 				}
 				if (Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameEn())) {
