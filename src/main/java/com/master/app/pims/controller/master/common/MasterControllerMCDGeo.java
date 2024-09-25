@@ -1,5 +1,6 @@
 package com.master.app.pims.controller.master.common;
 
+import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
@@ -84,10 +85,20 @@ public class MasterControllerMCDGeo {
 
         // Check if guid is provided (indicating an update)
         if (country.getCountryMstGuid() == null || country.getCountryMstGuid().isEmpty()) {
+        	
+        	country.setMasterCountry(country.getCountryMasterGuid());
+        	
+        	
             // Add new data
             country.setCreaterIp(request.getRemoteAddr());
             country.setCountryMstGuid(UUID.randomUUID().toString());
             country.setCreatedDate(new Date());
+            
+            
+        	if(country.getMasterCountry()!=null && !country.getMasterCountry().isEmpty()){
+        		country.setMasterGeoCountryMaster(new GeoCountryMaster(country.getMasterCountry()));
+			}
+            
 //			country.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			country.setCreaterRemarks(userSessionParam.getUserFullName());
             //country.setCreaterMacId(HttpSessionHelper.getMacAddress());
