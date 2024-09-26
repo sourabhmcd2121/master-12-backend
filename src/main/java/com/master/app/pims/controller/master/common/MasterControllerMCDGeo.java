@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -120,6 +122,13 @@ public class MasterControllerMCDGeo {
 
                 existingCountry.setModifierIp(request.getRemoteAddr());
                 existingCountry.setModifiedDate(new Date());
+                
+                existingCountry.setMasterCountry(country.getCountryMasterGuid());
+                
+               	if(existingCountry.getMasterCountry()!=null && !existingCountry.getMasterCountry().isEmpty()){
+               		existingCountry.setMasterGeoCountryMaster(new GeoCountryMaster(existingCountry.getMasterCountry()));
+    			}
+                
                 //existingCountry.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
                 //existingCountry.setModifierMacId(HttpSessionHelper.getMacAddress());
                 country = existingCountry; // Use the updated existing country object
