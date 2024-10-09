@@ -86,6 +86,9 @@ public class MasterControllerMCDCommon {
 	        	appMaster.setModifiedIpAddr(null);
 	        	appMaster.setModifiedBy(null);
 	        	appMaster.setModifiedDate(null);
+	        	appMaster.setCreatedBy(request.getRemoteAddr());
+	        	if (appMaster.getIsActive() == null)
+	        		appMaster.setIsActive(false);
 	        	
 				//appMaster.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
 				//appMaster.setCreatedMacAddr(HttpSessionHelper.getMacAddress());  	
@@ -110,6 +113,13 @@ public class MasterControllerMCDCommon {
 
 	            	existingAppMaster.setModifiedIpAddr(request.getRemoteAddr());
 	            	existingAppMaster.setModifiedDate(new Date());
+	            	
+	            	  if (existingAppMaster.getIsActive() == null)
+	            		  existingAppMaster.setIsActive(false);
+	            	  
+	            	  // for now setting some dummy value to test
+	            	  existingAppMaster.setModifiedBy(UUID.randomUUID().toString());
+	            	  existingAppMaster.setModifiedMacAddr(UUID.randomUUID().toString());
 	            	
 	            	//existingAppMaster.setModifiedIpAddr(HttpSessionHelper.getClientIPAddress(request));
 					//existingAppMaster.setModifiedMacAddr(HttpSessionHelper.getMacAddress());

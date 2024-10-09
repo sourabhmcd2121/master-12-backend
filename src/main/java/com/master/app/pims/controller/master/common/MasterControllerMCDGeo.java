@@ -245,10 +245,19 @@ public class MasterControllerMCDGeo {
 
         // Check if guid is provided (indicating an update)
         if (state.getStateMasterGuid() == null || state.getStateMasterGuid().isEmpty()) {
+        	
+        	
             // Add new data
         	state.setCreaterIp(request.getRemoteAddr());
         	state.setStateMasterGuid(UUID.randomUUID().toString());
         	state.setCreatedDate(new Date());
+        	
+        	//country dropdown
+        	state.setMasterCountry(state.getCountryMasterGuid());
+        	if(state.getMasterCountry()!=null && !state.getMasterCountry().isEmpty()){
+        		state.setMasterGeoCountryMaster(new GeoCountryMaster(state.getMasterCountry()));
+			}
+        	
             if(state.getIsRecordActive()==null)
                 state.setIsRecordActive(false);
 //			state.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
@@ -275,6 +284,11 @@ public class MasterControllerMCDGeo {
             	existingState.setModifiedDate(new Date());
             	existingState.setIsModified(true);
             	
+            	//country dropdown
+            	existingState.setMasterCountry(state.getCountryMasterGuid());
+             	if(existingState.getMasterCountry()!=null && !existingState.getMasterCountry().isEmpty()){
+             		existingState.setMasterGeoCountryMaster(new GeoCountryMaster(existingState.getMasterCountry()));
+    			}
             	//existingState.setModifierMacId(HttpSessionHelper.getMacAddress());	
             	//existingState.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
                 state = existingState; // Use the updated existing country object
@@ -356,9 +370,10 @@ public class MasterControllerMCDGeo {
         	colonyCategory.setModifierIp(null);
         	colonyCategory.setModifiedByGuid(null);
         	colonyCategory.setModifiedDate(null);
+    		colonyCategory.setCreatedByGuid(request.getRemoteAddr());
+
             if (colonyCategory.getIsActive() == null)
                 colonyCategory.setIsActive(false);
-//			colonyCategory.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			colonyCategory.setCreaterRemarks(userSessionParam.getUserFullName());
             //colonyCategory.setCreaterMacId(HttpSessionHelper.getMacAddress());
             //colonyCategory.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
