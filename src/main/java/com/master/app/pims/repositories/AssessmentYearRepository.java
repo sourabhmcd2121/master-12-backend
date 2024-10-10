@@ -11,6 +11,9 @@ import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 public interface AssessmentYearRepository extends JpaRepository<AssessmentYear, String> {
 
     // Check if Assessment Code exists for a given guid
-    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AssessmentYear a WHERE a.assessmentYearCode = :code AND a.assessmentYearGuid = :guid")
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AssessmentYear a WHERE a.assessmentYearCode = :code AND a.assessmentYearGuid != :guid")
     boolean isExistAssessmentCode(@Param("code") String code, @Param("guid") String guid);
+    
+   
+
 }

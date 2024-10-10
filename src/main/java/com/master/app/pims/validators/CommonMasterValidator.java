@@ -279,6 +279,49 @@ public class CommonMasterValidator implements Validator {
 					resultData.setMessage(PropertyReader.getFormMessage("master.assessmentYearCode.name.unique"));
 					return resultData;
 				}
+				
+				if (assessmentYear.getStartDate() == null || assessmentYear.getEndDate() == null) {
+				    resultData.setStatus(false);
+				    if (assessmentYear.getStartDate() == null) {
+				        resultData.setMessage(PropertyReader.getFormMessage("master.startDate.required"));
+				    } else {
+				        resultData.setMessage(PropertyReader.getFormMessage("master.endDate.required"));
+				    }
+				    return resultData;
+				}
+
+				// Check if startDate is after endDate
+				if (assessmentYear.getStartDate().compareTo(assessmentYear.getEndDate()) > 0) { // startDate is after endDate
+				    resultData.setStatus(false);
+				    resultData.setMessage(PropertyReader.getFormMessage("master.startDateEndDate.invalid"));
+				    return resultData;
+				}
+				
+				// Assuming you have startYear and endYear fields in your assessmentYear or another object
+			
+
+				if (assessmentYear.getStartYear() == null || assessmentYear.getEndYear() == null) {
+				    resultData.setStatus(false);
+				    if (assessmentYear.getStartYear() == null) {
+				        resultData.setMessage(PropertyReader.getFormMessage("master.startYear.required"));
+				    } else {
+				        resultData.setMessage(PropertyReader.getFormMessage("master.endYear.required"));
+				    }
+				    return resultData;
+				}
+
+				// Check if startYear is greater than endYear
+				if (assessmentYear.getStartYear() > assessmentYear.getEndYear()) { // startYear is greater than endYear
+				    resultData.setStatus(false);
+				    resultData.setMessage(PropertyReader.getFormMessage("master.startYearEndYear.invalid"));
+				    return resultData;
+				}
+				
+				if (Util.isNullOrEmpty(assessmentYear.getAssessmentYearDesc())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.assessmentYearDesc.required"));
+				}
+
 	        	
 				
 			

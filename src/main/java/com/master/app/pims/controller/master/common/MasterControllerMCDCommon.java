@@ -208,10 +208,12 @@ public class MasterControllerMCDCommon {
 	        	assessmentYear.setModifierIp(null);
 				assessmentYear.setModifiedByGuid(null);
 				assessmentYear.setModifiedDate(null);
+				assessmentYear.setCreatedByGuid(request.getRemoteAddr());
 //				assessmentYear.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 				//assessmentYear.setCreaterRemarks(userSessionParam.getUserFullName());
 	        	//assessmentYear.setCreaterMacId(HttpSessionHelper.getMacAddress());	
-				
+				 if (assessmentYear.getIsActive() == null)
+					 assessmentYear.setIsActive(false);
 	        } else {
 	            // Update existing data
 	        	AssessmentYear existingAssessmentYear = commonMasterService.getAssessmentYearById(assessmentYear.getAssessmentYearGuid());
@@ -231,6 +233,13 @@ public class MasterControllerMCDCommon {
 
 	            	existingAssessmentYear.setModifierIp(request.getRemoteAddr());
 	            	existingAssessmentYear.setModifiedDate(new Date());
+	            	
+	            	  if (existingAssessmentYear.getIsActive() == null)
+	            		  existingAssessmentYear.setIsActive(false);
+	            	
+	            	existingAssessmentYear.setModifiedByGuid(UUID.randomUUID().toString());
+	            	existingAssessmentYear.setModifierMacId(UUID.randomUUID().toString());
+	            
 	                //existingAssessmentYear.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
 	                //existingAssessmentYear.setModifierMacId(HttpSessionHelper.getMacAddress());
 	            	assessmentYear = existingAssessmentYear; // Use the updated existing assessmentYear object
