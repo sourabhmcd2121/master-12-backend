@@ -12,9 +12,10 @@ import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 @Repository
 public interface AssociatedChargesInfoRepository extends JpaRepository<AssociatedChargesInfo, String> {
 
-	@Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AssociatedChargesInfo a WHERE a.chargeCode = :associatedChargesInfoCode AND a.associatedChargesInfoGuid != :associatedChargesInfoGuid")
-	boolean isExistAssociatedChargesInfoCode(@Param("associatedChargesInfoCode") String associatedChargesInfoCode, @Param("associatedChargesInfoGuid") String associatedChargesInfoGuid) throws SQLException;
+	@Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AssociatedChargesInfo a WHERE a.chargeCode = :chargeCode AND a.associatedChargesInfoGuid != :associatedChargesInfoGuid")
+	boolean isExistAssociatedChargesInfoCode(@Param("chargeCode") String chargeCode, @Param("associatedChargesInfoGuid") String associatedChargesInfoGuid) throws SQLException;
 
+	
 	@Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AssociatedChargesInfo a WHERE a.chargeNameEn = :associatedChargesInfoNameEn AND a.associatedChargesInfoGuid != :associatedChargesInfoGuid")
 	boolean isExistAssociatedChargesInfoNameEn(@Param("associatedChargesInfoNameEn") String associatedChargesInfoNameEn, @Param("associatedChargesInfoGuid") String associatedChargesInfoGuid) throws SQLException;
 

@@ -343,7 +343,7 @@ public class MasterControllerMCDGeo {
     
     ///////////////////////////////////////GeoColonyCategory Start//////////////////////////////////////////////
  
- 	 //get all data from table
+    //get all data from table
     @GetMapping("/getGeoColonyCategoryList")
     public ResponseEntity<BaseResponse> getGeoColonyCategoryList() {
         BaseResponse response = new BaseResponse();
@@ -384,15 +384,15 @@ public class MasterControllerMCDGeo {
         	GeoColonyCategory existingColony = commonMasterService.getGeoColonyCategoryById(colonyCategory.getColonyCategoryGuid());
 
             if (existingColony != null) {
-            	existingColony.setColonyCategoryCode(!Util.isNullOrEmpty(existingColony.getColonyCategoryCode()) ? existingColony.getColonyCategoryCode().toUpperCase().trim() : null);
-            	existingColony.setColonyCategoryNameEn(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameEn()) ? existingColony.getColonyCategoryNameEn().toUpperCase().trim() : null);
+            	existingColony.setColonyCategoryCode(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode()) ? colonyCategory.getColonyCategoryCode().toUpperCase().trim() : null);
+            	existingColony.setColonyCategoryNameEn(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameEn()) ? colonyCategory.getColonyCategoryNameEn().toUpperCase().trim() : null);
 
-            	existingColony.setColonyCategoryNameHi(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameHi()) ? existingColony.getColonyCategoryNameHi().toUpperCase().trim() : null);
-                existingColony.setColonyCategoryNameRl(!Util.isNullOrEmpty(existingColony.getColonyCategoryNameRl()) ? existingColony.getColonyCategoryNameRl().trim() : null);
-                existingColony.setColonyCategoryDesc(!Util.isNullOrEmpty(existingColony.getColonyCategoryDesc()) ? existingColony.getColonyCategoryDesc().trim() : null);
+            	existingColony.setColonyCategoryNameHi(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameHi()) ? colonyCategory.getColonyCategoryNameHi().toUpperCase().trim() : null);
+                existingColony.setColonyCategoryNameRl(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameRl()) ? colonyCategory.getColonyCategoryNameRl().trim() : null);
+                existingColony.setColonyCategoryDesc(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryDesc()) ? colonyCategory.getColonyCategoryDesc().trim() : null);
 
              
-                existingColony.setIsActive(existingColony.getIsActive() != null ? existingColony.getIsActive() : existingColony.getIsActive());
+                existingColony.setIsActive(colonyCategory.getIsActive() != null ? colonyCategory.getIsActive() : existingColony.getIsActive());
 
                 existingColony.setModifierIp(request.getRemoteAddr());
                 existingColony.setModifiedDate(new Date());
@@ -449,6 +449,7 @@ public class MasterControllerMCDGeo {
     	GeoColonyCategory colonyCategory = geoColonyCategoryRepository.findById(colonyCategoryGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with stateMasterGuid : " + colonyCategoryGuid));
         return new ResponseEntity<>(colonyCategory, HttpStatus.OK);
     }
+    
  	
  	//////////////////////////////////////////////////GeoColonyCategory End///////////////////////////////////////////
  	

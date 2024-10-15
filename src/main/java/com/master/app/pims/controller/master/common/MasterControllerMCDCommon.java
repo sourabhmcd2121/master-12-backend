@@ -310,93 +310,102 @@ public class MasterControllerMCDCommon {
 	        response.setAssociatedChargesInfo(list);
 	        return ResponseEntity.ok(response);
 	    }
-
+	    
 	    // Create New Data And Update
-//	    @PostMapping("/submitOrUpdateMstCountry")
-//	    public BaseResponse submitOrUpdateMstCountry(@RequestBody GeoCountryMst country, HttpServletRequest request) {
-//	        BaseResponse resultData = new BaseResponse();
-//
-//	        // Check if guid is provided (indicating an update)
-//	        if (country.getCountryMstGuid() == null || country.getCountryMstGuid().isEmpty()) {
-//	            // Add new data
-//	            country.setCreaterIp(request.getRemoteAddr());
-//	            country.setCountryMstGuid(UUID.randomUUID().toString());
-//	            country.setCreatedDate(new Date());
-////				country.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
-////				country.setCreaterRemarks(userSessionParam.getUserFullName());
-//	            //country.setCreaterMacId(HttpSessionHelper.getMacAddress());
-//	            //obj.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
-//	        } else {
-//	            // Update existing data
-//	            GeoCountryMst existingCountry = commonMasterService.getGeoCountryMstById(country.getCountryMstGuid());
-//
-//	            if (existingCountry != null) {
-//	                existingCountry.setCountryMobileCode(!Util.isNullOrEmpty(country.getCountryMobileCode()) ? country.getCountryMobileCode().toUpperCase().trim() : null);
-//	                existingCountry.setCountryCode(!Util.isNullOrEmpty(country.getCountryCode()) ? country.getCountryCode().toUpperCase().trim() : null);
-//
-//	                existingCountry.setCountryNameEn(!Util.isNullOrEmpty(country.getCountryNameEn()) ? country.getCountryNameEn().toUpperCase().trim() : null);
-//	                existingCountry.setCountryNameHi(!Util.isNullOrEmpty(country.getCountryNameHi()) ? country.getCountryNameHi().trim() : null);
-//	                existingCountry.setCountryNameRl(!Util.isNullOrEmpty(country.getCountryNameRl()) ? country.getCountryNameRl().trim() : null);
-//	                existingCountry.setToDate(country.getToDate());
-//	                existingCountry.setFromDate(country.getFromDate());
-//	                existingCountry.setIsRecordActive(country.getIsRecordActive() != null ? country.getIsRecordActive() : existingCountry.getIsRecordActive());
-//
-//	                existingCountry.setModifierIp(request.getRemoteAddr());
-//	                existingCountry.setModifiedDate(new Date());
-//	                //existingCountry.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
-//	                //existingCountry.setModifierMacId(HttpSessionHelper.getMacAddress());
-//	                country = existingCountry; // Use the updated existing country object
-//	            } else {
-//	                log.error("Country not found");
-//	                resultData.setStatus(false);
-//	                resultData.setMessage("Country not found");
-//	                return resultData;
-//	            }
-//	        }
-//
-//	        // Validation
-//	        resultData = validator.validateMstCountry(country);
-//	        if (resultData != null && !resultData.getStatus()) {
-//	            log.error("Validation failed: {}", resultData.getMessage());
-//	            return resultData;
-//	        }
-//
-//	        // If validation passes, proceed to save or update
-//	        if (country.getIsRecordActive() == null) country.setIsRecordActive(false);
-//	        country.setCountryCode(!Util.isNullOrEmpty(country.getCountryCode()) ? country.getCountryCode().toUpperCase().trim() : null);
-//	        country.setCountryNameEn(!Util.isNullOrEmpty(country.getCountryNameEn()) ? country.getCountryNameEn().toUpperCase().trim() : null);
-//	        country.setCountryNameHi(!Util.isNullOrEmpty(country.getCountryNameHi()) ? country.getCountryNameHi().trim() : null);
-//	        country.setCountryNameRl(!Util.isNullOrEmpty(country.getCountryNameRl()) ? country.getCountryNameRl().trim() : null);
-//	        country.setCountryMobileCode(!Util.isNullOrEmpty(country.getCountryMobileCode()) ? country.getCountryMobileCode().trim() : null);
-//
-//	        try {
-//	            geoCountryMstRepository.save(country);
-//	            log.info("Record SaveOrUpdate Successfully");
-//	            resultData.setStatus(true);
-//	            resultData.setMessage("Record saved or updated successfully");
-//	        } catch (Exception e) {
-//	            log.error("Error saving or updating record: {}", e.getMessage());
-//	            resultData.setStatus(false);
-//	            resultData.setMessage("Error saving or updating record: " + e.getMessage());
-//	        }
-//
-//	        return resultData;
-//	    }
+	    @PostMapping("/submitOrUpdateAssociatedChargesInfo")
+	    public BaseResponse submitOrUpdateAssociatedChargesInfo(@RequestBody AssociatedChargesInfo associatedChargesInfo, HttpServletRequest request) {
+	        BaseResponse resultData = new BaseResponse();
 
-	    
-	 
+	        // Check if guid is provided (indicating an update)
+	        if (associatedChargesInfo.getAssociatedChargesInfoGuid() == null || associatedChargesInfo.getAssociatedChargesInfoGuid().isEmpty()) {
+	            // Add new data
+	        	associatedChargesInfo.setCreaterIp(request.getRemoteAddr());
+	        	associatedChargesInfo.setAssociatedChargesInfoGuid(UUID.randomUUID().toString());
+	        	associatedChargesInfo.setCreatedDate(new Date());
+	        	associatedChargesInfo.setModifierIp(null);
+	        	associatedChargesInfo.setModifiedByGuid(null);
+	        	associatedChargesInfo.setModifiedDate(null);
+	        	associatedChargesInfo.setCreatedByGuid(request.getRemoteAddr());
+
+	            if (associatedChargesInfo.getIsActive() == null)
+	            	associatedChargesInfo.setIsActive(false);
+//				colonyCategory.setCreaterRemarks(userSessionParam.getUserFullName());
+	            //colonyCategory.setCreaterMacId(HttpSessionHelper.getMacAddress());
+	            //colonyCategory.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+	        		
+	        	
+	        } else {
+	            // Update existing data
+	        	AssociatedChargesInfo existingChargeInfo = commonMasterService.getAssociatedChargesInfoById(associatedChargesInfo.getAssociatedChargesInfoGuid());
+
+	            if (existingChargeInfo != null) {
+	            	existingChargeInfo.setChargeCode(!Util.isNullOrEmpty(associatedChargesInfo.getChargeCode()) ? associatedChargesInfo.getChargeCode().toUpperCase().trim() : null);
+	            	existingChargeInfo.setChargeNameEn(!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameEn()) ? associatedChargesInfo.getChargeNameEn().toUpperCase().trim() : null);
+
+	            	existingChargeInfo.setChargeNameHi(!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameHi()) ? associatedChargesInfo.getChargeNameHi().toUpperCase().trim() : null);
+	            	existingChargeInfo.setChargeNameRl(!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameRl()) ? associatedChargesInfo.getChargeNameRl().trim() : null);
+	            	existingChargeInfo.setChargeInfoDesc(!Util.isNullOrEmpty(associatedChargesInfo.getChargeInfoDesc()) ? associatedChargesInfo.getChargeInfoDesc().trim() : null);
+
+	             
+	            	existingChargeInfo.setIsActive(associatedChargesInfo.getIsActive() != null ? associatedChargesInfo.getIsActive() : existingChargeInfo.getIsActive());
+
+	            	existingChargeInfo.setModifierIp(request.getRemoteAddr());
+	            	existingChargeInfo.setModifiedDate(new Date());
+	                if (existingChargeInfo.getIsActive() == null)
+	                	existingChargeInfo.setIsActive(false);
+	                // for now setting some dummy value to test
+	                existingChargeInfo.setModifiedByGuid(UUID.randomUUID().toString());
+	                existingChargeInfo.setModifierMacId(UUID.randomUUID().toString());
+	                associatedChargesInfo = existingChargeInfo; // Use the updated existing country object
+	            } else {
+	                log.error("Associated Charges Info not found");
+	                resultData.setStatus(false);
+	                resultData.setMessage("Associated Charges Info not found");
+	                return resultData;
+	            }
+	        }
+
+	        // Validation
+	        resultData = validator.validateAssociatedChargesInfo(associatedChargesInfo);
+	        if (resultData != null && !resultData.getStatus()) {
+	            log.error("Validation failed: {}", resultData.getMessage());
+	            return resultData;
+	        }
+
+	        // If validation passes, proceed to save or update
+	        if (associatedChargesInfo.getIsActive() == null) associatedChargesInfo.setIsActive(false);
+	        associatedChargesInfo.setChargeCode(!Util.isNullOrEmpty(associatedChargesInfo.getChargeCode()) ? associatedChargesInfo.getChargeCode().toUpperCase().trim() : null);
+	        associatedChargesInfo.setChargeNameEn(!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameEn()) ? associatedChargesInfo.getChargeNameEn().toUpperCase().trim() : null);
+	        associatedChargesInfo.setChargeNameHi(!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameHi()) ? associatedChargesInfo.getChargeNameHi().trim() : null);
+	        associatedChargesInfo.setChargeNameRl(!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameRl()) ? associatedChargesInfo.getChargeNameRl().trim() : null);
+	        associatedChargesInfo.setChargeInfoDesc(!Util.isNullOrEmpty(associatedChargesInfo.getChargeInfoDesc()) ? associatedChargesInfo.getChargeInfoDesc().trim() : null);
 
 
+	     
+
+	        try {
+	        	associatedChargesInfoRepository.save(associatedChargesInfo);
+	            log.info("Record SaveOrUpdate Successfully");
+	            resultData.setStatus(true);
+	            resultData.setMessage("Record saved or updated successfully");
+	        } catch (Exception e) {
+	            log.error("Error saving or updating record: {}", e.getMessage());
+	            resultData.setStatus(false);
+	            resultData.setMessage("Error saving or updating record: " + e.getMessage());
+	        }
+
+	        return resultData;
+	    }
+
+	 	
 	    //get data by id
-//	    @GetMapping("/getMstCountryByGuid/{countryMstGuid}")
-//	    public ResponseEntity<GeoCountryMst> getMstCountryByGuid(@PathVariable("countryMstGuid") String countryMstGuid) {
-//	        GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with countryMstGuid : " + countryMstGuid));
-//	        return new ResponseEntity<>(geoCountry, HttpStatus.OK);
-//	    }
-	    
+	    @GetMapping("/getAssociatedChargesInfoByGuid/{associatedChargesInfoGuid}")
+	    public ResponseEntity<AssociatedChargesInfo> getAssociatedChargesInfoByGuid(@PathVariable("associatedChargesInfoGuid") String associatedChargesInfoGuid) {
+	    	AssociatedChargesInfo associatedChargesInfo = associatedChargesInfoRepository.findById(associatedChargesInfoGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with associatedChargesInfoGuid : " + associatedChargesInfoGuid));
+	        return new ResponseEntity<>(associatedChargesInfo, HttpStatus.OK);
+	    }
 
-	  
-
+	   
 
 	    
 //////////////////////////////////////////////AssociatedChargesInfo Mst  End////////////////////////////

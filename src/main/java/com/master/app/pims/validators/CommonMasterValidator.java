@@ -338,49 +338,49 @@ public class CommonMasterValidator implements Validator {
         resultData.setStatus(true);
         resultData.setMessage("Record SaveOrUpdate Successfully");
         try {
-//        	if (Util.isNullOrEmpty(AssociatedChargesInfo.getChargeCode())) {
-//				resultData.setStatus(false);
-//				resultData
-//						.setMessage(PropertyReader.getFormMessage("master.associatedChargesInfo.chargeCode.required"));
-//				return resultData;
-//			}
-//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeCode())
-//					&& associatedChargesInfoRepository.isExistAssociatedChargesInfoCode(AssociatedChargesInfo.getChargeCode(),
-//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
-//				resultData.setStatus(false);
-//				resultData.setMessage(PropertyReader.getFormMessage("master.associatedChargesInfo.chargeCode.unique"));
-//				return resultData;
-//			}
-//			if (Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameEn())) {
-//				resultData.setStatus(false);
-//				resultData.setMessage(
-//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameEn.required"));
-//				return resultData;
-//			}
-//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameEn()) && associatedChargesInfoRepository
-//					.isExistAssociatedChargesInfoNameEn(AssociatedChargesInfo.getChargeNameEn(),
-//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
-//				resultData.setStatus(false);
-//				resultData.setMessage(
-//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameEn.unique"));
-//				return resultData;
-//			}
-//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameHi()) && associatedChargesInfoRepository
-//					.isExistAssociatedChargesInfoNameHi(AssociatedChargesInfo.getChargeNameHi(),
-//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
-//				resultData.setStatus(false);
-//				resultData.setMessage(
-//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameHi.unique"));
-//				return resultData;
-//			}
-//			if (!Util.isNullOrEmpty(AssociatedChargesInfo.getChargeNameRl()) && associatedChargesInfoRepository
-//					.isExistAssociatedChargesInfoNameRl(AssociatedChargesInfo.getChargeNameRl(),
-//							AssociatedChargesInfo.getAssociatedChargesInfoGuid())) {
-//				resultData.setStatus(false);
-//				resultData.setMessage(
-//						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameRl.unique"));
-//				return resultData;
-//			}
+        	if (Util.isNullOrEmpty(associatedChargesInfo.getChargeCode())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.associatedChargesInfo.chargeCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(associatedChargesInfo.getChargeCode())
+					&& associatedChargesInfoRepository.isExistAssociatedChargesInfoCode(associatedChargesInfo.getChargeCode(),
+							associatedChargesInfo.getAssociatedChargesInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.associatedChargesInfo.chargeCode.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(associatedChargesInfo.getChargeNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameEn()) && associatedChargesInfoRepository
+					.isExistAssociatedChargesInfoNameEn(associatedChargesInfo.getChargeNameEn(),
+							associatedChargesInfo.getAssociatedChargesInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameHi()) && associatedChargesInfoRepository
+					.isExistAssociatedChargesInfoNameHi(associatedChargesInfo.getChargeNameHi(),
+							associatedChargesInfo.getAssociatedChargesInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(associatedChargesInfo.getChargeNameRl()) && associatedChargesInfoRepository
+					.isExistAssociatedChargesInfoNameRl(associatedChargesInfo.getChargeNameRl(),
+							associatedChargesInfo.getAssociatedChargesInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.associatedChargesInfo.chargesInfoNameRl.unique"));
+				return resultData;
+			}
            
         } catch (Exception e) {
             resultData.setStatus(false);
