@@ -4,14 +4,18 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,12 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
     private AssociatedChargesInfoRepository associatedChargesInfoRepository;
+    
+    @Autowired
+    private DocsSubmissionInfoRepository docsSubmissionInfoRepository;
+    
+    @Autowired
+    private RequestSubmissionTypeRepository requestSubmissionTypeRepository;
     
     
     
@@ -110,4 +120,30 @@ public class CommonMasterServiceImpl implements CommonMasterService {
         return associatedChargesInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
+
+	@Override
+	public DocsSubmissionInfo saveDocsSubmissionInfo(DocsSubmissionInfo docsSubmissionInfo) {
+		 return docsSubmissionInfoRepository.save(docsSubmissionInfo);
+	}
+
+	@Override
+	public DocsSubmissionInfo getDocsSubmissionInfoById(String id) {
+        return docsSubmissionInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RequestSubmissionType saveRequestSubmissionType(RequestSubmissionType requestSubmissionType) {
+		 return requestSubmissionTypeRepository.save(requestSubmissionType);
+
+	}
+
+	@Override
+	public RequestSubmissionType getRequestSubmissionTypeById(String id) {
+        return requestSubmissionTypeRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	
+	
 }

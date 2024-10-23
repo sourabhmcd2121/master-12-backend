@@ -18,12 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
-import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
+import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
@@ -54,6 +57,12 @@ public class MasterControllerMCDCommon {
 	   
 	   @Autowired
 	    private AssociatedChargesInfoRepository associatedChargesInfoRepository;
+	   
+	   @Autowired
+	    private DocsSubmissionInfoRepository docsSubmissionInfoRepository;
+	   
+	   @Autowired
+	    private RequestSubmissionTypeRepository requestSubmissionTypeRepository;
 	   
 	  
 	  
@@ -409,5 +418,231 @@ public class MasterControllerMCDCommon {
 
 	    
 //////////////////////////////////////////////AssociatedChargesInfo Mst  End////////////////////////////
+	    
+//////////////////////////////////////////// DocSubmissionInfo Start //////////////////////////
+	    
+	    //get all data from table
+	    @GetMapping("/getDocsSubmissionInfoList")
+	    public ResponseEntity<BaseResponse> getDocsSubmissionInfoList() {
+	        BaseResponse response = new BaseResponse();
+	        // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+	        List<DocsSubmissionInfo> list = docsSubmissionInfoRepository.findAll();
+	        response.setMessage("success");
+	        response.setStatus(true);
+	        response.setTotalDataCount(list.size());
+	        response.setDocsSubmissionInfo(list);
+	        return ResponseEntity.ok(response);
+	    }
+	    
+	    // Create New Data And Update
+	    @PostMapping("/submitOrUpdateDocsSubmissionInfo")
+	    public BaseResponse submitOrUpdateDocsSubmissionInfo(@RequestBody DocsSubmissionInfo docsSubmissionInfo, HttpServletRequest request) {
+	        BaseResponse resultData = new BaseResponse();
+
+	        // Check if guid is provided (indicating an update)
+	        if (docsSubmissionInfo.getDocsSubmissionInfoGuid() == null || docsSubmissionInfo.getDocsSubmissionInfoGuid().isEmpty()) {
+	            // Add new data
+	        	docsSubmissionInfo.setCreaterIp(request.getRemoteAddr());
+	        	docsSubmissionInfo.setDocsSubmissionInfoGuid(UUID.randomUUID().toString());
+	        	docsSubmissionInfo.setCreatedDate(new Date());
+	        	docsSubmissionInfo.setModifierIp(null);
+	        	docsSubmissionInfo.setModifiedByGuid(null);
+	        	docsSubmissionInfo.setModifiedDate(null);
+	        	docsSubmissionInfo.setCreatedByGuid(request.getRemoteAddr());
+
+	            if (docsSubmissionInfo.getIsActive() == null)
+	            	docsSubmissionInfo.setIsActive(false);
+//				docsSubmissionInfo.setCreaterRemarks(userSessionParam.getUserFullName());
+	            //docsSubmissionInfo.setCreaterMacId(HttpSessionHelper.getMacAddress());
+	            //docsSubmissionInfo.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+	        		
+	        	
+	        } else {
+	            // Update existing data
+	        	DocsSubmissionInfo existingDocsInfo = commonMasterService.getDocsSubmissionInfoById(docsSubmissionInfo.getDocsSubmissionInfoGuid());
+
+	            if (existingDocsInfo != null) {
+	            	existingDocsInfo.setDocsCode(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsCode()) ? docsSubmissionInfo.getDocsCode().toUpperCase().trim() : null);
+	            	existingDocsInfo.setDocsNameEn(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameEn()) ? docsSubmissionInfo.getDocsNameEn().toUpperCase().trim() : null);
+
+	            	existingDocsInfo.setDocsNameHi(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameHi()) ? docsSubmissionInfo.getDocsNameHi().toUpperCase().trim() : null);
+	            	existingDocsInfo.setDocsNameRl(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameRl()) ? docsSubmissionInfo.getDocsNameRl().trim() : null);
+	            	existingDocsInfo.setDocsInfoDesc(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsInfoDesc()) ? docsSubmissionInfo.getDocsInfoDesc().trim() : null);
+
+	             
+	            	existingDocsInfo.setIsActive(docsSubmissionInfo.getIsActive() != null ? docsSubmissionInfo.getIsActive() : existingDocsInfo.getIsActive());
+
+	            	existingDocsInfo.setModifierIp(request.getRemoteAddr());
+	            	existingDocsInfo.setModifiedDate(new Date());
+	                if (existingDocsInfo.getIsActive() == null)
+	                	existingDocsInfo.setIsActive(false);
+	                // for now setting some dummy value to test
+	                existingDocsInfo.setModifiedByGuid(UUID.randomUUID().toString());
+	                existingDocsInfo.setModifierMacId(UUID.randomUUID().toString());
+	                docsSubmissionInfo = existingDocsInfo; // Use the updated existing country object
+	            } else {
+	                log.error("Docs Submission Info not found");
+	                resultData.setStatus(false);
+	                resultData.setMessage("Docs Submission Info not found");
+	                return resultData;
+	            }
+	        }
+
+	        // Validation
+	        resultData = validator.validateDocsSubmissionInfo(docsSubmissionInfo);
+	        if (resultData != null && !resultData.getStatus()) {
+	            log.error("Validation failed: {}", resultData.getMessage());
+	            return resultData;
+	        }
+
+	        // If validation passes, proceed to save or update
+	        if (docsSubmissionInfo.getIsActive() == null) docsSubmissionInfo.setIsActive(false);
+	        docsSubmissionInfo.setDocsCode(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsCode()) ? docsSubmissionInfo.getDocsCode().toUpperCase().trim() : null);
+	        docsSubmissionInfo.setDocsNameEn(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameEn()) ? docsSubmissionInfo.getDocsNameEn().toUpperCase().trim() : null);
+	        docsSubmissionInfo.setDocsNameHi(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameHi()) ? docsSubmissionInfo.getDocsNameHi().trim() : null);
+	        docsSubmissionInfo.setDocsNameRl(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameRl()) ? docsSubmissionInfo.getDocsNameRl().trim() : null);
+	        docsSubmissionInfo.setDocsInfoDesc(!Util.isNullOrEmpty(docsSubmissionInfo.getDocsInfoDesc()) ? docsSubmissionInfo.getDocsInfoDesc().trim() : null);
+
+
+	     
+
+	        try {
+	            docsSubmissionInfoRepository.save(docsSubmissionInfo);
+	            log.info("Record SaveOrUpdate Successfully");
+	            resultData.setStatus(true);
+	            resultData.setMessage("Record saved or updated successfully");
+	        } catch (Exception e) {
+	            log.error("Error saving or updating record: {}", e.getMessage());
+	            resultData.setStatus(false);
+	            resultData.setMessage("Error saving or updating record: " + e.getMessage());
+	        }
+
+	        return resultData;
+	    }
+
+	 	
+	    //get data by id
+	    @GetMapping("/getDocsSubmissionInfoByGuid/{docsSubmissionInfoGuid}")
+	    public ResponseEntity<DocsSubmissionInfo> getDocsSubmissionInfoByGuid(@PathVariable("docsSubmissionInfoGuid") String docsSubmissionInfoGuid) {
+	    	DocsSubmissionInfo docsInfo = docsSubmissionInfoRepository.findById(docsSubmissionInfoGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with docsSubmissionInfoGuid : " + docsSubmissionInfoGuid));
+	        return new ResponseEntity<>(docsInfo, HttpStatus.OK);
+	    }
+	    
+	    
+////////////////////////////////////////////DocSubmissionInfo End //////////////////////////
+
+////////////////////////////////////////////RequestSubmissionType Start //////////////////////////
+	    
+//get all data from table
+@GetMapping("/getRequestSubmissionTypeList")
+public ResponseEntity<BaseResponse> getRequestSubmissionTypeList() {
+BaseResponse response = new BaseResponse();
+// Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<RequestSubmissionType> list = requestSubmissionTypeRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setRequestSubmissionType(list);
+return ResponseEntity.ok(response);
+}
+
+// Create New Data And Update
+@PostMapping("/submitOrUpdatRequestSubmissionType")
+public BaseResponse submitOrUpdatRequestSubmissionType(@RequestBody RequestSubmissionType requestSubmissionType, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+// Check if guid is provided (indicating an update)
+if (requestSubmissionType.getRequestSubmissionTypeGuid() == null || requestSubmissionType.getRequestSubmissionTypeGuid().isEmpty()) {
+// Add new data
+	requestSubmissionType.setCreaterIp(request.getRemoteAddr());
+	requestSubmissionType.setRequestSubmissionTypeGuid(UUID.randomUUID().toString());
+	requestSubmissionType.setCreatedDate(new Date());
+	requestSubmissionType.setModifierIp(null);
+	requestSubmissionType.setModifiedByGuid(null);
+	requestSubmissionType.setModifiedDate(null);
+	requestSubmissionType.setCreatedByGuid(request.getRemoteAddr());
+
+if (requestSubmissionType.getIsActive() == null)
+	requestSubmissionType.setIsActive(false);
+//docsSubmissionInfo.setCreaterRemarks(userSessionParam.getUserFullName());
+//docsSubmissionInfo.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//docsSubmissionInfo.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+
+
+} else {
+// Update existing data
+	RequestSubmissionType existingRequestType = commonMasterService.getRequestSubmissionTypeById(requestSubmissionType.getRequestSubmissionTypeGuid());
+
+if (existingRequestType != null) {
+	existingRequestType.setRequestSubmissionTypeCode(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeCode()) ? requestSubmissionType.getRequestSubmissionTypeCode().toUpperCase().trim() : null);
+	existingRequestType.setRequestSubmissionTypeNameEn(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameEn()) ? requestSubmissionType.getRequestSubmissionTypeNameEn().toUpperCase().trim() : null);
+
+	existingRequestType.setRequestSubmissionTypeNameHi(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameHi()) ? requestSubmissionType.getRequestSubmissionTypeNameHi().toUpperCase().trim() : null);
+	existingRequestType.setRequestSubmissionTypeNameRl(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameRl()) ? requestSubmissionType.getRequestSubmissionTypeNameRl().trim() : null);
+	existingRequestType.setRequestSubmissionTypeDesc(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeDesc()) ? requestSubmissionType.getRequestSubmissionTypeDesc().trim() : null);
+
+
+	existingRequestType.setIsActive(requestSubmissionType.getIsActive() != null ? requestSubmissionType.getIsActive() : existingRequestType.getIsActive());
+
+	existingRequestType.setModifierIp(request.getRemoteAddr());
+	existingRequestType.setModifiedDate(new Date());
+if (existingRequestType.getIsActive() == null)
+	existingRequestType.setIsActive(false);
+// for now setting some dummy value to test
+existingRequestType.setModifiedByGuid(UUID.randomUUID().toString());
+existingRequestType.setModifierMacId(UUID.randomUUID().toString());
+requestSubmissionType = existingRequestType; // Use the updated existing country object
+} else {
+log.error("Request Submission Type not found");
+resultData.setStatus(false);
+resultData.setMessage("Request Submission Type not found");
+return resultData;
+}
+}
+
+// Validation
+resultData = validator.validateRequestSubmissionType(requestSubmissionType);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+// If validation passes, proceed to save or update
+if (requestSubmissionType.getIsActive() == null) requestSubmissionType.setIsActive(false);
+requestSubmissionType.setRequestSubmissionTypeCode(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeCode()) ? requestSubmissionType.getRequestSubmissionTypeCode().toUpperCase().trim() : null);
+requestSubmissionType.setRequestSubmissionTypeNameEn(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameEn()) ? requestSubmissionType.getRequestSubmissionTypeNameEn().toUpperCase().trim() : null);
+requestSubmissionType.setRequestSubmissionTypeNameHi(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameHi()) ? requestSubmissionType.getRequestSubmissionTypeNameHi().trim() : null);
+requestSubmissionType.setRequestSubmissionTypeNameRl(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameRl()) ? requestSubmissionType.getRequestSubmissionTypeNameRl().trim() : null);
+requestSubmissionType.setRequestSubmissionTypeDesc(!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeDesc()) ? requestSubmissionType.getRequestSubmissionTypeDesc().trim() : null);
+
+
+
+
+try {
+	requestSubmissionTypeRepository.save(requestSubmissionType);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getRequestSubmissionTypeGuidGuid/{requestSubmissionTypeGuid}")
+public ResponseEntity<RequestSubmissionType> getRequestSubmissionTypeGuidGuid(@PathVariable("requestSubmissionTypeGuid") String requestSubmissionTypeGuid) {
+	RequestSubmissionType reqType = requestSubmissionTypeRepository.findById(requestSubmissionTypeGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with requestSubmissionTypeGuid : " + requestSubmissionTypeGuid));
+return new ResponseEntity<>(reqType, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////RequestSubmissionType End //////////////////////////
+
+	    
 
 }

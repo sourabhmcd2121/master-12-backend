@@ -5,15 +5,19 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.utils.PropertyReader;
 import com.master.app.pims.utils.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +48,12 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private AssociatedChargesInfoRepository associatedChargesInfoRepository;
+    
+    @Autowired
+    private DocsSubmissionInfoRepository docsSubmissionInfoRepository;
+    
+    @Autowired
+    private RequestSubmissionTypeRepository requestSubmissionTypeRepository;
 
     
     //mst country validation
@@ -389,4 +399,106 @@ public class CommonMasterValidator implements Validator {
         return resultData;
 	}
 
+	@Override
+	public BaseResponse validateDocsSubmissionInfo(DocsSubmissionInfo docsSubmissionInfo) {
+		  BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+				if (Util.isNullOrEmpty(docsSubmissionInfo.getDocsCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.docsSubmissionInfo.code.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(docsSubmissionInfo.getDocsCode())
+						&& docsSubmissionInfoRepository.isExistDocsSubmissionInfoCode(docsSubmissionInfo.getDocsCode(),
+								docsSubmissionInfo.getDocsSubmissionInfoGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.docsSubmissionInfo.code.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameEn())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.docsSubmissionInfo.NameEn.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameEn())
+						&& docsSubmissionInfoRepository.isExistDocsSubmissionInfoNameEn(docsSubmissionInfo.getDocsNameEn(),
+								docsSubmissionInfo.getDocsSubmissionInfoGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.docsSubmissionInfo.NameEn.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameHi())
+						&& docsSubmissionInfoRepository.isExistDocsSubmissionInfoNameHi(docsSubmissionInfo.getDocsNameHi(),
+								docsSubmissionInfo.getDocsSubmissionInfoGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.docsSubmissionInfo.NameHi.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(docsSubmissionInfo.getDocsNameRl())
+						&& docsSubmissionInfoRepository.isExistDocsSubmissionInfoNameRl(docsSubmissionInfo.getDocsNameRl(),
+								docsSubmissionInfo.getDocsSubmissionInfoGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.docsSubmissionInfo.NameRl.unique"));
+					return resultData;
+				}
+			} catch (Exception e) {
+				  resultData.setStatus(false);
+		            resultData.setMessage("Error validating docs submission info: " + e.getMessage());
+			}
+	        return resultData;
+	}
+
+	
+	@Override
+	public BaseResponse validateRequestSubmissionType(RequestSubmissionType requestSubmissionType) {
+		  BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+				if (Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.requestSubmissionType.code.required"));
+				}
+				if (!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeCode()) && requestSubmissionTypeRepository
+						.isExistRequestSubmissionTypeCode(requestSubmissionType.getRequestSubmissionTypeCode(),
+								requestSubmissionType.getRequestSubmissionTypeGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.requestSubmissionType.code.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameEn())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.requestSubmissionType.name.required"));
+				}
+				if (!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameEn()) && requestSubmissionTypeRepository
+						.isExistRequestSubmissionTypeNameEn(requestSubmissionType.getRequestSubmissionTypeNameEn(),
+								requestSubmissionType.getRequestSubmissionTypeGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.requestSubmissionType.nameEn.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameHi()) && requestSubmissionTypeRepository
+						.isExistRequestSubmissionTypeNameHi(requestSubmissionType.getRequestSubmissionTypeNameHi(),
+								requestSubmissionType.getRequestSubmissionTypeGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.requestSubmissionType.nameHi.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(requestSubmissionType.getRequestSubmissionTypeNameRl()) && requestSubmissionTypeRepository
+						.isExistRequestSubmissionTypeNameRl(requestSubmissionType.getRequestSubmissionTypeNameRl(),
+								requestSubmissionType.getRequestSubmissionTypeGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.requestSubmissionType.nameRl.unique"));
+					return resultData;
+				}
+			}  catch (Exception e) {
+				  resultData.setStatus(false);
+		            resultData.setMessage("Error validating docs submission info: " + e.getMessage());
+			}
+	        return resultData;
+	}
+
+	
 }

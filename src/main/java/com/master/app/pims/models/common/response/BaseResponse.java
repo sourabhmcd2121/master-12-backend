@@ -8,8 +8,11 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +36,8 @@ public class BaseResponse {
     private List<ApplicationMaster> applicationMaster;
     private List<AssessmentYear> assessmentYear;
     private List<AssociatedChargesInfo> associatedChargesInfo;
+    private List<DocsSubmissionInfo> docsSubmissionInfo;
+    private List<RequestSubmissionType> requestSubmissionType;
     
     private List<DesignationAppointmentType> designation;
    

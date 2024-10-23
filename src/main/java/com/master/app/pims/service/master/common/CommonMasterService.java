@@ -4,8 +4,10 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 
 public interface CommonMasterService {
     GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst);
@@ -30,4 +32,13 @@ public interface CommonMasterService {
     ///for AssociatedChargesInfo join with mst schema
     AssociatedChargesInfo saveAssociatedChargesInfo(AssociatedChargesInfo associatedChargesInfo);
     AssociatedChargesInfo getAssociatedChargesInfoById(String id);
+    
+    ///for DocsSubmissionInfo join with mst schema
+    DocsSubmissionInfo saveDocsSubmissionInfo(DocsSubmissionInfo docsSubmissionInfo);
+    DocsSubmissionInfo getDocsSubmissionInfoById(String id);
+    
+    ///for DocsSubmissionInfo join with mst schema
+    RequestSubmissionType saveRequestSubmissionType(RequestSubmissionType requestSubmissionType);
+    RequestSubmissionType getRequestSubmissionTypeById(String id);
+    
 }
