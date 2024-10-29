@@ -12,6 +12,8 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
+import com.master.app.pims.entities.schemas.mst.UnitArea;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,6 +40,9 @@ public class BaseResponse {
     private List<AssociatedChargesInfo> associatedChargesInfo;
     private List<DocsSubmissionInfo> docsSubmissionInfo;
     private List<RequestSubmissionType> requestSubmissionType;
+    private List<SubmittedRequestStage> submittedRequestStage;
+    private List<UnitArea> unitArea;
+    
     
     private List<DesignationAppointmentType> designation;
    

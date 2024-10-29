@@ -8,6 +8,8 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
+import com.master.app.pims.entities.schemas.mst.UnitArea;
 
 public interface CommonMasterService {
     GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst);
@@ -37,8 +39,16 @@ public interface CommonMasterService {
     DocsSubmissionInfo saveDocsSubmissionInfo(DocsSubmissionInfo docsSubmissionInfo);
     DocsSubmissionInfo getDocsSubmissionInfoById(String id);
     
-    ///for DocsSubmissionInfo join with mst schema
+    ///for RequestSubmissionType join with mst schema
     RequestSubmissionType saveRequestSubmissionType(RequestSubmissionType requestSubmissionType);
     RequestSubmissionType getRequestSubmissionTypeById(String id);
+    
+    ///for RequestSubmissionType join with mst schema
+    SubmittedRequestStage saveSubmittedRequestStage(SubmittedRequestStage submittedRequestStage);
+    SubmittedRequestStage getSubmittedRequestStageById(String id);
+    
+    ///for RequestSubmissionType join with mst schema
+    UnitArea saveUnitArea(UnitArea unitArea);
+    UnitArea getUnitAreaById(String id);
     
 }

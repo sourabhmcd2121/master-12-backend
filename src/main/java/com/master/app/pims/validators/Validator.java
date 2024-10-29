@@ -8,6 +8,8 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
+import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.models.common.response.BaseResponse;
 
 public interface Validator {
@@ -34,8 +36,14 @@ public interface Validator {
     //DocsSubmissionInfo validation
     BaseResponse validateDocsSubmissionInfo(DocsSubmissionInfo docsSubmissionInfo);
     
-    //DocsSubmissionInfo validation
+    //RequestSubmissionType validation
     BaseResponse validateRequestSubmissionType(RequestSubmissionType requestSubmissionType);
+    
+    //SubmittedRequestStage validation
+    BaseResponse validateSubmittedRequestStage(SubmittedRequestStage submittedRequestStage);
+    
+    //UnitArea validation
+    BaseResponse validateUnitArea(UnitArea unitArea);
 
 
     

@@ -20,6 +20,8 @@ import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
+import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
@@ -27,6 +29,8 @@ import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
+import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
+import com.master.app.pims.repositories.mst.UnitAreaRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
@@ -63,6 +67,12 @@ public class MasterControllerMCDCommon {
 	   
 	   @Autowired
 	    private RequestSubmissionTypeRepository requestSubmissionTypeRepository;
+	   
+	   @Autowired
+	    private SubmittedRequestStageRepository submittedRequestStageRepository;
+	   
+	   @Autowired
+	    private UnitAreaRepository unitAreaRepository;
 	   
 	  
 	  
@@ -643,6 +653,229 @@ return new ResponseEntity<>(reqType, HttpStatus.OK);
 
 ////////////////////////////////////////////RequestSubmissionType End //////////////////////////
 
+////////////////////////////////////////////SubmittedRequestStage Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getSubmittedRequestStageList")
+public ResponseEntity<BaseResponse> getSubmittedRequestStageList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<SubmittedRequestStage> list = submittedRequestStageRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setSubmittedRequestStage(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateSubmittedRequestStage")
+public BaseResponse submitSubmittedRequestStage(@RequestBody SubmittedRequestStage submittedRequestStage, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (submittedRequestStage.getSubmittedRequestStageGuid() == null || submittedRequestStage.getSubmittedRequestStageGuid().isEmpty()) {
+//Add new data
+	submittedRequestStage.setCreaterIp(request.getRemoteAddr());
+	submittedRequestStage.setSubmittedRequestStageGuid(UUID.randomUUID().toString());
+	submittedRequestStage.setCreatedDate(new Date());
+	submittedRequestStage.setModifierIp(null);
+	submittedRequestStage.setModifiedByGuid(null);
+	submittedRequestStage.setModifiedDate(null);
+	submittedRequestStage.setCreatedByGuid(request.getRemoteAddr());
+
+if (submittedRequestStage.getIsActive() == null)
+	submittedRequestStage.setIsActive(false);
+//docsSubmissionInfo.setCreaterRemarks(userSessionParam.getUserFullName());
+//docsSubmissionInfo.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//docsSubmissionInfo.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+
+
+} else {
+//Update existing data
+SubmittedRequestStage existingSubmittedRequest = commonMasterService.getSubmittedRequestStageById(submittedRequestStage.getSubmittedRequestStageGuid());
+
+if (existingSubmittedRequest != null) {
+	existingSubmittedRequest.setSubmittedRequestStageCode(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageCode()) ? submittedRequestStage.getSubmittedRequestStageCode().toUpperCase().trim() : null);
+	existingSubmittedRequest.setSubmittedRequestStageNameEn(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameEn()) ? submittedRequestStage.getSubmittedRequestStageNameEn().toUpperCase().trim() : null);
+
+	existingSubmittedRequest.setSubmittedRequestStageNameHi(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameHi()) ? submittedRequestStage.getSubmittedRequestStageNameHi().toUpperCase().trim() : null);
+	existingSubmittedRequest.setSubmittedRequestStageNameRl(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameRl()) ? submittedRequestStage.getSubmittedRequestStageNameRl().trim() : null);
+	existingSubmittedRequest.setSubmittedRequestStageDesc(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageDesc()) ? submittedRequestStage.getSubmittedRequestStageDesc().trim() : null);
+
+
+	existingSubmittedRequest.setIsActive(submittedRequestStage.getIsActive() != null ? submittedRequestStage.getIsActive() : existingSubmittedRequest.getIsActive());
+
+	existingSubmittedRequest.setModifierIp(request.getRemoteAddr());
+	existingSubmittedRequest.setModifiedDate(new Date());
+if (existingSubmittedRequest.getIsActive() == null)
+	existingSubmittedRequest.setIsActive(false);
+//for now setting some dummy value to test
+existingSubmittedRequest.setModifiedByGuid(UUID.randomUUID().toString());
+existingSubmittedRequest.setModifierMacId(UUID.randomUUID().toString());
+submittedRequestStage = existingSubmittedRequest; // Use the updated existing country object
+} else {
+log.error("Submitted Request Stage not found");
+resultData.setStatus(false);
+resultData.setMessage("Submitted Request Stage not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateSubmittedRequestStage(submittedRequestStage);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (submittedRequestStage.getIsActive() == null) submittedRequestStage.setIsActive(false);
+submittedRequestStage.setSubmittedRequestStageCode(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageCode()) ? submittedRequestStage.getSubmittedRequestStageCode().toUpperCase().trim() : null);
+submittedRequestStage.setSubmittedRequestStageNameEn(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameEn()) ? submittedRequestStage.getSubmittedRequestStageNameEn().toUpperCase().trim() : null);
+submittedRequestStage.setSubmittedRequestStageNameHi(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameHi()) ? submittedRequestStage.getSubmittedRequestStageNameHi().trim() : null);
+submittedRequestStage.setSubmittedRequestStageNameRl(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameRl()) ? submittedRequestStage.getSubmittedRequestStageNameRl().trim() : null);
+submittedRequestStage.setSubmittedRequestStageDesc(!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageDesc()) ? submittedRequestStage.getSubmittedRequestStageDesc().trim() : null);
+
+
+
+
+try {
+submittedRequestStageRepository.save(submittedRequestStage);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getSubmittedRequestStageByGuid/{submittedRequestStageGuid}")
+public ResponseEntity<SubmittedRequestStage> getSubmittedRequestStageByGuid(@PathVariable("submittedRequestStageGuid") String submittedRequestStageGuid) {
+	SubmittedRequestStage reqStage = submittedRequestStageRepository.findById(submittedRequestStageGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with submittedRequestStageGuid : " + submittedRequestStageGuid));
+return new ResponseEntity<>(reqStage, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////SubmittedRequestStage End //////////////////////////
+
+////////////////////////////////////////////Unit Area Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getUnitAreaList")
+public ResponseEntity<BaseResponse> getUnitAreaList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<UnitArea> list = unitAreaRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setUnitArea(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateUnitArea")
+public BaseResponse submitOrUpdateUnitArea(@RequestBody UnitArea unitArea, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (unitArea.getUnitAreaGuid() == null || unitArea.getUnitAreaGuid().isEmpty()) {
+//Add new data
+	unitArea.setCreaterIp(request.getRemoteAddr());
+	unitArea.setUnitAreaGuid(UUID.randomUUID().toString());
+	unitArea.setCreatedDate(new Date());
+	unitArea.setModifierIp(null);
+	unitArea.setModifiedByGuid(null);
+	unitArea.setModifiedDate(null);
+	unitArea.setCreatedByGuid(request.getRemoteAddr());
+
+if (unitArea.getIsActive() == null)
+	unitArea.setIsActive(false);
+//unitArea.setCreaterRemarks(userSessionParam.getUserFullName());
+//unitArea.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//unitArea.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+
+
+} else {
+//Update existing data
+	UnitArea existingUnitArea = commonMasterService.getUnitAreaById(unitArea.getUnitAreaGuid());
+
+if (existingUnitArea != null) {
+	existingUnitArea.setUnitAreaCode(!Util.isNullOrEmpty(unitArea.getUnitAreaCode()) ? unitArea.getUnitAreaCode().toUpperCase().trim() : null);
+	existingUnitArea.setUnitAreaNameEn(!Util.isNullOrEmpty(unitArea.getUnitAreaNameEn()) ? unitArea.getUnitAreaNameEn().toUpperCase().trim() : null);
+
+	existingUnitArea.setUnitAreaNameHi(!Util.isNullOrEmpty(unitArea.getUnitAreaNameHi()) ? unitArea.getUnitAreaNameHi().toUpperCase().trim() : null);
+	existingUnitArea.setUnitAreaNameRl(!Util.isNullOrEmpty(unitArea.getUnitAreaNameRl()) ? unitArea.getUnitAreaNameRl().trim() : null);
+	existingUnitArea.setUnitAreaDesc(!Util.isNullOrEmpty(unitArea.getUnitAreaDesc()) ? unitArea.getUnitAreaDesc().trim() : null);
+
+
+	existingUnitArea.setIsActive(unitArea.getIsActive() != null ? unitArea.getIsActive() : existingUnitArea.getIsActive());
+
+	existingUnitArea.setModifierIp(request.getRemoteAddr());
+	existingUnitArea.setModifiedDate(new Date());
+if (existingUnitArea.getIsActive() == null)
+	existingUnitArea.setIsActive(false);
+//for now setting some dummy value to test
+existingUnitArea.setModifiedByGuid(UUID.randomUUID().toString());
+existingUnitArea.setModifierMacId(UUID.randomUUID().toString());
+unitArea = existingUnitArea; // Use the updated existing country object
+} else {
+log.error("Unit Area not found");
+resultData.setStatus(false);
+resultData.setMessage("Unit Area not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateUnitArea(unitArea);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (unitArea.getIsActive() == null) unitArea.setIsActive(false);
+unitArea.setUnitAreaCode(!Util.isNullOrEmpty(unitArea.getUnitAreaCode()) ? unitArea.getUnitAreaCode().toUpperCase().trim() : null);
+unitArea.setUnitAreaNameEn(!Util.isNullOrEmpty(unitArea.getUnitAreaNameEn()) ? unitArea.getUnitAreaNameEn().toUpperCase().trim() : null);
+unitArea.setUnitAreaNameHi(!Util.isNullOrEmpty(unitArea.getUnitAreaNameHi()) ? unitArea.getUnitAreaNameHi().trim() : null);
+unitArea.setUnitAreaNameRl(!Util.isNullOrEmpty(unitArea.getUnitAreaNameRl()) ? unitArea.getUnitAreaNameRl().trim() : null);
+unitArea.setUnitAreaDesc(!Util.isNullOrEmpty(unitArea.getUnitAreaDesc()) ? unitArea.getUnitAreaDesc().trim() : null);
+
+
+
+
+try {
+unitAreaRepository.save(unitArea);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getUnitAreaByGuid/{unitAreaGuid}")
+public ResponseEntity<UnitArea> getUnitAreaByGuid(@PathVariable("unitAreaGuid") String unitAreaGuid) {
+	UnitArea unitArea = unitAreaRepository.findById(unitAreaGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with unitAreaGuid : " + unitAreaGuid));
+return new ResponseEntity<>(unitArea, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////Unit Area End //////////////////////////
 	    
 
 }

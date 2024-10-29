@@ -9,6 +9,8 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
+import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
@@ -18,6 +20,8 @@ import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
+import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
+import com.master.app.pims.repositories.mst.UnitAreaRepository;
 import com.master.app.pims.utils.PropertyReader;
 import com.master.app.pims.utils.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +58,12 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private RequestSubmissionTypeRepository requestSubmissionTypeRepository;
+    
+    @Autowired
+    private SubmittedRequestStageRepository submittedRequestStageRepository;
+    
+    @Autowired
+    private UnitAreaRepository unitAreaRepository;
 
     
     //mst country validation
@@ -498,6 +508,103 @@ public class CommonMasterValidator implements Validator {
 		            resultData.setMessage("Error validating docs submission info: " + e.getMessage());
 			}
 	        return resultData;
+	}
+
+	@Override
+	public BaseResponse validateSubmittedRequestStage(SubmittedRequestStage submittedRequestStage) {
+		  BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+				if (Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.submittedRequestStage.code.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageCode()) && submittedRequestStageRepository
+						.isExistSubmittedRequestStageCode(submittedRequestStage.getSubmittedRequestStageCode(),
+								submittedRequestStage.getSubmittedRequestStageGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.submittedRequestStage.code.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameEn())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.submittedRequestStage.NameEn.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameEn()) && submittedRequestStageRepository
+						.isExistSubmittedRequestStageNameEn(submittedRequestStage.getSubmittedRequestStageNameEn(),
+								submittedRequestStage.getSubmittedRequestStageGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.submittedRequestStage.NameEn.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameHi()) && submittedRequestStageRepository
+						.isExistSubmittedRequestStageNameHi(submittedRequestStage.getSubmittedRequestStageNameHi(),
+								submittedRequestStage.getSubmittedRequestStageGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.submittedRequestStage.NameHi.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(submittedRequestStage.getSubmittedRequestStageNameRl()) && submittedRequestStageRepository
+						.isExistSubmittedRequestStageNameRl(submittedRequestStage.getSubmittedRequestStageNameRl(),
+								submittedRequestStage.getSubmittedRequestStageGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.submittedRequestStage.NameRl.unique"));
+					return resultData;
+				}
+			} catch (Exception e) {
+				  resultData.setStatus(false);
+		            resultData.setMessage("Error validating Submitted Request Stage: " + e.getMessage());
+			}
+			return resultData;
+	}
+
+	@Override
+	public BaseResponse validateUnitArea(UnitArea UnitArea) {
+		 BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+				if (Util.isNullOrEmpty(UnitArea.getUnitAreaCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.unitArea.unitAreaCode.required"));
+				}
+				
+				if (!Util.isNullOrEmpty(UnitArea.getUnitAreaCode()) && unitAreaRepository
+						.isExistUnitAreaCode(UnitArea.getUnitAreaCode(), UnitArea.getUnitAreaGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.unitArea.unitAreaCode.unique"));
+					return resultData;
+				}
+				if (Util.isNullOrEmpty(UnitArea.getUnitAreaNameEn())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.unitArea.unitAreaName.required"));
+				}
+				if (!Util.isNullOrEmpty(UnitArea.getUnitAreaNameEn()) && unitAreaRepository
+						.isExistUnitAreaNameEn(UnitArea.getUnitAreaNameEn(), UnitArea.getUnitAreaGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.unitArea.UnitAreaNameEn.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(UnitArea.getUnitAreaNameHi()) && unitAreaRepository
+						.isExistUnitAreaNameHi(UnitArea.getUnitAreaNameHi(), UnitArea.getUnitAreaGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.unitArea.UnitAreaNameHi.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(UnitArea.getUnitAreaNameRl()) && unitAreaRepository
+						.isExistUnitAreaNameRl(UnitArea.getUnitAreaNameRl(), UnitArea.getUnitAreaGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.unitArea.UnitAreaNameRl.unique"));
+					return resultData;
+				}
+			}catch (Exception e) {
+				  resultData.setStatus(false);
+		            resultData.setMessage("Error validating Unit Area: " + e.getMessage());
+			}
+			return resultData;
 	}
 
 	
