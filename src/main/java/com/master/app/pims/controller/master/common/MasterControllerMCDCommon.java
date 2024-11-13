@@ -19,6 +19,9 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.EducationLevel;
+import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
@@ -28,6 +31,9 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
+import com.master.app.pims.repositories.mst.EducationLevelRepository;
+import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
+import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
@@ -73,6 +79,15 @@ public class MasterControllerMCDCommon {
 	   
 	   @Autowired
 	    private UnitAreaRepository unitAreaRepository;
+	   
+	   @Autowired
+	    private MstChargeDetailsRepository mstChargeDetailsRepository;
+	   
+	   @Autowired
+	    private OccupationTypeRepository occupationTypeRepository;
+	   
+	   @Autowired
+	    private EducationLevelRepository educationLevelRepository;
 	   
 	  
 	  
@@ -876,6 +891,350 @@ return new ResponseEntity<>(unitArea, HttpStatus.OK);
 
 
 ////////////////////////////////////////////Unit Area End //////////////////////////
-	    
+
+////////////////////////////////////////////MstChargeDetails Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getMstChargeDetailsList")
+public ResponseEntity<BaseResponse> getMstChargeDetailsList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<MstChargeDetails> list = mstChargeDetailsRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setMstChargeDetails(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateMstChargeDetails")
+public BaseResponse submitOrUpdateMstChargeDetails(@RequestBody MstChargeDetails mstChargeDetails, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (mstChargeDetails.getChargeDetailsGuid() == null || mstChargeDetails.getChargeDetailsGuid().isEmpty()) {
+//Add new data
+	mstChargeDetails.setCreatedIpAddr(request.getRemoteAddr());
+	mstChargeDetails.setChargeDetailsGuid(UUID.randomUUID().toString());
+	mstChargeDetails.setCreatedDate(new Date());
+	mstChargeDetails.setModifiedIpAddr(null);
+	mstChargeDetails.setModifiedBy(null);
+	mstChargeDetails.setModifiedDate(null);
+	mstChargeDetails.setCreatedBy(request.getRemoteAddr());
+
+if (mstChargeDetails.getIsActive() == null)
+	mstChargeDetails.setIsActive(false);
+//mstChargeDetails.setCreatedRemarks(userSessionParam.getUserFullName());
+//mstChargeDetails.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//mstChargeDetails.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//mstChargeDetails.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+
+} else {
+//Update existing data
+	MstChargeDetails existingChargeDetail = commonMasterService.getMstChargeDetailsById(mstChargeDetails.getChargeDetailsGuid());
+
+if (existingChargeDetail != null) {
+	existingChargeDetail.setChargeDetailsCode(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsCode()) ? mstChargeDetails.getChargeDetailsCode().toUpperCase().trim() : null);
+	existingChargeDetail.setChargeDetailsNameEn(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameEn()) ? mstChargeDetails.getChargeDetailsNameEn().toUpperCase().trim() : null);
+
+	existingChargeDetail.setChargeDetailsNameHi(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameHi()) ? mstChargeDetails.getChargeDetailsNameHi().toUpperCase().trim() : null);
+	existingChargeDetail.setChargeDetailsNameRl(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameRl()) ? mstChargeDetails.getChargeDetailsNameRl().trim() : null);
+	existingChargeDetail.setChargeDetailsDesc(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsDesc()) ? mstChargeDetails.getChargeDetailsDesc().trim() : null);
+
+
+	existingChargeDetail.setIsActive(mstChargeDetails.getIsActive() != null ? mstChargeDetails.getIsActive() : existingChargeDetail.getIsActive());
+
+	existingChargeDetail.setModifiedIpAddr(request.getRemoteAddr());
+	existingChargeDetail.setModifiedDate(new Date());
+if (existingChargeDetail.getIsActive() == null)
+	existingChargeDetail.setIsActive(false);
+//for now setting some dummy value to test
+existingChargeDetail.setModifiedBy(UUID.randomUUID().toString());
+existingChargeDetail.setModifiedMacAddr(UUID.randomUUID().toString());
+mstChargeDetails = existingChargeDetail; // Use the updated existing country object
+} else {
+log.error("Charge Details not found");
+resultData.setStatus(false);
+resultData.setMessage("Charge Details not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateMstChargeDetails(mstChargeDetails);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (mstChargeDetails.getIsActive() == null) mstChargeDetails.setIsActive(false);
+mstChargeDetails.setChargeDetailsCode(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsCode()) ? mstChargeDetails.getChargeDetailsCode().toUpperCase().trim() : null);
+mstChargeDetails.setChargeDetailsNameEn(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameEn()) ? mstChargeDetails.getChargeDetailsNameEn().toUpperCase().trim() : null);
+mstChargeDetails.setChargeDetailsNameHi(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameHi()) ? mstChargeDetails.getChargeDetailsNameHi().trim() : null);
+mstChargeDetails.setChargeDetailsNameRl(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameRl()) ? mstChargeDetails.getChargeDetailsNameRl().trim() : null);
+mstChargeDetails.setChargeDetailsDesc(!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsDesc()) ? mstChargeDetails.getChargeDetailsDesc().trim() : null);
+
+
+
+
+try {
+mstChargeDetailsRepository.save(mstChargeDetails);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getMstChargeDetailsByGuid/{chargeDetailsGuid}")
+public ResponseEntity<MstChargeDetails> getMstChargeDetailsByGuid(@PathVariable("chargeDetailsGuid") String chargeDetailsGuid) {
+	MstChargeDetails mstChargeDetails = mstChargeDetailsRepository.findById(chargeDetailsGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with chargeDetailsGuid : " + chargeDetailsGuid));
+return new ResponseEntity<>(mstChargeDetails, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////MstChargeDetails End //////////////////////////
+
+////////////////////////////////////////////OccupationType Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getOccupationTypeList")
+public ResponseEntity<BaseResponse> getOccupationTypeList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<OccupationType> list = occupationTypeRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setOccupationType(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateOccupationType")
+public BaseResponse submitOrUpdateOccupationType(@RequestBody OccupationType occupationType, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (occupationType.getOccupationGuid() == null || occupationType.getOccupationGuid().isEmpty()) {
+//Add new data
+	occupationType.setCreatedIpAddr(request.getRemoteAddr());
+	occupationType.setOccupationGuid(UUID.randomUUID().toString());
+	occupationType.setCreatedDate(new Date());
+	occupationType.setModifiedIpAddr(null);
+	occupationType.setModifiedBy(null);
+	occupationType.setModifiedDate(null);
+	occupationType.setCreatedBy(request.getRemoteAddr());
+
+if (occupationType.getIsActive() == null)
+	occupationType.setIsActive(false);
+//occupationType.setCreatedRemarks(userSessionParam.getUserFullName());
+//occupationType.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//occupationType.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//occupationType.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+
+} else {
+//Update existing data
+	OccupationType existingOccupationType = commonMasterService.getOccupationTypeById(occupationType.getOccupationGuid());
+
+if (existingOccupationType != null) {
+	existingOccupationType.setOccupationCode(!Util.isNullOrEmpty(occupationType.getOccupationCode()) ? occupationType.getOccupationCode().toUpperCase().trim() : null);
+	existingOccupationType.setOccupationNameEn(!Util.isNullOrEmpty(occupationType.getOccupationNameEn()) ? occupationType.getOccupationNameEn().toUpperCase().trim() : null);
+
+	existingOccupationType.setOccupationNameHi(!Util.isNullOrEmpty(occupationType.getOccupationNameHi()) ? occupationType.getOccupationNameHi().toUpperCase().trim() : null);
+existingOccupationType.setOccupationNameRl(!Util.isNullOrEmpty(occupationType.getOccupationNameRl()) ? occupationType.getOccupationNameRl().trim() : null);
+existingOccupationType.setOccupationDesc(!Util.isNullOrEmpty(occupationType.getOccupationDesc()) ? occupationType.getOccupationDesc().trim() : null);
+
+
+existingOccupationType.setIsActive(occupationType.getIsActive() != null ? occupationType.getIsActive() : existingOccupationType.getIsActive());
+
+existingOccupationType.setModifiedIpAddr(request.getRemoteAddr());
+existingOccupationType.setModifiedDate(new Date());
+if (existingOccupationType.getIsActive() == null)
+	existingOccupationType.setIsActive(false);
+//for now setting some dummy value to test
+existingOccupationType.setModifiedBy(UUID.randomUUID().toString());
+existingOccupationType.setModifiedMacAddr(UUID.randomUUID().toString());
+occupationType = existingOccupationType; // Use the updated existing country object
+} else {
+log.error("Occupation Type  not found");
+resultData.setStatus(false);
+resultData.setMessage("Occupation Type not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateOccupationType(occupationType);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (occupationType.getIsActive() == null) occupationType.setIsActive(false);
+occupationType.setOccupationCode(!Util.isNullOrEmpty(occupationType.getOccupationCode()) ? occupationType.getOccupationCode().toUpperCase().trim() : null);
+occupationType.setOccupationNameEn(!Util.isNullOrEmpty(occupationType.getOccupationNameEn()) ? occupationType.getOccupationNameEn().toUpperCase().trim() : null);
+occupationType.setOccupationNameHi(!Util.isNullOrEmpty(occupationType.getOccupationNameHi()) ? occupationType.getOccupationNameHi().trim() : null);
+occupationType.setOccupationNameRl(!Util.isNullOrEmpty(occupationType.getOccupationNameRl()) ? occupationType.getOccupationNameRl().trim() : null);
+occupationType.setOccupationDesc(!Util.isNullOrEmpty(occupationType.getOccupationDesc()) ? occupationType.getOccupationDesc().trim() : null);
+
+
+
+
+try {
+occupationTypeRepository.save(occupationType);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getOccupationTypeByGuid/{occupationGuid}")
+public ResponseEntity<OccupationType> getOccupationTypeByGuid(@PathVariable("occupationGuid") String occupationGuid) {
+	OccupationType occupationType = occupationTypeRepository.findById(occupationGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with occupationGuid : " + occupationGuid));
+return new ResponseEntity<>(occupationType, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////OccupationType End //////////////////////////
+
+////////////////////////////////////////////EducationLevel Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getEducationLevelList")
+public ResponseEntity<BaseResponse> getEducationLevelList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<EducationLevel> list = educationLevelRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setEducationLevel(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateEducationLevel")
+public BaseResponse submitOrUpdateEducationLevel(@RequestBody EducationLevel educationLevel, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (educationLevel.getEducationLevelGuid() == null || educationLevel.getEducationLevelGuid().isEmpty()) {
+//Add new data
+	educationLevel.setCreatedIpAddr(request.getRemoteAddr());
+	educationLevel.setEducationLevelGuid(UUID.randomUUID().toString());
+	educationLevel.setCreatedDate(new Date());
+	educationLevel.setModifiedIpAddr(null);
+	educationLevel.setModifiedBy(null);
+educationLevel.setModifiedDate(null);
+educationLevel.setCreatedBy(request.getRemoteAddr());
+
+if (educationLevel.getIsActive() == null)
+	educationLevel.setIsActive(false);
+if (educationLevel.getIsModified() == null)
+	educationLevel.setIsModified(false);
+//educationLevel.setCreatedRemarks(userSessionParam.getUserFullName());
+//educationLevel.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//educationLevel.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//educationLevel.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+
+} else {
+//Update existing data
+	EducationLevel existingEducationLevel = commonMasterService.getEducationLevelById(educationLevel.getEducationLevelGuid());
+
+if (existingEducationLevel != null) {
+	existingEducationLevel.setEducationLevelCode(!Util.isNullOrEmpty(educationLevel.getEducationLevelCode()) ? educationLevel.getEducationLevelCode().toUpperCase().trim() : null);
+	existingEducationLevel.setEducationLevelNameEn(!Util.isNullOrEmpty(educationLevel.getEducationLevelNameEn()) ? educationLevel.getEducationLevelNameEn().toUpperCase().trim() : null);
+
+	existingEducationLevel.setEducationLevelNameHi(!Util.isNullOrEmpty(educationLevel.getEducationLevelNameHi()) ? educationLevel.getEducationLevelNameHi().toUpperCase().trim() : null);
+	existingEducationLevel.setEducationLevelNameRl(!Util.isNullOrEmpty(educationLevel.getEducationLevelNameRl()) ? educationLevel.getEducationLevelNameRl().trim() : null);
+	existingEducationLevel.setEducationLevelDesc(!Util.isNullOrEmpty(educationLevel.getEducationLevelDesc()) ? educationLevel.getEducationLevelDesc().trim() : null);
+
+	existingEducationLevel.setIsModified(educationLevel.getIsModified() != null ? educationLevel.getIsModified() : existingEducationLevel.getIsModified());
+
+	existingEducationLevel.setIsActive(educationLevel.getIsActive() != null ? educationLevel.getIsActive() : existingEducationLevel.getIsActive());
+
+	existingEducationLevel.setModifiedIpAddr(request.getRemoteAddr());
+	existingEducationLevel.setModifiedDate(new Date());
+if (existingEducationLevel.getIsActive() == null)
+	existingEducationLevel.setIsActive(false);
+if (existingEducationLevel.getIsModified() == null)
+	existingEducationLevel.setIsModified(false);
+//for now setting some dummy value to test
+existingEducationLevel.setModifiedBy(UUID.randomUUID().toString());
+existingEducationLevel.setModifiedMacAddr(UUID.randomUUID().toString());
+educationLevel = existingEducationLevel; // Use the updated existing country object
+} else {
+log.error("Education Level  not found");
+resultData.setStatus(false);
+resultData.setMessage("Education Level not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateEducationLevel(educationLevel);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (educationLevel.getIsActive() == null) educationLevel.setIsActive(false);
+educationLevel.setEducationLevelCode(!Util.isNullOrEmpty(educationLevel.getEducationLevelCode()) ? educationLevel.getEducationLevelCode().toUpperCase().trim() : null);
+educationLevel.setEducationLevelNameEn(!Util.isNullOrEmpty(educationLevel.getEducationLevelNameEn()) ? educationLevel.getEducationLevelNameEn().toUpperCase().trim() : null);
+educationLevel.setEducationLevelNameHi(!Util.isNullOrEmpty(educationLevel.getEducationLevelNameHi()) ? educationLevel.getEducationLevelNameHi().trim() : null);
+educationLevel.setEducationLevelNameRl(!Util.isNullOrEmpty(educationLevel.getEducationLevelNameRl()) ? educationLevel.getEducationLevelNameRl().trim() : null);
+educationLevel.setEducationLevelDesc(!Util.isNullOrEmpty(educationLevel.getEducationLevelDesc()) ? educationLevel.getEducationLevelDesc().trim() : null);
+
+
+
+
+try {
+educationLevelRepository.save(educationLevel);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getEducationLevelByGuid/{educationLevelGuid}")
+public ResponseEntity<EducationLevel> getEducationLevelByGuid(@PathVariable("educationLevelGuid") String educationLevelGuid) {
+	EducationLevel educationLevel = educationLevelRepository.findById(educationLevelGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with educationLevelGuid : " + educationLevelGuid));
+return new ResponseEntity<>(educationLevel, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////EducationLevel End //////////////////////////
+
 
 }

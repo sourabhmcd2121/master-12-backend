@@ -1,15 +1,21 @@
 package com.master.app.pims.service.master.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 
 public interface CommonMasterService {
     GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst);
@@ -50,5 +56,19 @@ public interface CommonMasterService {
     ///for RequestSubmissionType join with mst schema
     UnitArea saveUnitArea(UnitArea unitArea);
     UnitArea getUnitAreaById(String id);
+    
+    ///for MstChargeDetails join with mst schema
+    MstChargeDetails saveMstChargeDetails(MstChargeDetails mstChargeDetails);
+    MstChargeDetails getMstChargeDetailsById(String id);
+    
+    ///for OccupationType join with mst schema
+    OccupationType saveOccupationType(OccupationType occupationType);
+    OccupationType getOccupationTypeById(String id);
+    
+    ///for OccupationType join with mst schema
+    EducationLevel saveEducationLevel(EducationLevel educationLevel);
+    EducationLevel getEducationLevelById(String id);
+    
+  
     
 }

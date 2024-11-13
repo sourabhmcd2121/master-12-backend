@@ -5,8 +5,11 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
@@ -15,8 +18,11 @@ import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
+import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
+import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
@@ -59,6 +65,15 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
     private UnitAreaRepository unitAreaRepository;
+    
+    @Autowired
+    private MstChargeDetailsRepository mstChargeDetailsRepository;
+    
+    @Autowired
+    private OccupationTypeRepository occupationTypeRepository;
+    
+    @Autowired
+    private EducationLevelRepository educationLevelRepository;
     
     
     
@@ -175,6 +190,40 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public UnitArea getUnitAreaById(String id) {
         return unitAreaRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public MstChargeDetails saveMstChargeDetails(MstChargeDetails mstChargeDetails) {
+		 return mstChargeDetailsRepository.save(mstChargeDetails);
+	}
+
+	@Override
+	public MstChargeDetails getMstChargeDetailsById(String id) {
+        return mstChargeDetailsRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public OccupationType saveOccupationType(OccupationType occupationType) {
+		 return occupationTypeRepository.save(occupationType);
+
+	}
+
+	@Override
+	public OccupationType getOccupationTypeById(String id) {
+        return occupationTypeRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public EducationLevel saveEducationLevel(EducationLevel educationLevel) {
+		 return educationLevelRepository.save(educationLevel);
+	}
+
+	@Override
+	public EducationLevel getEducationLevelById(String id) {
+        return educationLevelRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 

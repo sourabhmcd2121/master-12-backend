@@ -6,8 +6,11 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
@@ -17,8 +20,11 @@ import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
+import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
+import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
@@ -64,7 +70,15 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private UnitAreaRepository unitAreaRepository;
+    
+    @Autowired
+    private MstChargeDetailsRepository mstChargeDetailsRepository;
 
+    @Autowired
+    private OccupationTypeRepository occupationTypeRepository;
+    
+    @Autowired
+    private EducationLevelRepository educationLevelRepository; 
     
     //mst country validation
     @Override
@@ -317,7 +331,7 @@ public class CommonMasterValidator implements Validator {
 				    return resultData;
 				}
 				
-				// Assuming you have startYear and endYear fields in your assessmentYear or another object
+				// Assuming you have startYear and endYear fields in your assessmentYear or another educationLevelect
 			
 
 				if (assessmentYear.getStartYear() == null || assessmentYear.getEndYear() == null) {
@@ -607,5 +621,170 @@ public class CommonMasterValidator implements Validator {
 			return resultData;
 	}
 
+	@Override
+	public BaseResponse validateMstChargeDetails(MstChargeDetails mstChargeDetails) {
+		 BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+	        	if (Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsCode())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.chargeDetailsCode.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsCode()) && mstChargeDetailsRepository
+						.isExistChargeDetailsCode(mstChargeDetails.getChargeDetailsCode(), mstChargeDetails.getChargeDetailsGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.chargeDetailsCode.unique"));
+					return resultData;
+				}
+
+				if (Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameEn())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.chargeDetailsNameEn.required"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameEn()) && mstChargeDetailsRepository
+						.isExistChargeDetailsNameEn(mstChargeDetails.getChargeDetailsNameEn(), mstChargeDetails.getChargeDetailsGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.chargeDetailsNameEn.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameHi()) && mstChargeDetailsRepository
+						.isExistChargeDetailsNameHi(mstChargeDetails.getChargeDetailsNameHi(), mstChargeDetails.getChargeDetailsGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.chargeDetailsNameHi.unique"));
+					return resultData;
+				}
+				if (!Util.isNullOrEmpty(mstChargeDetails.getChargeDetailsNameRl()) && mstChargeDetailsRepository
+						.isExistChargeDetailsNameRl(mstChargeDetails.getChargeDetailsNameRl(), mstChargeDetails.getChargeDetailsGuid())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.chargeDetailsNameRl.unique"));
+					return resultData;
+				}
+
+				
+			}catch (Exception e) {
+				  resultData.setStatus(false);
+		            resultData.setMessage("Error validating Charge Details: " + e.getMessage());
+			}
+			return resultData;
+	}
+
+	
+/////OccupationType Validatrion
+	@Override
+	public BaseResponse validateOccupationType(OccupationType occupationType) {
+		 BaseResponse resultData = new BaseResponse();
+	        resultData.setStatus(true);
+	        resultData.setMessage("Record SaveOrUpdate Successfully");
+	        try {
+	    		if (Util.isNullOrEmpty(occupationType.getOccupationCode())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationCode.required"));
+	    			return resultData;
+	    		}
+	    		if (!Util.isNullOrEmpty(occupationType.getOccupationCode())
+	    				&& occupationTypeRepository.isExistOccupationCode(occupationType.getOccupationCode(), occupationType.getOccupationGuid())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationCode.unique"));
+	    			return resultData;
+	    		}
+
+	    		if (Util.isNullOrEmpty(occupationType.getOccupationNameEn())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationNameEn.required"));
+	    			return resultData;
+	    		}
+	    		if (!Util.isNullOrEmpty(occupationType.getOccupationNameEn()) && occupationTypeRepository
+	    				.isExistOccupationNameEn(occupationType.getOccupationNameEn(), occupationType.getOccupationGuid())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationNameEn.unique"));
+	    			return resultData;
+	    		}
+	    		if (Util.isNullOrEmpty(occupationType.getOccupationNameHi())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationNameHi.required"));
+	    			return resultData;
+	    		}
+	    		if (!Util.isNullOrEmpty(occupationType.getOccupationNameHi()) && occupationTypeRepository
+	    				.isExistOccupationNameHi(occupationType.getOccupationNameHi(), occupationType.getOccupationGuid())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationNameHi.unique"));
+	    			return resultData;
+	    		}
+	    		if (Util.isNullOrEmpty(occupationType.getOccupationNameRl())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationNameRl.required"));
+	    			return resultData;
+	    		}
+	    		if (!Util.isNullOrEmpty(occupationType.getOccupationNameRl()) && occupationTypeRepository
+	    				.isExistOccupationNameRl(occupationType.getOccupationNameRl(), occupationType.getOccupationGuid())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationNameRl.unique"));
+	    			return resultData;
+	    		}
+	    		if (Util.isNullOrEmpty(occupationType.getOccupationDesc())) {
+	    			resultData.setStatus(false);
+	    			resultData.setMessage(PropertyReader.getFormMessage("master.occupationDesc.required"));
+	    			return resultData;
+	    		}
+	    	}catch (Exception e) {
+				  resultData.setStatus(false);
+		            resultData.setMessage("Error validating Occupation Type: " + e.getMessage());
+			}
+			return resultData;
+	}
+
+@Override
+public BaseResponse validateEducationLevel(EducationLevel educationLevel) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+			if (Util.isNullOrEmpty(educationLevel.getEducationLevelCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.educationLevelCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(educationLevel.getEducationLevelCode()) && educationLevelRepository
+					.isExistEducationLevelCode(educationLevel.getEducationLevelCode(), educationLevel.getEducationLevelGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.educationLevelCode.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(educationLevel.getEducationLevelNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.educationLevelNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(educationLevel.getEducationLevelNameEn()) && educationLevelRepository
+					.isExistEducationLevelNameEn(educationLevel.getEducationLevelNameEn(), educationLevel.getEducationLevelGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.educationLevelNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(educationLevel.getEducationLevelNameHi()) && educationLevelRepository
+					.isExistEducationLevelNameHi(educationLevel.getEducationLevelNameHi(), educationLevel.getEducationLevelGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.educationLevelNameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(educationLevel.getEducationLevelNameRl()) && educationLevelRepository
+					.isExistEducationLevelNameRl(educationLevel.getEducationLevelNameRl(), educationLevel.getEducationLevelGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.educationLevelNameRl.unique"));
+				return resultData;
+			}
+		}
+     catch (Exception e) {
+		  resultData.setStatus(false);
+           resultData.setMessage("Error validating Occupation Type: " + e.getMessage());
+	}
+	return resultData;
+}
+
+	
+	
 	
 }

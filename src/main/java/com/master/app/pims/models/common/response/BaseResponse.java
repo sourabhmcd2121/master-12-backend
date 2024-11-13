@@ -9,8 +9,11 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
@@ -42,7 +45,9 @@ public class BaseResponse {
     private List<RequestSubmissionType> requestSubmissionType;
     private List<SubmittedRequestStage> submittedRequestStage;
     private List<UnitArea> unitArea;
-    
+    private List<MstChargeDetails> mstChargeDetails;
+    private List<OccupationType> occupationType;
+    private List<EducationLevel> educationLevel;
     
     private List<DesignationAppointmentType> designation;
    

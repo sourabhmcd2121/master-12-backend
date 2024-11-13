@@ -5,8 +5,11 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
@@ -44,7 +47,15 @@ public interface Validator {
     
     //UnitArea validation
     BaseResponse validateUnitArea(UnitArea unitArea);
+    
+    //MstChargeDetails validation
+    BaseResponse validateMstChargeDetails(MstChargeDetails mstChargeDetails);
+    
+    //MstChargeDetails validation
+    BaseResponse validateOccupationType(OccupationType occupationType);
 
+    //EducationLevel validation
+    BaseResponse validateEducationLevel(EducationLevel educationLevel);
 
     
   
