@@ -4,26 +4,34 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
+import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
+import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
+import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
@@ -75,6 +83,17 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     @Autowired
     private EducationLevelRepository educationLevelRepository;
     
+    @Autowired
+    private ReligiousPlacesRepository religiousPlacesRepository;
+    
+    @Autowired
+    private DocsCategoryInfoRepository docsCategoryInfoRepository;
+    
+    @Autowired
+    private CommonMasterProcessStatusRepo commonMasterProcessStatusRepo;
+    
+    @Autowired
+    private SmsEmailTemplateRepository smsEmailTemplateRepository;
     
     
     @Override
@@ -224,6 +243,51 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public EducationLevel getEducationLevelById(String id) {
         return educationLevelRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public ReligiousPlaces saveReligiousPlaces(ReligiousPlaces religiousPlaces) {
+		 return religiousPlacesRepository.save(religiousPlaces);
+	}
+	
+	@Override
+	public ReligiousPlaces getReligiousPlacesById(String id) {
+        return religiousPlacesRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+	
+	@Override
+	public DocsCategoryInfo saveDocsCategoryInfo(DocsCategoryInfo docsCategoryInfo) {
+		 return docsCategoryInfoRepository.save(docsCategoryInfo);
+	}
+
+	@Override
+	public DocsCategoryInfo getDocsCategoryInfoById(String id) {
+        return docsCategoryInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public CommonMasterProcessStatus saveCommonMasterProcessStatus(
+			CommonMasterProcessStatus commonMasterProcessStatus) {
+		 return commonMasterProcessStatusRepo.save(commonMasterProcessStatus);
+	}
+
+	@Override
+	public CommonMasterProcessStatus getCommonMasterProcessStatusById(String id) {
+        return commonMasterProcessStatusRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public SmsEmailTemplate saveSmsEmailTemplate(SmsEmailTemplate smsEmailTemplate) {
+		 return smsEmailTemplateRepository.save(smsEmailTemplate);
+	}
+	
+	@Override
+	public SmsEmailTemplate getSmsEmailTemplateById(String id) {
+        return smsEmailTemplateRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 

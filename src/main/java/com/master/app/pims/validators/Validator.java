@@ -4,13 +4,17 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.models.common.response.BaseResponse;
@@ -51,12 +55,23 @@ public interface Validator {
     //MstChargeDetails validation
     BaseResponse validateMstChargeDetails(MstChargeDetails mstChargeDetails);
     
-    //MstChargeDetails validation
+    //OccupationType validation
     BaseResponse validateOccupationType(OccupationType occupationType);
 
     //EducationLevel validation
     BaseResponse validateEducationLevel(EducationLevel educationLevel);
+    
+    //ReligiousPlaces validation
+    BaseResponse validateReligiousPlaces(ReligiousPlaces religiousPlaces);
 
+    //DocsCategoryInfo validation
+    BaseResponse validateDocsCategoryInfo(DocsCategoryInfo docsCategoryInfo);
+    
+    //CommonMasterProcessStatus validation
+    BaseResponse validateCommonMasterProcessStatus(CommonMasterProcessStatus commonMasterProcessStatus);
+    
+    //SmsEmailTemplate validation
+    BaseResponse validateSmsEmailTemplate(SmsEmailTemplate smsEmailTemplate);
     
   
 }

@@ -8,13 +8,17 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
 
@@ -48,9 +52,15 @@ public class BaseResponse {
     private List<MstChargeDetails> mstChargeDetails;
     private List<OccupationType> occupationType;
     private List<EducationLevel> educationLevel;
+    private List<ReligiousPlaces> religiousPlaces;
+    private List<DocsCategoryInfo> docsCategoryInfo;
+    private List<CommonMasterProcessStatus> commonMasterProcessStatus;
+    private List<SmsEmailTemplate> smsEmailTemplate;
+
+    
+    
     
     private List<DesignationAppointmentType> designation;
-   
     List<GeoDistrict> districtList;
 
     public List<GeoDistrict> getDistrictList() {

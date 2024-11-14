@@ -5,13 +5,17 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.models.common.response.BaseResponse;
@@ -19,13 +23,17 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
+import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
+import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
+import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
 import com.master.app.pims.utils.PropertyReader;
@@ -79,6 +87,18 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private EducationLevelRepository educationLevelRepository; 
+    
+    @Autowired
+    private ReligiousPlacesRepository religiousPlacesRepository;
+    
+    @Autowired
+    private DocsCategoryInfoRepository docsCategoryInfoRepository;
+    
+    @Autowired
+    private CommonMasterProcessStatusRepo commonMasterProcessStatusRepo;
+    
+    @Autowired
+    private SmsEmailTemplateRepository smsEmailTemplateRepository;
     
     //mst country validation
     @Override
@@ -779,12 +799,175 @@ public BaseResponse validateEducationLevel(EducationLevel educationLevel) {
 		}
      catch (Exception e) {
 		  resultData.setStatus(false);
-           resultData.setMessage("Error validating Occupation Type: " + e.getMessage());
+           resultData.setMessage("Error validating Education Level: " + e.getMessage());
 	}
 	return resultData;
 }
 
+@Override
+public BaseResponse validateReligiousPlaces(ReligiousPlaces religiousPlaces) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    		if (Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.ReligiousPlaces.code.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesCode()) && religiousPlacesRepository
+					.isExistReligiousPlacesCode(religiousPlaces.getReligiousPlacesCode(), religiousPlaces.getReligiousPlacesGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.ReligiousPlaces.code.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.ReligiousPlaces.nameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameEn()) && religiousPlacesRepository
+					.isExistReligiousPlacesNameEn(religiousPlaces.getReligiousPlacesNameEn(), religiousPlaces.getReligiousPlacesGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.ReligiousPlaces.nameEn.unique"));
+				return resultData;
+			}
+
+			
+		}
+     catch (Exception e) {
+		  resultData.setStatus(false);
+           resultData.setMessage("Error validating Religious Places: " + e.getMessage());
+	}
+	return resultData;
+}
+
+@Override
+public BaseResponse validateDocsCategoryInfo(DocsCategoryInfo docsCategoryInfo) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.docsCategoryCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryCode()) && docsCategoryInfoRepository
+					.isExistDocsCategoryInfoCode(docsCategoryInfo.getDocsCategoryCode(), docsCategoryInfo.getDocsCategoryInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.docsCategoryCode.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.docsCategoryNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameEn()) && docsCategoryInfoRepository
+					.isExistDocsCategoryInfoNameEn(docsCategoryInfo.getDocsCategoryNameEn(), docsCategoryInfo.getDocsCategoryInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.docsCategoryNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameHi()) && docsCategoryInfoRepository
+					.isExistDocsCategoryInfoNameHi(docsCategoryInfo.getDocsCategoryNameHi(), docsCategoryInfo.getDocsCategoryInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.docsCategoryNameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameRl()) && docsCategoryInfoRepository
+					.isExistDocsCategoryInfoNameRl(docsCategoryInfo.getDocsCategoryNameRl(), docsCategoryInfo.getDocsCategoryInfoGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.docsCategoryNameRl.unique"));
+				return resultData;
+			}
+    		
+			
+		}
+     catch (Exception e) {
+		  resultData.setStatus(false);
+           resultData.setMessage("Error validating DocsCategoryInfo: " + e.getMessage());
+	}
+	return resultData;
+}
+
+@Override
+public BaseResponse validateCommonMasterProcessStatus(CommonMasterProcessStatus commonMasterProcessStatus) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(commonMasterProcessStatus.getProcessStatusCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.processStatus.code.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(commonMasterProcessStatus.getProcessStatusCode()) && commonMasterProcessStatusRepo
+					.isExistCommonProcessStatusCode(commonMasterProcessStatus.getProcessStatusCode(), commonMasterProcessStatus.getProcessStatusGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.processStatus.code.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(commonMasterProcessStatus.getProcessStatusDesc())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.processStatus.desc.required"));
+				return resultData;
+			}
+        
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating processStatus: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateSmsEmailTemplate(SmsEmailTemplate smsEmailTemplate) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(smsEmailTemplate.getSmsemailTemplateCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.smsEmailTemplate.code.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailTemplateCode()) && smsEmailTemplateRepository
+					.isExistMstSmsEmailTemplateCode(smsEmailTemplate.getSmsemailTemplateCode(), smsEmailTemplate.getSmsemailTemplateGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.smsEmailTemplate.code.unique"));
+				return resultData;
+			}
+			 if (Util.isNullOrEmpty(smsEmailTemplate.getSmsemailTemplateName())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.smsEmailTemplateName.name.required"));
+					return resultData;
+				}
+			 if (Util.isNullOrEmpty(smsEmailTemplate.getSmsemailLinkedHeader())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.smsemailLinkedHeader.header.required"));
+					return resultData;
+				}
+			 if (Util.isNullOrEmpty(smsEmailTemplate.getSmsemailEntityId())) {
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.smsemailEntityId.id.required"));
+					return resultData;
+				}
+//			if (Util.isNullOrEmpty(smsEmailTemplate.getEmailServiceSubjectEn())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.smsEmailTemplate.emailServiceSubjectEn.required"));
+//				return resultData;
+//			}
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating smsEmailTemplate: " + e.getMessage());
+     }
+     return resultData;
+}
+
 	
-	
+//smsEmailTemplateRepository
 	
 }

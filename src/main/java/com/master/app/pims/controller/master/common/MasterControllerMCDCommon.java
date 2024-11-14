@@ -18,11 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
+import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
@@ -30,11 +34,15 @@ import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
+import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
+import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
+import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
@@ -88,6 +96,18 @@ public class MasterControllerMCDCommon {
 	   
 	   @Autowired
 	    private EducationLevelRepository educationLevelRepository;
+	   
+	   @Autowired
+	    private ReligiousPlacesRepository religiousPlacesRepository;
+	   
+	   @Autowired
+	    private DocsCategoryInfoRepository docsCategoryInfoRepository;
+	   
+	   @Autowired
+	    private CommonMasterProcessStatusRepo commonMasterProcessStatusRepo;
+	   
+	   @Autowired
+	    private SmsEmailTemplateRepository smsEmailTemplateRepository;
 	   
 	  
 	  
@@ -1236,5 +1256,482 @@ return new ResponseEntity<>(educationLevel, HttpStatus.OK);
 
 ////////////////////////////////////////////EducationLevel End //////////////////////////
 
+
+////////////////////////////////////////////ReligiousPlaces Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getReligiousPlacesList")
+public ResponseEntity<BaseResponse> getReligiousPlacesList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<ReligiousPlaces> list = religiousPlacesRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setReligiousPlaces(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateReligiousPlaces")
+public BaseResponse submitOrUpdateReligiousPlaces(@RequestBody ReligiousPlaces religiousPlaces, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (religiousPlaces.getReligiousPlacesGuid() == null || religiousPlaces.getReligiousPlacesGuid().isEmpty()) {
+//Add new data
+	religiousPlaces.setCreatedIpAddr(request.getRemoteAddr());
+	religiousPlaces.setReligiousPlacesGuid(UUID.randomUUID().toString());
+	religiousPlaces.setCreatedDate(new Date());
+	religiousPlaces.setModifiedIpAddr(null);
+	religiousPlaces.setModifiedBy(null);
+	religiousPlaces.setModifiedDate(null);
+	religiousPlaces.setCreatedBy(request.getRemoteAddr());
+
+if (religiousPlaces.getIsActive() == null)
+	religiousPlaces.setIsActive(false);
+
+//religiousPlaces.setCreatedRemarks(userSessionParam.getUserFullName());
+//religiousPlaces.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//religiousPlaces.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//religiousPlaces.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+
+} else {
+//Update existing data
+	ReligiousPlaces existingReligiousPlaces = commonMasterService.getReligiousPlacesById(religiousPlaces.getReligiousPlacesGuid());
+
+if (existingReligiousPlaces != null) {
+	existingReligiousPlaces.setReligiousPlacesCode(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesCode()) ? religiousPlaces.getReligiousPlacesCode().toUpperCase().trim() : null);
+	existingReligiousPlaces.setReligiousPlacesNameEn(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameEn()) ? religiousPlaces.getReligiousPlacesNameEn().toUpperCase().trim() : null);
+	
+	existingReligiousPlaces.setReligiousPlacesNameHi(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameHi()) ? religiousPlaces.getReligiousPlacesNameHi().toUpperCase().trim() : null);
+	existingReligiousPlaces.setReligiousPlacesNameRl(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameRl()) ? religiousPlaces.getReligiousPlacesNameRl().trim() : null);
+	existingReligiousPlaces.setReligiousPlacesDesc(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesDesc()) ? religiousPlaces.getReligiousPlacesDesc().trim() : null);
+	existingReligiousPlaces.setGroupReligiousPlaces(!Util.isNullOrEmpty(religiousPlaces.getGroupReligiousPlaces()) ? religiousPlaces.getGroupReligiousPlaces().trim() : null);
+
+	existingReligiousPlaces.setIsActive(religiousPlaces.getIsActive() != null ? religiousPlaces.getIsActive() : existingReligiousPlaces.getIsActive());
+
+	existingReligiousPlaces.setModifiedIpAddr(request.getRemoteAddr());
+	existingReligiousPlaces.setModifiedDate(new Date());
+if (existingReligiousPlaces.getIsActive() == null)
+	existingReligiousPlaces.setIsActive(false);
+
+//for now setting some dummy value to test
+existingReligiousPlaces.setModifiedBy(UUID.randomUUID().toString());
+existingReligiousPlaces.setModifiedMacAddr(UUID.randomUUID().toString());
+religiousPlaces = existingReligiousPlaces; // Use the updated existing country object
+} else {
+log.error("Religious Places   not found");
+resultData.setStatus(false);
+resultData.setMessage("Religious Places not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateReligiousPlaces(religiousPlaces);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (religiousPlaces.getIsActive() == null) religiousPlaces.setIsActive(false);
+religiousPlaces.setReligiousPlacesCode(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesCode()) ? religiousPlaces.getReligiousPlacesCode().toUpperCase().trim() : null);
+religiousPlaces.setReligiousPlacesNameEn(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameEn()) ? religiousPlaces.getReligiousPlacesNameEn().toUpperCase().trim() : null);
+religiousPlaces.setReligiousPlacesNameHi(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameHi()) ? religiousPlaces.getReligiousPlacesNameHi().trim() : null);
+religiousPlaces.setReligiousPlacesNameRl(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesNameRl()) ? religiousPlaces.getReligiousPlacesNameRl().trim() : null);
+religiousPlaces.setReligiousPlacesDesc(!Util.isNullOrEmpty(religiousPlaces.getReligiousPlacesDesc()) ? religiousPlaces.getReligiousPlacesDesc().trim() : null);
+religiousPlaces.setGroupReligiousPlaces(!Util.isNullOrEmpty(religiousPlaces.getGroupReligiousPlaces()) ? religiousPlaces.getGroupReligiousPlaces().trim() : null);
+
+
+
+
+try {
+	religiousPlacesRepository.save(religiousPlaces);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getReligiousPlacesByGuid/{religiousPlacesGuid}")
+public ResponseEntity<ReligiousPlaces> getReligiousPlacesByGuid(@PathVariable("religiousPlacesGuid") String religiousPlacesGuid) {
+	ReligiousPlaces religiousPlaces = religiousPlacesRepository.findById(religiousPlacesGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with religiousPlacesGuid : " + religiousPlacesGuid));
+return new ResponseEntity<>(religiousPlaces, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////ReligiousPlaces End //////////////////////////
+
+
+////////////////////////////////////////////DocsCategoryInfo Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getDocsCategoryInfoList")
+public ResponseEntity<BaseResponse> getDocsCategoryInfoList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<DocsCategoryInfo> list = docsCategoryInfoRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setDocsCategoryInfo(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateDocsCategoryInfo")
+public BaseResponse submitOrUpdateDocsCategoryInfo(@RequestBody DocsCategoryInfo docsCategoryInfo, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (docsCategoryInfo.getDocsCategoryInfoGuid() == null || docsCategoryInfo.getDocsCategoryInfoGuid().isEmpty()) {
+//Add new data
+	docsCategoryInfo.setCreatedIpAddr(request.getRemoteAddr());
+	docsCategoryInfo.setDocsCategoryInfoGuid(UUID.randomUUID().toString());
+	docsCategoryInfo.setCreatedDate(new Date());
+	docsCategoryInfo.setModifiedIpAddr(null);
+	docsCategoryInfo.setModifiedBy(null);
+	docsCategoryInfo.setModifiedDate(null);
+	docsCategoryInfo.setCreatedBy(request.getRemoteAddr());
+
+if (docsCategoryInfo.getIsActive() == null)
+	docsCategoryInfo.setIsActive(false);
+
+//docsCategoryInfo.setCreatedRemarks(userSessionParam.getUserFullName());
+//docsCategoryInfo.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//docsCategoryInfo.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//docsCategoryInfo.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+
+} else {
+//Update existing data
+	DocsCategoryInfo existingDocsCategoryInfo = commonMasterService.getDocsCategoryInfoById(docsCategoryInfo.getDocsCategoryInfoGuid());
+
+if (existingDocsCategoryInfo != null) {
+	existingDocsCategoryInfo.setDocsCategoryCode(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryCode()) ? docsCategoryInfo.getDocsCategoryCode().toUpperCase().trim() : null);
+	existingDocsCategoryInfo.setDocsCategoryNameEn(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameEn()) ? docsCategoryInfo.getDocsCategoryNameEn().toUpperCase().trim() : null);
+
+	existingDocsCategoryInfo.setDocsCategoryNameHi(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameHi()) ? docsCategoryInfo.getDocsCategoryNameHi().toUpperCase().trim() : null);
+	existingDocsCategoryInfo.setDocsCategoryNameRl(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameRl()) ? docsCategoryInfo.getDocsCategoryNameRl().trim() : null);
+	existingDocsCategoryInfo.setDocsCategoryInfoDesc(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryInfoDesc()) ? docsCategoryInfo.getDocsCategoryInfoDesc().trim() : null);
+	existingDocsCategoryInfo.setAllowedExtType(!Util.isNullOrEmpty(docsCategoryInfo.getAllowedExtType()) ? docsCategoryInfo.getAllowedExtType().trim() : null);
+
+	existingDocsCategoryInfo.setIsActive(docsCategoryInfo.getIsActive() != null ? docsCategoryInfo.getIsActive() : existingDocsCategoryInfo.getIsActive());
+
+	existingDocsCategoryInfo.setModifiedIpAddr(request.getRemoteAddr());
+	existingDocsCategoryInfo.setModifiedDate(new Date());
+if (existingDocsCategoryInfo.getIsActive() == null)
+	existingDocsCategoryInfo.setIsActive(false);
+
+//for now setting some dummy value to test
+existingDocsCategoryInfo.setModifiedBy(UUID.randomUUID().toString());
+existingDocsCategoryInfo.setModifiedMacAddr(UUID.randomUUID().toString());
+docsCategoryInfo = existingDocsCategoryInfo; // Use the updated existing country object
+} else {
+log.error("DocsCategory Info   not found");
+resultData.setStatus(false);
+resultData.setMessage("DocsCategory Info not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateDocsCategoryInfo(docsCategoryInfo);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (docsCategoryInfo.getIsActive() == null) docsCategoryInfo.setIsActive(false);
+docsCategoryInfo.setDocsCategoryCode(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryCode()) ? docsCategoryInfo.getDocsCategoryCode().toUpperCase().trim() : null);
+docsCategoryInfo.setDocsCategoryNameEn(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameEn()) ? docsCategoryInfo.getDocsCategoryNameEn().toUpperCase().trim() : null);
+docsCategoryInfo.setDocsCategoryNameHi(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameHi()) ? docsCategoryInfo.getDocsCategoryNameHi().trim() : null);
+docsCategoryInfo.setDocsCategoryNameRl(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryNameRl()) ? docsCategoryInfo.getDocsCategoryNameRl().trim() : null);
+docsCategoryInfo.setDocsCategoryInfoDesc(!Util.isNullOrEmpty(docsCategoryInfo.getDocsCategoryInfoDesc()) ? docsCategoryInfo.getDocsCategoryInfoDesc().trim() : null);
+docsCategoryInfo.setAllowedExtType(!Util.isNullOrEmpty(docsCategoryInfo.getAllowedExtType()) ? docsCategoryInfo.getAllowedExtType().trim() : null);
+
+
+
+
+try {
+docsCategoryInfoRepository.save(docsCategoryInfo);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getDocsCategoryInfoByGuid/{docsCategoryInfoGuid}")
+public ResponseEntity<DocsCategoryInfo> getDocsCategoryInfoByGuid(@PathVariable("docsCategoryInfoGuid") String docsCategoryInfoGuid) {
+	DocsCategoryInfo docsCategoryInfo = docsCategoryInfoRepository.findById(docsCategoryInfoGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with docsCategoryInfoGuid : " + docsCategoryInfoGuid));
+return new ResponseEntity<>(docsCategoryInfo, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////DocsCategoryInfo End //////////////////////////
+
+////////////////////////////////////////////CommonMasterProcessStatus Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getCommonMasterProcessStatusList")
+public ResponseEntity<BaseResponse> getCommonMasterProcessStatusList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<CommonMasterProcessStatus> list = commonMasterProcessStatusRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setCommonMasterProcessStatus(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateCommonMasterProcessStatus")
+public BaseResponse submitOrUpdateCommonMasterProcessStatus(@RequestBody CommonMasterProcessStatus commonMasterProcessStatus, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (commonMasterProcessStatus.getProcessStatusGuid() == null || commonMasterProcessStatus.getProcessStatusGuid().isEmpty()) {
+//Add new data
+	commonMasterProcessStatus.setCreatedIpAddr(request.getRemoteAddr());
+	commonMasterProcessStatus.setProcessStatusGuid(UUID.randomUUID().toString());
+	commonMasterProcessStatus.setCreatedDate(new Date());
+commonMasterProcessStatus.setModifiedIpAddr(null);
+commonMasterProcessStatus.setModifiedBy(null);
+commonMasterProcessStatus.setModifiedDate(null);
+commonMasterProcessStatus.setCreatedBy(request.getRemoteAddr());
+
+if (commonMasterProcessStatus.getIsActive() == null)
+	commonMasterProcessStatus.setIsActive(false);
+
+//commonMasterProcessStatus.setCreatedRemarks(userSessionParam.getUserFullName());
+//commonMasterProcessStatus.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//commonMasterProcessStatus.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//commonMasterProcessStatus.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+
+} else {
+//Update existing data
+	CommonMasterProcessStatus existingCommonMasterProcessStatus = commonMasterService.getCommonMasterProcessStatusById(commonMasterProcessStatus.getProcessStatusGuid());
+
+if (existingCommonMasterProcessStatus != null) {
+	existingCommonMasterProcessStatus.setProcessStatusCode(!Util.isNullOrEmpty(commonMasterProcessStatus.getProcessStatusCode()) ? commonMasterProcessStatus.getProcessStatusCode().toUpperCase().trim() : null);
+
+	existingCommonMasterProcessStatus.setProcessStatusDesc(!Util.isNullOrEmpty(commonMasterProcessStatus.getProcessStatusDesc()) ? commonMasterProcessStatus.getProcessStatusDesc().trim() : null);
+
+	existingCommonMasterProcessStatus.setIsActive(commonMasterProcessStatus.getIsActive() != null ? commonMasterProcessStatus.getIsActive() : existingCommonMasterProcessStatus.getIsActive());
+
+	existingCommonMasterProcessStatus.setModifiedIpAddr(request.getRemoteAddr());
+	existingCommonMasterProcessStatus.setModifiedDate(new Date());
+if (existingCommonMasterProcessStatus.getIsActive() == null)
+	existingCommonMasterProcessStatus.setIsActive(false);
+
+//for now setting some dummy value to test
+existingCommonMasterProcessStatus.setModifiedBy(UUID.randomUUID().toString());
+existingCommonMasterProcessStatus.setModifiedMacAddr(UUID.randomUUID().toString());
+commonMasterProcessStatus = existingCommonMasterProcessStatus; // Use the updated existing country object
+} else {
+log.error("ProcessStatus Info   not found");
+resultData.setStatus(false);
+resultData.setMessage("ProcessStatus Info not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateCommonMasterProcessStatus(commonMasterProcessStatus);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (commonMasterProcessStatus.getIsActive() == null) commonMasterProcessStatus.setIsActive(false);
+commonMasterProcessStatus.setProcessStatusCode(!Util.isNullOrEmpty(commonMasterProcessStatus.getProcessStatusCode()) ? commonMasterProcessStatus.getProcessStatusCode().toUpperCase().trim() : null);
+commonMasterProcessStatus.setProcessStatusDesc(!Util.isNullOrEmpty(commonMasterProcessStatus.getProcessStatusDesc()) ? commonMasterProcessStatus.getProcessStatusDesc().trim() : null);
+
+try {
+	commonMasterProcessStatusRepo.save(commonMasterProcessStatus);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getCommonMasterProcessStatusByGuid/{processStatusGuid}")
+public ResponseEntity<CommonMasterProcessStatus> getCommonMasterProcessStatusByGuid(@PathVariable("processStatusGuid") String processStatusGuid) {
+	CommonMasterProcessStatus commonMasterProcessStatus = commonMasterProcessStatusRepo.findById(processStatusGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with processStatusGuid : " + processStatusGuid));
+return new ResponseEntity<>(commonMasterProcessStatus, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////CommonMasterProcessStatus End //////////////////////////
+
+
+////////////////////////////////////////////SmsEmailTemplate Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getSmsEmailTemplateList")
+public ResponseEntity<BaseResponse> getSmsEmailTemplateList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<SmsEmailTemplate> list = smsEmailTemplateRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setSmsEmailTemplate(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitOrUpdateSmsEmailTemplate")
+public BaseResponse submitOrUpdateSmsEmailTemplate(@RequestBody SmsEmailTemplate smsEmailTemplate, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (smsEmailTemplate.getSmsemailTemplateGuid() == null || smsEmailTemplate.getSmsemailTemplateGuid().isEmpty()) {
+//Add new data
+	smsEmailTemplate.setCreatedIpAddr(request.getRemoteAddr());
+	smsEmailTemplate.setSmsemailTemplateGuid(UUID.randomUUID().toString());
+	smsEmailTemplate.setCreatedDate(new Date());
+	smsEmailTemplate.setModifiedIpAddr(null);
+	smsEmailTemplate.setModifiedBy(null);
+	smsEmailTemplate.setModifiedDate(null);
+	smsEmailTemplate.setCreatedBy(request.getRemoteAddr());
+
+	
+if (smsEmailTemplate.getIsActive() == null)
+	smsEmailTemplate.setIsActive(false);
+
+
+//smsEmailTemplate.setCreatedRemarks(userSessionParam.getUserFullName());
+//smsEmailTemplate.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//smsEmailTemplate.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//smsEmailTemplate.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+
+} else {
+//Update existing data
+	SmsEmailTemplate existingSmsEmailTemplate = commonMasterService.getSmsEmailTemplateById(smsEmailTemplate.getSmsemailTemplateGuid());
+
+if (existingSmsEmailTemplate != null) {
+	existingSmsEmailTemplate.setSmsemailTemplateName(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailTemplateName()) ? smsEmailTemplate.getSmsemailTemplateName().toUpperCase().trim() : null);
+	existingSmsEmailTemplate.setSmsemailLinkedHeader(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailLinkedHeader()) ? smsEmailTemplate.getSmsemailLinkedHeader().toUpperCase().trim() : null);
+
+	existingSmsEmailTemplate.setSmsemailEntityId(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailEntityId()) ? smsEmailTemplate.getSmsemailEntityId().toUpperCase().trim() : null);
+	existingSmsEmailTemplate.setSmsemailTemplateCode(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailTemplateCode()) ? smsEmailTemplate.getSmsemailTemplateCode().trim() : null);
+	existingSmsEmailTemplate.setEmailServiceBodyEn(!Util.isNullOrEmpty(smsEmailTemplate.getEmailServiceBodyEn()) ? smsEmailTemplate.getEmailServiceBodyEn().trim() : null);
+	existingSmsEmailTemplate.setSmsServiceBodyEn(!Util.isNullOrEmpty(smsEmailTemplate.getSmsServiceBodyEn()) ? smsEmailTemplate.getSmsServiceBodyEn().trim() : null);
+	existingSmsEmailTemplate.setGimsServiceBodyEn(!Util.isNullOrEmpty(smsEmailTemplate.getGimsServiceBodyEn()) ? smsEmailTemplate.getGimsServiceBodyEn().trim() : null);
+	
+	existingSmsEmailTemplate.setIsActive(smsEmailTemplate.getIsActive() != null ? smsEmailTemplate.getIsActive() : existingSmsEmailTemplate.getIsActive());
+
+	existingSmsEmailTemplate.setModifiedIpAddr(request.getRemoteAddr());
+	existingSmsEmailTemplate.setModifiedDate(new Date());
+	
+	if (existingSmsEmailTemplate.getIsMail() == null)
+		existingSmsEmailTemplate.setIsMail(false);
+	if (existingSmsEmailTemplate.getIsSms() == null)
+		existingSmsEmailTemplate.setIsSms(false);
+	if (existingSmsEmailTemplate.getIsGims() == null)
+		existingSmsEmailTemplate.setIsGims(false);
+	if (existingSmsEmailTemplate.getIsPreFormatted() == null)
+		existingSmsEmailTemplate.setIsPreFormatted(false);
+	if (existingSmsEmailTemplate.getIsEncoded() == null)
+		existingSmsEmailTemplate.setIsEncoded(false);
+	if (existingSmsEmailTemplate.getIsBroadcast() == null)
+		existingSmsEmailTemplate.setIsBroadcast(false);
+	if (existingSmsEmailTemplate.getIsEmailAttachment() == null)
+		existingSmsEmailTemplate.setIsEmailAttachment(false);
+	
+if (existingSmsEmailTemplate.getIsActive() == null)
+	existingSmsEmailTemplate.setIsActive(false);
+
+
+
+//for now setting some dummy value to test
+existingSmsEmailTemplate.setModifiedBy(UUID.randomUUID().toString());
+existingSmsEmailTemplate.setModifiedMacAddr(UUID.randomUUID().toString());
+smsEmailTemplate = existingSmsEmailTemplate; // Use the updated existing country object
+} else {
+log.error("SmsEmail Template  not found");
+resultData.setStatus(false);
+resultData.setMessage("SmsEmail Template not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateSmsEmailTemplate(smsEmailTemplate);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (smsEmailTemplate.getIsActive() == null) smsEmailTemplate.setIsActive(false);
+smsEmailTemplate.setSmsemailTemplateName(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailTemplateName()) ? smsEmailTemplate.getSmsemailTemplateName().toUpperCase().trim() : null);
+smsEmailTemplate.setSmsemailLinkedHeader(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailLinkedHeader()) ? smsEmailTemplate.getSmsemailLinkedHeader().toUpperCase().trim() : null);
+smsEmailTemplate.setSmsemailEntityId(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailEntityId()) ? smsEmailTemplate.getSmsemailEntityId().trim() : null);
+smsEmailTemplate.setSmsemailTemplateCode(!Util.isNullOrEmpty(smsEmailTemplate.getSmsemailTemplateCode()) ? smsEmailTemplate.getSmsemailTemplateCode().trim() : null);
+smsEmailTemplate.setEmailServiceBodyEn(!Util.isNullOrEmpty(smsEmailTemplate.getEmailServiceBodyEn()) ? smsEmailTemplate.getEmailServiceBodyEn().trim() : null);
+smsEmailTemplate.setSmsServiceBodyEn(!Util.isNullOrEmpty(smsEmailTemplate.getSmsServiceBodyEn()) ? smsEmailTemplate.getSmsServiceBodyEn().trim() : null);
+smsEmailTemplate.setGimsServiceBodyEn(!Util.isNullOrEmpty(smsEmailTemplate.getGimsServiceBodyEn()) ? smsEmailTemplate.getGimsServiceBodyEn().trim() : null);
+
+
+
+
+try {
+	smsEmailTemplateRepository.save(smsEmailTemplate);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getSmsEmailTemplateByGuid/{smsemailTemplateGuid}")
+public ResponseEntity<SmsEmailTemplate> getSmsEmailTemplateByGuid(@PathVariable("smsemailTemplateGuid") String smsemailTemplateGuid) {
+	SmsEmailTemplate smsEmailTemplate = smsEmailTemplateRepository.findById(smsemailTemplateGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with smsemailTemplateGuid : " + smsemailTemplateGuid));
+return new ResponseEntity<>(smsEmailTemplate, HttpStatus.OK);
+}
+
+
+////////////////////////////////////////////SmsEmailTemplate End //////////////////////////
 
 }
