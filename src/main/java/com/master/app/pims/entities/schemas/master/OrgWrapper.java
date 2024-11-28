@@ -1,9 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.master.app.pims.entities.schemas.master;
+
+import java.io.Serializable;
+import java.util.Date;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,44 +10,37 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
-
-/**
- * @author Sourbh
- */
 @Data
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "geo_country", schema = "master")
-public class GeoCountryMaster implements Serializable {
+@Table(name = "org_wrapper", schema="master")
+//@XmlRootElement
+//@NamedQueries({
+//    @NamedQuery(name = "OrgWrapper.findAll", query = "SELECT o FROM OrgWrapper o")})
+public class OrgWrapper implements Serializable {
     private static final long serialVersionUID = 1L;
-    /*
-     * @Basic(optional = false)
-     *
-     * @Column(name = "country_master_id") private long countryMasterId;
-     */
+   /* @Basic(optional = false)
+    @Column(name = "wrapper_id")
+    private long wrapperId;*/
     @Id
     @Basic(optional = false)
-    @Column(name = "country_master_guid")
-    private String countryMasterGuid;
-    @Column(name = "country_code")
-    private String countryCode;
-    @Column(name = "country_name_en")
-    private String countryNameEn;
-    @Column(name = "country_name_hi")
-    private String countryNameHi;
-    @Column(name = "country_name_rl")
-    private String countryNameRl;
+    @Column(name = "wrapper_guid")
+    private String wrapperGuid;
+    @Column(name = "wrapper_code")
+    private String wraperCode;
+    @Column(name = "wrapper_name_en")
+    private String wraperNameEn;
+    @Column(name = "wrapper_name_hi")
+    private String wraperNameHi;
+    @Column(name = "wrapper_name_rl")
+    private String wraperNameRl;
     @Column(name = "is_record_active")
     private Boolean isRecordActive;
-    @Column(name = "country_description")
-    private String countryDescription;
+    @Column(name = "wrapper_description")
+    private String wraperDescription;
     @Basic(optional = false)
     @Column(name = "from_date")
     @Temporal(TemporalType.TIMESTAMP)
@@ -57,6 +48,7 @@ public class GeoCountryMaster implements Serializable {
     @Column(name = "to_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date toDate;
+
     @Column(name = "created_by_guid")
     private String createdByGuid;
     @Basic(optional = false)
@@ -100,7 +92,7 @@ public class GeoCountryMaster implements Serializable {
     @Column(name = "attested_by_guid")
     private String attestedByGuid;
     @Column(name = "attested_date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date attestedDate;
     @Basic(optional = false)
     @Column(name = "is_attested")
@@ -121,9 +113,11 @@ public class GeoCountryMaster implements Serializable {
     private String attesterUri;
     @Column(name = "supporting_uri")
     private String supportingUri;
+	public OrgWrapper(String wrapperGuid) {
+		super();
+		this.wrapperGuid = wrapperGuid;
+	}
 
-    // Constructor to initialize only with GUID
-    public GeoCountryMaster(String countryMasterGuid) {
-        this.countryMasterGuid = countryMasterGuid;
-    }
+
+ 
 }

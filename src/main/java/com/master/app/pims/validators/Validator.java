@@ -1,6 +1,8 @@
 package com.master.app.pims.validators;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -10,6 +12,7 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -20,7 +23,7 @@ import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.models.common.response.BaseResponse;
 
 public interface Validator {
-    // mst related validator
+    
 	//mst country validation
     BaseResponse validateMstCountry(GeoCountryMst country);
     
@@ -72,6 +75,15 @@ public interface Validator {
     
     //SmsEmailTemplate validation
     BaseResponse validateSmsEmailTemplate(SmsEmailTemplate smsEmailTemplate);
+
+    //OrgPrimary validation
+    BaseResponse validateOrgPrimary(OrgPrimary orgPrimary);
+    
+    //OrgWrapper validation
+    BaseResponse validateOrgWrapper(OrgWrapper orgWrapper);
+    
+  //OrgWrapper validation
+    BaseResponse validateGeoZoneMCD(GeoZoneMCD geoZoneMcd);
     
   
 }

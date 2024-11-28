@@ -5,6 +5,8 @@ import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -14,6 +16,7 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -56,7 +59,9 @@ public class BaseResponse {
     private List<DocsCategoryInfo> docsCategoryInfo;
     private List<CommonMasterProcessStatus> commonMasterProcessStatus;
     private List<SmsEmailTemplate> smsEmailTemplate;
-
+    private List<OrgPrimary> orgPrimary;
+    private List<OrgWrapper> orgWrapper;
+    private List<GeoZoneMCD> geoZoneMCD;
     
     
     

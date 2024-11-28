@@ -2,6 +2,8 @@ package com.master.app.pims.validators;
 
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -11,6 +13,7 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -23,12 +26,15 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.master.OrgPrimaryRepository;
+import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
@@ -99,6 +105,15 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private SmsEmailTemplateRepository smsEmailTemplateRepository;
+    
+    @Autowired
+    private OrgPrimaryRepository orgPrimaryRepository;
+    
+    @Autowired
+    private OrgWrapperRepository orgWrapperRepository;
+    
+    @Autowired
+    private GeoZoneMCDRepository geoZoneMCDRepository;
     
     //mst country validation
     @Override
@@ -967,7 +982,158 @@ public BaseResponse validateSmsEmailTemplate(SmsEmailTemplate smsEmailTemplate) 
      return resultData;
 }
 
-	
-//smsEmailTemplateRepository
+@Override
+public BaseResponse validateOrgPrimary(OrgPrimary orgPrimary) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if(Util.isNullOrEmpty(orgPrimary.getOrgPrimaryCode()))
+ 		{
+ 			resultData.setStatus(false);
+ 			resultData.setMessage(PropertyReader.getFormMessage("master.orgPrimary.code.required"));
+ 		}if(!Util.isNullOrEmpty(orgPrimary.getOrgPrimaryCode()) && orgPrimaryRepository.isExistOrgPrimaryCode(orgPrimary.getOrgPrimaryCode(),orgPrimary.getOrgPrimaryGuid()) ){
+ 					resultData.setStatus(false);
+ 					resultData.setMessage(PropertyReader.getFormMessage("master.orgPrimary.code.unique"));
+ 					return resultData;
+ 		} if(!Util.isNullOrEmpty(orgPrimary.getOrgPrimaryNameEn()) && orgPrimaryRepository.isExistOrgPrimaryNameEn(orgPrimary.getOrgPrimaryNameEn(),orgPrimary.getOrgPrimaryGuid())){
+ 				resultData.setStatus(false);
+ 				resultData.setMessage(PropertyReader.getFormMessage("master.orgPrimary.nameEn.unique"));
+ 				return resultData;
+ 		}
+ 		 if(!Util.isNullOrEmpty(orgPrimary.getOrgPrimaryNameHi()) && orgPrimaryRepository.isExistOrgPrimaryNameHi(orgPrimary.getOrgPrimaryNameHi(),orgPrimary.getOrgPrimaryGuid())){
+ 				resultData.setStatus(false);
+ 				resultData.setMessage(PropertyReader.getFormMessage("master.orgPrimary.nameHi.unique"));
+ 				return resultData;
+ 		}
+ 		 if(!Util.isNullOrEmpty(orgPrimary.getOrgPrimaryNameRl()) && orgPrimaryRepository.isExistOrgPrimaryNameRl(orgPrimary.getOrgPrimaryNameRl(),orgPrimary.getOrgPrimaryGuid())){
+ 				resultData.setStatus(false);
+ 				resultData.setMessage(PropertyReader.getFormMessage("master.orgPrimary.nameRl.unique"));
+ 				return resultData;
+ 		}
+ 		if (Util.isNullOrEmpty(orgPrimary.getFromDate())) {
+ 		    resultData.setStatus(false);
+ 		    resultData.setMessage(PropertyReader.getFormMessage("master.orgPrimary.fromDate.required"));
+ 		    return resultData;
+ 		}
+ 		 if(Util.isNullOrEmpty(orgPrimary.getOrgPrimaryNameEn()))
+  		{
+  			resultData.setStatus(false);
+  			resultData.setMessage(PropertyReader.getFormMessage("master.orgPrimary.nameEn.required"));
+  		}
+
+    	
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating orgPrimary: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateOrgWrapper(OrgWrapper orgWrapper) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if(Util.isNullOrEmpty(orgWrapper.getWraperCode()))
+ 		{
+ 			resultData.setStatus(false);
+ 			resultData.setMessage(PropertyReader.getFormMessage("master.orgWrapper.code.required"));
+ 		}if(!Util.isNullOrEmpty(orgWrapper.getWraperCode()) && orgWrapperRepository.isExistOrgWrapperCode(orgWrapper.getWraperCode(),orgWrapper.getWrapperGuid()) ){
+ 					resultData.setStatus(false);
+ 					resultData.setMessage(PropertyReader.getFormMessage("master.orgWrapper.code.unique"));
+ 					return resultData;
+ 		} if(!Util.isNullOrEmpty(orgWrapper.getWraperNameEn()) && orgWrapperRepository.isExistOrgWrapperNameEn(orgWrapper.getWraperNameEn(),orgWrapper.getWrapperGuid())){
+ 				resultData.setStatus(false);
+ 				resultData.setMessage(PropertyReader.getFormMessage("master.orgWrapper.nameEn.unique"));
+ 				return resultData;
+ 		}
+ 		 if(!Util.isNullOrEmpty(orgWrapper.getWraperNameHi()) && orgWrapperRepository.isExistOrgWrapperNameHi(orgWrapper.getWraperNameHi(),orgWrapper.getWrapperGuid())){
+ 				resultData.setStatus(false);
+ 				resultData.setMessage(PropertyReader.getFormMessage("master.orgWrapper.nameHi.unique"));
+ 				return resultData;
+ 		}
+ 		 if(!Util.isNullOrEmpty(orgWrapper.getWraperNameRl()) && orgWrapperRepository.isExistOrgWrapperNameRl(orgWrapper.getWraperNameRl(),orgWrapper.getWrapperGuid())){
+ 				resultData.setStatus(false);
+ 				resultData.setMessage(PropertyReader.getFormMessage("master.orgWrapper.nameRl.unique"));
+ 				return resultData;
+ 		}
+ 		if (Util.isNullOrEmpty(orgWrapper.getFromDate())) {
+ 		    resultData.setStatus(false);
+ 		    resultData.setMessage(PropertyReader.getFormMessage("master.orgWrapper.fromDate.required"));
+ 		    return resultData;
+ 		}
+ 		 if(Util.isNullOrEmpty(orgWrapper.getWraperNameEn()))
+  		{
+  			resultData.setStatus(false);
+  			resultData.setMessage(PropertyReader.getFormMessage("master.orgWrapper.nameEn.required"));
+  		}
+
+    	
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating orgWrapper: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateGeoZoneMCD(GeoZoneMCD geoZoneMcd) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	
+    	 if (Util.isNullOrEmpty(geoZoneMcd.getOrgPrimary())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.zone.primaryOrg.name.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(geoZoneMcd.getZoneCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geozone.geozoneCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoZoneMcd.getZoneCode())
+					&& geoZoneMCDRepository.isExistGeoZoneCode(geoZoneMcd.getZoneCode(), geoZoneMcd.getZoneGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geozone.geozoneCode.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(geoZoneMcd.getZoneNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geozone.geozoneNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoZoneMcd.getZoneNameEn())
+					&& geoZoneMCDRepository.isExistGeoZoneNameEn(geoZoneMcd.getZoneNameEn(), geoZoneMcd.getZoneGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geozone.geozoneNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoZoneMcd.getZoneNameHi())
+					&& geoZoneMCDRepository.isExistGeoZoneNameHi(geoZoneMcd.getZoneNameHi(), geoZoneMcd.getZoneGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geozone.geozoneNameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoZoneMcd.getZoneNameRl())
+					&& geoZoneMCDRepository.isExistGeoZoneNameRl(geoZoneMcd.getZoneNameRl(), geoZoneMcd.getZoneGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geozone.geozoneNameRl.unique"));
+				return resultData;
+			}
+    	
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating orgWrapper: " + e.getMessage());
+     }
+     return resultData;
+}
+
 	
 }

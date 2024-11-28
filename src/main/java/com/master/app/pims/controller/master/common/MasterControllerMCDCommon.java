@@ -1626,10 +1626,33 @@ if (smsEmailTemplate.getSmsemailTemplateGuid() == null || smsEmailTemplate.getSm
 	smsEmailTemplate.setModifiedBy(null);
 	smsEmailTemplate.setModifiedDate(null);
 	smsEmailTemplate.setCreatedBy(request.getRemoteAddr());
-
 	
+	
+//	if (smsEmailTemplate.getEmailServiceBodyEn() == null)
+//		smsEmailTemplate.setEmailServiceBodyEn(smsEmailTemplate.getEmailServiceBodyEn().replaceAll("\"", "'"));
+//	if (smsEmailTemplate.getSmsServiceBodyEn() == null)
+//		smsEmailTemplate.setSmsServiceBodyEn(smsEmailTemplate.getSmsServiceBodyEn().replaceAll("\"", "'"));
+//	if (smsEmailTemplate.getGimsServiceBodyEn() == null)
+//		smsEmailTemplate.setGimsServiceBodyEn(smsEmailTemplate.getGimsServiceBodyEn().replaceAll("\"", "'"));
+
+
+if (smsEmailTemplate.getIsMail() == null)
+	smsEmailTemplate.setIsMail(false);
+if (smsEmailTemplate.getIsSms() == null)
+	smsEmailTemplate.setIsSms(false);
+if (smsEmailTemplate.getIsGims() == null)
+	smsEmailTemplate.setIsGims(false);
+if (smsEmailTemplate.getIsPreFormatted() == null)
+	smsEmailTemplate.setIsPreFormatted(false);
+if (smsEmailTemplate.getIsEncoded() == null)
+	smsEmailTemplate.setIsEncoded(false);
+if (smsEmailTemplate.getIsBroadcast() == null)
+	smsEmailTemplate.setIsBroadcast(false);
+if (smsEmailTemplate.getIsEmailAttachment() == null)
+	smsEmailTemplate.setIsEmailAttachment(false);
 if (smsEmailTemplate.getIsActive() == null)
 	smsEmailTemplate.setIsActive(false);
+
 
 
 //smsEmailTemplate.setCreatedRemarks(userSessionParam.getUserFullName());
@@ -1655,7 +1678,14 @@ if (existingSmsEmailTemplate != null) {
 	existingSmsEmailTemplate.setIsActive(smsEmailTemplate.getIsActive() != null ? smsEmailTemplate.getIsActive() : existingSmsEmailTemplate.getIsActive());
 
 	existingSmsEmailTemplate.setModifiedIpAddr(request.getRemoteAddr());
-	existingSmsEmailTemplate.setModifiedDate(new Date());
+	
+//	if (smsEmailTemplate.getEmailServiceBodyEn() == null)
+//		smsEmailTemplate.setEmailServiceBodyEn(smsEmailTemplate.getEmailServiceBodyEn().replaceAll("\"", "'"));
+//	if (smsEmailTemplate.getSmsServiceBodyEn() == null)
+//		smsEmailTemplate.setSmsServiceBodyEn(smsEmailTemplate.getSmsServiceBodyEn().replaceAll("\"", "'"));
+//	if (smsEmailTemplate.getGimsServiceBodyEn() == null)
+//		smsEmailTemplate.setGimsServiceBodyEn(smsEmailTemplate.getGimsServiceBodyEn().replaceAll("\"", "'"));
+
 	
 	if (existingSmsEmailTemplate.getIsMail() == null)
 		existingSmsEmailTemplate.setIsMail(false);
@@ -1678,6 +1708,7 @@ if (existingSmsEmailTemplate.getIsActive() == null)
 
 
 //for now setting some dummy value to test
+existingSmsEmailTemplate.setModifiedDate(new Date());
 existingSmsEmailTemplate.setModifiedBy(UUID.randomUUID().toString());
 existingSmsEmailTemplate.setModifiedMacAddr(UUID.randomUUID().toString());
 smsEmailTemplate = existingSmsEmailTemplate; // Use the updated existing country object

@@ -5,8 +5,10 @@ package com.master.app.pims.entities.schemas.mst;
 
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -15,6 +17,8 @@ import java.util.Date;
 @Data
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "geo_country", schema = "mst")
 public class GeoCountryMst implements Serializable{

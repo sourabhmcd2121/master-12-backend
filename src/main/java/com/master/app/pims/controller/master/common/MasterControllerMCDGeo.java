@@ -2,13 +2,17 @@ package com.master.app.pims.controller.master.common;
 
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
@@ -44,7 +48,8 @@ public class MasterControllerMCDGeo {
     @Autowired
     private GeoColonyCategoryRepository geoColonyCategoryRepository;
     
-    
+    @Autowired
+    private GeoZoneMCDRepository geoZoneMCDRepository;
 
     @Autowired
     private Validator validator;
@@ -453,6 +458,132 @@ public class MasterControllerMCDGeo {
  	
  	//////////////////////////////////////////////////GeoColonyCategory End///////////////////////////////////////////
  	
+/////////////////////////////////////GeoZoneMcd Start///////////////////////////////////
+    
+    //get all data from table
+    @GetMapping("/getGeoZoneMCDList")
+    public ResponseEntity<BaseResponse> getGeoZoneMCDList() {
+        BaseResponse response = new BaseResponse();
+        // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        List<GeoZoneMCD> list = geoZoneMCDRepository.findAll();
+        response.setMessage("success");
+        response.setStatus(true);
+        response.setTotalDataCount(list.size());
+        response.setGeoZoneMCD(list);
+        return ResponseEntity.ok(response);
+    }
+    
+    // Create New Data And Update
+    @PostMapping("/submitGeoZoneMCD")
+    public BaseResponse submitGeoZoneMCD(@RequestBody GeoZoneMCD geoZoneMCD, HttpServletRequest request) {
+        BaseResponse resultData = new BaseResponse();
+
+        // Check if guid is provided (indicating an update)
+        if (geoZoneMCD.getZoneGuid() == null || geoZoneMCD.getZoneGuid().isEmpty()) {
+        	    	
+        	
+        	
+            // Add new data
+        	geoZoneMCD.setCreaterIp(request.getRemoteAddr());
+        	geoZoneMCD.setZoneGuid(UUID.randomUUID().toString());
+        	geoZoneMCD.setCreatedDate(new Date());
+        	geoZoneMCD.setModifierIp(null);
+        	geoZoneMCD.setModifiedByGuid(null);
+        	geoZoneMCD.setModifiedDate(null);
+        	geoZoneMCD.setCreatedByGuid(request.getRemoteAddr());
+        	
+        	//for dropdown
+        	geoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
+        	geoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
+        	if(geoZoneMCD.getOrgPrimary()!=null && !geoZoneMCD.getOrgPrimary().isEmpty()){
+        		geoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(geoZoneMCD.getOrgPrimary()));
+			}
+        	
+        	if(geoZoneMCD.getOrgWrapper()!=null && !geoZoneMCD.getOrgWrapper().isEmpty()){
+        		geoZoneMCD.setWrapperMaster(new OrgWrapper(geoZoneMCD.getOrgWrapper()));
+			}
+            
+//			geoZoneMCD.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//			geoZoneMCD.setCreaterRemarks(userSessionParam.getUserFullName());
+            //geoZoneMCD.setCreaterMacId(HttpSessionHelper.getMacAddress());
+            //geoZoneMCD.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+        } else {
+            // Update existing data
+        	GeoZoneMCD existingGeoZoneMCD = commonMasterService.getGeoZoneMCDById(geoZoneMCD.getZoneGuid());
+
+            if (existingGeoZoneMCD != null) {
+            	existingGeoZoneMCD.setZoneCode(!Util.isNullOrEmpty(geoZoneMCD.getZoneCode()) ? geoZoneMCD.getZoneCode().toUpperCase().trim() : null);
+            	existingGeoZoneMCD.setZoneNameEn(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameEn()) ? geoZoneMCD.getZoneNameEn().toUpperCase().trim() : null);
+
+            	existingGeoZoneMCD.setZoneNameHi(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameHi()) ? geoZoneMCD.getZoneNameHi().toUpperCase().trim() : null);
+            	existingGeoZoneMCD.setZoneNameRl(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameRl()) ? geoZoneMCD.getZoneNameRl().trim() : null);
+            	existingGeoZoneMCD.setZonalAddress(!Util.isNullOrEmpty(geoZoneMCD.getZonalAddress()) ? geoZoneMCD.getZonalAddress().trim() : null);
+            	existingGeoZoneMCD.setZoneDesc(!Util.isNullOrEmpty(geoZoneMCD.getZoneDesc()) ? geoZoneMCD.getZoneDesc().trim() : null);
+            	existingGeoZoneMCD.setIsActive(geoZoneMCD.getIsActive() != null ? geoZoneMCD.getIsActive() : existingGeoZoneMCD.getIsActive());
+
+            	existingGeoZoneMCD.setModifierIp(request.getRemoteAddr());
+            	existingGeoZoneMCD.setModifiedDate(new Date());
+              
+            	//dropdown
+            	existingGeoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
+            	existingGeoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
+               	if(existingGeoZoneMCD.getOrgPrimary()!=null && !existingGeoZoneMCD.getOrgPrimary().isEmpty()){
+               		existingGeoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(existingGeoZoneMCD.getOrgPrimary()));
+    			}
+            	if(existingGeoZoneMCD.getOrgWrapper()!=null && !existingGeoZoneMCD.getOrgWrapper().isEmpty()){
+            		existingGeoZoneMCD.setWrapperMaster(new OrgWrapper(existingGeoZoneMCD.getOrgWrapper()));
+    			}
+                
+            	
+                //existingGeoZoneMCD.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
+                //existingGeoZoneMCD.setModifierMacId(HttpSessionHelper.getMacAddress());
+               	geoZoneMCD = existingGeoZoneMCD; // Use the updated existing country object
+            } else {
+                log.error("Zone not found");
+                resultData.setStatus(false);
+                resultData.setMessage("Zone not found");
+                return resultData;
+            }
+        }
+
+        // Validation
+        resultData = validator.validateGeoZoneMCD(geoZoneMCD);
+        if (resultData != null && !resultData.getStatus()) {
+            log.error("Validation failed: {}", resultData.getMessage());
+            return resultData;
+        }
+
+        // If validation passes, proceed to save or update
+        if (geoZoneMCD.getIsActive() == null) geoZoneMCD.setIsActive(false);
+        geoZoneMCD.setZoneCode(!Util.isNullOrEmpty(geoZoneMCD.getZoneCode()) ? geoZoneMCD.getZoneCode().toUpperCase().trim() : null);
+        geoZoneMCD.setZoneNameEn(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameEn()) ? geoZoneMCD.getZoneNameEn().toUpperCase().trim() : null);
+        geoZoneMCD.setZoneNameHi(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameHi()) ? geoZoneMCD.getZoneNameHi().trim() : null);
+        geoZoneMCD.setZoneNameRl(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameRl()) ? geoZoneMCD.getZoneNameRl().trim() : null);
+        geoZoneMCD.setZonalAddress(!Util.isNullOrEmpty(geoZoneMCD.getZonalAddress()) ? geoZoneMCD.getZonalAddress().trim() : null);
+        geoZoneMCD.setZoneDesc(!Util.isNullOrEmpty(geoZoneMCD.getZoneDesc()) ? geoZoneMCD.getZoneDesc().trim() : null);
+
+        try {
+            geoZoneMCDRepository.save(geoZoneMCD);
+            log.info("Record SaveOrUpdate Successfully");
+            resultData.setStatus(true);
+            resultData.setMessage("Record saved or updated successfully");
+        } catch (Exception e) {
+            log.error("Error saving or updating record: {}", e.getMessage());
+            resultData.setStatus(false);
+            resultData.setMessage("Error saving or updating record: " + e.getMessage());
+        }
+
+        return resultData;
+    }
+    
+    //get data by id
+    @GetMapping("/getGeoZoneMCDByGuid/{zoneGuid}")
+    public ResponseEntity<GeoZoneMCD> getGeoZoneMCDByGuid(@PathVariable("zoneGuid") String zoneGuid) {
+    	GeoZoneMCD geoZoneMCD = geoZoneMCDRepository.findById(zoneGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with zoneGuid : " + zoneGuid));
+        return new ResponseEntity<>(geoZoneMCD, HttpStatus.OK);
+    }
+    
+/////////////////////////////////////GeoZoneMcd End///////////////////////////////////
 
   
 

@@ -1,6 +1,8 @@
 package com.master.app.pims.service.master.common;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -10,6 +12,7 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -17,9 +20,10 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
-import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
+
 
 public interface CommonMasterService {
+	//for GeoCountryMst
     GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst);
     GeoCountryMst getGeoCountryMstById(String id);
     
@@ -86,5 +90,17 @@ public interface CommonMasterService {
     ///for SmsEmailTemplate join with mst schema
     SmsEmailTemplate saveSmsEmailTemplate(SmsEmailTemplate smsEmailTemplate);
     SmsEmailTemplate getSmsEmailTemplateById(String id);
+    
+    ///for OrgPrimary join with master schema
+    OrgPrimary saveOrgPrimary(OrgPrimary orgPrimary);
+    OrgPrimary getOrgPrimaryById(String id);
+    
+    ///for OrgWrapper join with master schema
+    OrgWrapper saveOrgWrapper(OrgWrapper orgWrapper);
+    OrgWrapper getOrgWrapperById(String id);
+    
+    ///for OrgWrapper join with master schema
+    GeoZoneMCD saveGeoZoneMCD(GeoZoneMCD geoZoneMCD);
+    GeoZoneMCD getGeoZoneMCDById(String id);
     
 }

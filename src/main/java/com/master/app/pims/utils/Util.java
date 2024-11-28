@@ -313,5 +313,11 @@ public final class Util {
 		}
 		return true;
 	}
+	
+	
+	/////////for date validation
+	  public static boolean isNullOrEmpty(Date date) {
+	        return date == null;
+	    }
 
 }

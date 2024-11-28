@@ -1,6 +1,8 @@
 package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -10,6 +12,7 @@ import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -21,12 +24,15 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.master.OrgPrimaryRepository;
+import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
@@ -94,6 +100,19 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
     private SmsEmailTemplateRepository smsEmailTemplateRepository;
+    
+    @Autowired
+    private OrgPrimaryRepository orgPrimaryRepository;
+    
+    @Autowired
+    private OrgWrapperRepository orgWrapperRepository;
+    
+    @Autowired
+    private GeoZoneMCDRepository geoZoneMCDRepository;
+    
+    
+    
+    
     
     
     @Override
@@ -288,6 +307,39 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public SmsEmailTemplate getSmsEmailTemplateById(String id) {
         return smsEmailTemplateRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public OrgPrimary saveOrgPrimary(OrgPrimary orgPrimary) {
+		 return orgPrimaryRepository.save(orgPrimary);
+	}
+
+	@Override
+	public OrgPrimary getOrgPrimaryById(String id) {
+        return orgPrimaryRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public OrgWrapper saveOrgWrapper(OrgWrapper orgWrapper) {
+		 return orgWrapperRepository.save(orgWrapper);
+	}
+
+	@Override
+	public OrgWrapper getOrgWrapperById(String id) {
+        return orgWrapperRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public GeoZoneMCD saveGeoZoneMCD(GeoZoneMCD geoZoneMCD) {
+		 return geoZoneMCDRepository.save(geoZoneMCD);
+	}
+
+	@Override
+	public GeoZoneMCD getGeoZoneMCDById(String id) {
+        return geoZoneMCDRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 
