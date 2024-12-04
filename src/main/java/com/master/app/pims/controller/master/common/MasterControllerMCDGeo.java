@@ -10,6 +10,8 @@ import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
+import com.master.app.pims.repositories.master.OrgPrimaryRepository;
+import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
@@ -56,6 +58,12 @@ public class MasterControllerMCDGeo {
 
     @Autowired
     private CommonMasterService commonMasterService;
+    
+    @Autowired
+    private OrgPrimaryRepository orgPrimaryRepository;
+    
+    @Autowired
+    private OrgWrapperRepository orgWrapperRepository;
 
 
     /////////////////////////////////////GeoCountry Mst Start///////////////////////////////////
@@ -493,8 +501,13 @@ public class MasterControllerMCDGeo {
         	geoZoneMCD.setCreatedByGuid(request.getRemoteAddr());
         	
         	//for dropdown
-        	geoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
-        	geoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
+        	// ye orgPrimaryRepository, orgWrapperRepository autowire kiya hu upar dekh lena ye bhi
+        	// setting id for both for now.. aj add kiya hu 29th nov
+        	String orgPrimaryId = orgPrimaryRepository.findAll().stream().findAny().get().getOrgPrimaryGuid();
+        	String orgWrapperId = orgWrapperRepository.findAll().stream().findAny().get().getWrapperGuid();
+        	geoZoneMCD.setOrgPrimary(orgPrimaryId);
+        	geoZoneMCD.setOrgWrapper(orgWrapperId);
+        	// setting id for both for now.. aj add kiya hu 29th nov end here
         	if(geoZoneMCD.getOrgPrimary()!=null && !geoZoneMCD.getOrgPrimary().isEmpty()){
         		geoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(geoZoneMCD.getOrgPrimary()));
 			}
