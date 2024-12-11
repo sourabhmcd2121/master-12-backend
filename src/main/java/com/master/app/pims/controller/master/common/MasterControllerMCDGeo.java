@@ -10,8 +10,6 @@ import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
-import com.master.app.pims.repositories.master.OrgPrimaryRepository;
-import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
@@ -58,12 +56,6 @@ public class MasterControllerMCDGeo {
 
     @Autowired
     private CommonMasterService commonMasterService;
-    
-    @Autowired
-    private OrgPrimaryRepository orgPrimaryRepository;
-    
-    @Autowired
-    private OrgWrapperRepository orgWrapperRepository;
 
 
     /////////////////////////////////////GeoCountry Mst Start///////////////////////////////////
@@ -488,8 +480,10 @@ public class MasterControllerMCDGeo {
 
         // Check if guid is provided (indicating an update)
         if (geoZoneMCD.getZoneGuid() == null || geoZoneMCD.getZoneGuid().isEmpty()) {
-        	    	
-        	
+        	  
+        	//dropdown
+        	geoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
+        	geoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
         	
             // Add new data
         	geoZoneMCD.setCreaterIp(request.getRemoteAddr());
@@ -501,13 +495,7 @@ public class MasterControllerMCDGeo {
         	geoZoneMCD.setCreatedByGuid(request.getRemoteAddr());
         	
         	//for dropdown
-        	// ye orgPrimaryRepository, orgWrapperRepository autowire kiya hu upar dekh lena ye bhi
-        	// setting id for both for now.. aj add kiya hu 29th nov
-        	String orgPrimaryId = orgPrimaryRepository.findAll().stream().findAny().get().getOrgPrimaryGuid();
-        	String orgWrapperId = orgWrapperRepository.findAll().stream().findAny().get().getWrapperGuid();
-        	geoZoneMCD.setOrgPrimary(orgPrimaryId);
-        	geoZoneMCD.setOrgWrapper(orgWrapperId);
-        	// setting id for both for now.. aj add kiya hu 29th nov end here
+        	
         	if(geoZoneMCD.getOrgPrimary()!=null && !geoZoneMCD.getOrgPrimary().isEmpty()){
         		geoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(geoZoneMCD.getOrgPrimary()));
 			}
@@ -536,6 +524,7 @@ public class MasterControllerMCDGeo {
 
             	existingGeoZoneMCD.setModifierIp(request.getRemoteAddr());
             	existingGeoZoneMCD.setModifiedDate(new Date());
+            	existingGeoZoneMCD.setModifiedByGuid("admin");
               
             	//dropdown
             	existingGeoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
