@@ -4,17 +4,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgRadius;
+import com.master.app.pims.entities.schemas.master.OrgUnit;
+import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -22,29 +31,36 @@ import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
+import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
+import com.master.app.pims.repositories.mst.RefDocsCategoryMapRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
+import com.master.app.pims.repositories.usr.RefUserDocsMapRepo;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
@@ -105,6 +121,15 @@ public class MasterControllerMCDCommon {
 
 	@Autowired
 	private SmsEmailTemplateRepository smsEmailTemplateRepository;
+
+	@Autowired
+	private OrgRadiusRepository orgRadiusRepository;
+	
+	@Autowired
+	private RefDocsCategoryMapRepository refDocsCategoryMapRepository;
+	
+	 @Autowired
+	 private RefUserDocsMapRepo refUserDocsMapRepo;
 
 	////////////////////////////////////////////// Application Master
 	////////////////////////////////////////////// Start////////////////////////////
@@ -776,8 +801,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //get data by id
-	@GetMapping("/getRequestSubmissionTypeGuidGuid/{requestSubmissionTypeGuid}")
-	public ResponseEntity<RequestSubmissionType> getRequestSubmissionTypeGuidGuid(
+	@GetMapping("/getRequestSubmissionTypeGuid/{requestSubmissionTypeGuid}")
+	public ResponseEntity<RequestSubmissionType> getRequestSubmissionTypeGuid(
 			@PathVariable("requestSubmissionTypeGuid") String requestSubmissionTypeGuid) {
 		RequestSubmissionType reqType = requestSubmissionTypeRepository.findById(requestSubmissionTypeGuid)
 				.orElseThrow(() -> new ResourceNotFoundException(
@@ -2082,5 +2107,462 @@ public class MasterControllerMCDCommon {
 	}
 
 ////////////////////////////////////////////SmsEmailTemplate End //////////////////////////
+
+/////////////////////////////////////OrgRadius Start///////////////////////////////////
+
+	// get all data from table
+	@GetMapping("/getOrgRadiusList")
+	public ResponseEntity<BaseResponse> getOrgRadiusList() {
+		BaseResponse response = new BaseResponse();
+		// Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+		List<OrgRadius> list = orgRadiusRepository.findAll();
+		response.setMessage("success");
+		response.setStatus(true);
+		response.setTotalDataCount(list.size());
+		response.setOrgRadius(list);
+		return ResponseEntity.ok(response);
+	}
+	
+	//get all data  according to page and size
+//    @GetMapping("/getOrgRadiusByPage")
+//    public ResponseEntity<BaseResponse> getOrgRadiusByPage(@RequestParam(required = true, name = "page") int page, @RequestParam(required = true, name = "size") int size, @RequestParam(defaultValue = "createdDate", required = false) String sortBy) {
+//        BaseResponse response = new BaseResponse();
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+//        Page<OrgRadius> radiusPage = orgRadiusRepository.findAll(pageable);
+//        response.setMessage("success");
+//        response.setStatus(true);
+//        response.setTotalDataCount(orgRadiusRepository.findAll().size());
+//        response.setOrgRadius(radiusPage.toList());
+//        return ResponseEntity.ok(response);
+//    }
+
+	// Create New Data And Update
+	@PostMapping("/submitOrgRadius")
+	public BaseResponse submitOrgRadius(@RequestBody OrgRadius orgRadius, HttpServletRequest request) {
+		BaseResponse resultData = new BaseResponse();
+
+		// Check if guid is provided (indicating an update)
+		if (orgRadius.getOrgRadiusGuid() == null || orgRadius.getOrgRadiusGuid().isEmpty()) {
+
+			// Add new data
+			orgRadius.setCreatedIp(request.getRemoteAddr());
+			orgRadius.setOrgRadiusGuid(UUID.randomUUID().toString());
+			orgRadius.setCreatedDate(new Date());
+			orgRadius.setModifiedIp(null);
+			orgRadius.setModifiedByGuid(null);
+			orgRadius.setModifiedDate(null);
+			orgRadius.setCreatedByGuid(request.getRemoteAddr());
+
+			// for dropdown
+			orgRadius.setOrgUnitName(orgRadius.getOrgUnitBasicInfoGuid());
+			if (orgRadius.getOrgUnitName() != null && !orgRadius.getOrgUnitName().isEmpty()) {
+				orgRadius.setOrgUnitBasicInfoMaster(new OrgUnit(orgRadius.getOrgUnitName()));
+			}
+
+//						orgRadius.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//						orgRadius.setCreaterRemarks(userSessionParam.getUserFullName());
+			// orgRadius.setCreaterMacId(HttpSessionHelper.getMacAddress());
+			// orgRadius.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+		} else {
+			// Update existing data
+			OrgRadius existingOrgRadius = commonMasterService.getOrgRadiusById(orgRadius.getOrgRadiusGuid());
+
+			if (existingOrgRadius != null) {
+				existingOrgRadius
+						.setInRadius(!Util.isNullOrZero(orgRadius.getInRadius()) ? orgRadius.getInRadius() : null);
+				existingOrgRadius
+						.setOutRadius(!Util.isNullOrZero(orgRadius.getOutRadius()) ? orgRadius.getOutRadius() : null);
+
+				existingOrgRadius.setIsVerified(orgRadius.getIsVerified() != null ? orgRadius.getIsVerified()
+						: existingOrgRadius.getIsVerified());
+				existingOrgRadius.setIsModified(orgRadius.getIsModified() != null ? orgRadius.getIsModified()
+						: existingOrgRadius.getIsModified());
+				existingOrgRadius.setIsAttested(orgRadius.getIsAttested() != null ? orgRadius.getIsAttested()
+						: existingOrgRadius.getIsAttested());
+				existingOrgRadius
+						.setIsRecordActive(orgRadius.getIsRecordActive() != null ? orgRadius.getIsRecordActive()
+								: existingOrgRadius.getIsRecordActive());
+
+				existingOrgRadius.setModifiedIp(request.getRemoteAddr());
+				existingOrgRadius.setModifiedDate(new Date());
+				existingOrgRadius.setModifiedByGuid("admin");
+
+				// dropdown
+				existingOrgRadius.setOrgUnitName(orgRadius.getOrgUnitBasicInfoGuid());
+				if (existingOrgRadius.getOrgUnitName() != null && !existingOrgRadius.getOrgUnitName().isEmpty()) {
+					existingOrgRadius.setOrgUnitBasicInfoMaster(new OrgUnit(existingOrgRadius.getOrgUnitName()));
+				}
+
+				orgRadius = existingOrgRadius; // Use the updated existing country object
+			} else {
+				log.error("OrgRadius not found");
+				resultData.setStatus(false);
+				resultData.setMessage("OrgRadius not found");
+				return resultData;
+			}
+		}
+
+		// Validation
+		resultData = validator.validateOrgRadius(orgRadius);
+		if (resultData != null && !resultData.getStatus()) {
+			log.error("Validation failed: {}", resultData.getMessage());
+			return resultData;
+		}
+
+		// If validation passes, proceed to save or update
+		if (orgRadius.getIsRecordActive() == null)
+			orgRadius.setIsRecordActive(false);
+		orgRadius.setInRadius(!Util.isNullOrZero(orgRadius.getInRadius()) ? orgRadius.getInRadius() : null);
+		orgRadius.setOutRadius(!Util.isNullOrZero(orgRadius.getOutRadius()) ? orgRadius.getOutRadius() : null);
+
+		try {
+			orgRadiusRepository.save(orgRadius);
+			log.info("Record SaveOrUpdate Successfully");
+			resultData.setStatus(true);
+			resultData.setMessage("Record saved or updated successfully");
+		} catch (Exception e) {
+			log.error("Error saving or updating record: {}", e.getMessage());
+			resultData.setStatus(false);
+			resultData.setMessage("Error saving or updating record: " + e.getMessage());
+		}
+
+		return resultData;
+	}
+
+	// get data by id
+	@GetMapping("/getOrgRadiusByGuid/{orgRadiusGuid}")
+	public ResponseEntity<OrgRadius> getOrgRadiusByGuid(@PathVariable("orgRadiusGuid") String orgRadiusGuid) {
+		OrgRadius orgRadius = orgRadiusRepository.findById(orgRadiusGuid).orElseThrow(
+				() -> new ResourceNotFoundException("Resource not found with orgRadiusGuid : " + orgRadiusGuid));
+		return new ResponseEntity<>(orgRadius, HttpStatus.OK);
+	}
+
+	///////////////////////////////////// OrgRadius End///////////////////////////////////
+	
+/////////////////////////////////////RefDocsCategoryMap Start///////////////////////////////////
+    
+//get all data from table
+@GetMapping("/getRefDocsCategoryMapList")
+public ResponseEntity<BaseResponse> getRefDocsCategoryMapList() {
+BaseResponse response = new BaseResponse();
+// Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<RefDocsCategoryMap> list = refDocsCategoryMapRepository.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setRefDocsCategoryMap(list);
+return ResponseEntity.ok(response);
+}
+
+// Create New Data And Update
+@PostMapping("/submitRefDocsCategoryMap")
+public BaseResponse submitRefDocsCategoryMap(@RequestBody RefDocsCategoryMap refDocsCategoryMap, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+// Check if guid is provided (indicating an update)
+if (refDocsCategoryMap.getDocsCategoryMapGuid() == null || refDocsCategoryMap.getDocsCategoryMapGuid().isEmpty()) {
+
+// Add new data
+	refDocsCategoryMap.setCreatedIpAddr(request.getRemoteAddr());
+	refDocsCategoryMap.setDocsCategoryMapGuid(UUID.randomUUID().toString());
+	refDocsCategoryMap.setCreatedDate(new Date());
+	refDocsCategoryMap.setModifiedIpAddr(null);
+	refDocsCategoryMap.setCreatedBy("admin");
+	//refDocsCategoryMap.setModifiedByGuid(null);
+	refDocsCategoryMap.setModifiedDate(null);
+	//refDocsCategoryMap.setCreatedByGuid(request.getRemoteAddr());
+
+//for dropdown
+	refDocsCategoryMap.setAssessmentYear(refDocsCategoryMap.getAssessmentYearGuid());
+	refDocsCategoryMap.setDocsCategoryInfo(refDocsCategoryMap.getDocsCategoryInfoGuid());
+	refDocsCategoryMap.setDocsSubmissionInfo(refDocsCategoryMap.getDocsSubmissionInfoGuid());
+	refDocsCategoryMap.setRequestSubmissionType(refDocsCategoryMap.getRequestSubmissionTypeGuid());
+
+	//AssessmentYear
+if(refDocsCategoryMap.getAssessmentYear()!=null && !refDocsCategoryMap.getAssessmentYear().isEmpty()){
+	refDocsCategoryMap.setAssessmentYearMaster(new AssessmentYear(refDocsCategoryMap.getAssessmentYear()));
+}
+
+//DocsCategoryInfo
+if(refDocsCategoryMap.getDocsCategoryInfo()!=null && !refDocsCategoryMap.getDocsCategoryInfo().isEmpty()){
+	refDocsCategoryMap.setDocsCategoryInfoMaster(new DocsCategoryInfo(refDocsCategoryMap.getDocsCategoryInfo()));
+}
+
+//DocsSubmissionInfo
+if(refDocsCategoryMap.getDocsSubmissionInfo()!=null && !refDocsCategoryMap.getDocsSubmissionInfo().isEmpty()){
+	refDocsCategoryMap.setDocsSubmissionInfoMaster(new DocsSubmissionInfo(refDocsCategoryMap.getDocsSubmissionInfo()));
+}
+
+//RequestSubmissionType
+if(refDocsCategoryMap.getRequestSubmissionType()!=null && !refDocsCategoryMap.getRequestSubmissionType().isEmpty()){
+	refDocsCategoryMap.setRequestSubmissionTypeMaster(new RequestSubmissionType(refDocsCategoryMap.getRequestSubmissionType()));
+}
+
+if (refDocsCategoryMap.getIsExtraDocInfoRequired() == null)
+	refDocsCategoryMap.setIsExtraDocInfoRequired(false);
+
+if (refDocsCategoryMap.getIsMandatory() == null)
+	refDocsCategoryMap.setIsMandatory(false);
+
+if (refDocsCategoryMap.getIsActive() == null)
+	refDocsCategoryMap.setIsActive(false);
+
+//refDocsCategoryMap.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//refDocsCategoryMap.setCreaterRemarks(userSessionParam.getUserFullName());
+//refDocsCategoryMap.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//refDocsCategoryMap.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+// Update existing data
+	RefDocsCategoryMap existingRefDocsCategoryMap = commonMasterService.getRefDocsCategoryMapById(refDocsCategoryMap.getDocsCategoryMapGuid());
+
+if (existingRefDocsCategoryMap != null) {
+	existingRefDocsCategoryMap.setIsExtraDocInfoRequired(refDocsCategoryMap.getIsExtraDocInfoRequired() != null ? refDocsCategoryMap.getIsExtraDocInfoRequired() : existingRefDocsCategoryMap.getIsExtraDocInfoRequired());
+	existingRefDocsCategoryMap.setIsMandatory(refDocsCategoryMap.getIsMandatory() != null ? refDocsCategoryMap.getIsMandatory() : existingRefDocsCategoryMap.getIsMandatory());	
+	existingRefDocsCategoryMap.setIsActive(refDocsCategoryMap.getIsActive() != null ? refDocsCategoryMap.getIsActive() : existingRefDocsCategoryMap.getIsActive());
+	
+	existingRefDocsCategoryMap.setModifiedIpAddr(request.getRemoteAddr());
+	existingRefDocsCategoryMap.setModifiedDate(new Date());
+	existingRefDocsCategoryMap.setModifiedBy("admin");
+	//existingRefDocsCategoryMap.setModifiedByGuid("admin");
+
+//dropdown
+	existingRefDocsCategoryMap.setAssessmentYear(refDocsCategoryMap.getAssessmentYearGuid());
+	existingRefDocsCategoryMap.setDocsCategoryInfo(refDocsCategoryMap.getDocsCategoryInfoGuid());
+	existingRefDocsCategoryMap.setDocsSubmissionInfo(refDocsCategoryMap.getDocsSubmissionInfoGuid());
+	existingRefDocsCategoryMap.setRequestSubmissionType(refDocsCategoryMap.getRequestSubmissionTypeGuid());
+
+//AssessmentYear
+if(existingRefDocsCategoryMap.getAssessmentYear()!=null && !existingRefDocsCategoryMap.getAssessmentYear().isEmpty()){
+	existingRefDocsCategoryMap.setAssessmentYearMaster(new AssessmentYear(existingRefDocsCategoryMap.getAssessmentYear()));
+}
+
+//DocsCategoryInfo
+if(existingRefDocsCategoryMap.getDocsCategoryInfo()!=null && !existingRefDocsCategoryMap.getDocsCategoryInfo().isEmpty()){
+	existingRefDocsCategoryMap.setDocsCategoryInfoMaster(new DocsCategoryInfo(existingRefDocsCategoryMap.getDocsCategoryInfo()));
+}
+
+//DocsSubmissionInfo
+if(existingRefDocsCategoryMap.getDocsSubmissionInfo()!=null && !existingRefDocsCategoryMap.getDocsSubmissionInfo().isEmpty()){
+	existingRefDocsCategoryMap.setDocsSubmissionInfoMaster(new DocsSubmissionInfo(existingRefDocsCategoryMap.getDocsSubmissionInfo()));
+}
+
+//RequestSubmissionType
+if(existingRefDocsCategoryMap.getRequestSubmissionType()!=null && !existingRefDocsCategoryMap.getRequestSubmissionType().isEmpty()){
+	existingRefDocsCategoryMap.setRequestSubmissionTypeMaster(new RequestSubmissionType(existingRefDocsCategoryMap.getRequestSubmissionType()));
+}
+
+if (existingRefDocsCategoryMap.getIsExtraDocInfoRequired() == null)
+	existingRefDocsCategoryMap.setIsExtraDocInfoRequired(false);
+
+if (existingRefDocsCategoryMap.getIsMandatory() == null)
+	existingRefDocsCategoryMap.setIsMandatory(false);
+
+if (existingRefDocsCategoryMap.getIsActive() == null)
+	existingRefDocsCategoryMap.setIsActive(false);
+
+refDocsCategoryMap = existingRefDocsCategoryMap; // Use the updated existing country object
+} else {
+log.error("RefDocsCategoryMap not found");
+resultData.setStatus(false);
+resultData.setMessage("RefDocsCategoryMap not found");
+return resultData;
+}
+}
+
+// Validation
+resultData = validator.validateRefDocsCategoryMap(refDocsCategoryMap);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+// If validation passes, proceed to save or update
+if (refDocsCategoryMap.getIsExtraDocInfoRequired() == null) refDocsCategoryMap.setIsExtraDocInfoRequired(false);
+if (refDocsCategoryMap.getIsMandatory() == null) refDocsCategoryMap.setIsMandatory(false);
+if (refDocsCategoryMap.getIsActive() == null) refDocsCategoryMap.setIsActive(false);
+//geoZoneMCD.setZoneCode(!Util.isNullOrEmpty(geoZoneMCD.getZoneCode()) ? geoZoneMCD.getZoneCode().toUpperCase().trim() : null);
+//geoZoneMCD.setZoneNameEn(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameEn()) ? geoZoneMCD.getZoneNameEn().toUpperCase().trim() : null);
+
+try {
+refDocsCategoryMapRepository.save(refDocsCategoryMap);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getRefDocsCategoryMapByGuid/{docsCategoryMapGuid}")
+public ResponseEntity<RefDocsCategoryMap> getRefDocsCategoryMapByGuid(@PathVariable("docsCategoryMapGuid") String docsCategoryMapGuid) {
+	RefDocsCategoryMap refDocsCategoryMap = refDocsCategoryMapRepository.findById(docsCategoryMapGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with docsCategoryMapGuid : " + docsCategoryMapGuid));
+return new ResponseEntity<>(refDocsCategoryMap, HttpStatus.OK);
+}
+
+/////////////////////////////////////RefDocsCategoryMap End///////////////////////////////////
+
+/////////////////////////////////////RefUserDocsMap Start///////////////////////////////////
+
+//get all data from table
+@GetMapping("/getRefUserDocsMapList")
+public ResponseEntity<BaseResponse> getRefUserDocsMapList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<RefUserDocsMap> list = refUserDocsMapRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setRefUserDocsMap(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitRefUserDocsMap")
+public BaseResponse submitRefUserDocsMap(@RequestBody RefUserDocsMap refUserDocsMap, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (refUserDocsMap.getUserDocsMapGuid() == null || refUserDocsMap.getUserDocsMapGuid().isEmpty()) {
+
+//Add new data
+	refUserDocsMap.setCreatedIpAddr(request.getRemoteAddr());
+	refUserDocsMap.setUserDocsMapGuid(UUID.randomUUID().toString());
+	refUserDocsMap.setCreatedDate(new Date());
+	refUserDocsMap.setModifiedIpAddr(null);
+	refUserDocsMap.setCreatedBy("admin");
+//refUserDocsMap.setModifiedByGuid(null);
+	refUserDocsMap.setModifiedDate(null);
+	refUserDocsMap.setModifiedBy(null);
+//refUserDocsMap.setCreatedByGuid(request.getRemoteAddr());
+
+//for dropdown
+	refUserDocsMap.setAssessmentYear(refUserDocsMap.getAssessmentYearGuid());
+	refUserDocsMap.setDocsSubmissionInfo(refUserDocsMap.getDocsSubmissionInfoGuid());
+	refUserDocsMap.setRequestSubmissionType(refUserDocsMap.getRequestSubmissionTypeGuid());
+
+//AssessmentYear
+if(refUserDocsMap.getAssessmentYear()!=null && !refUserDocsMap.getAssessmentYear().isEmpty()){
+	refUserDocsMap.setAssessmentYearMaster(new AssessmentYear(refUserDocsMap.getAssessmentYear()));
+}
+
+//DocsSubmissionInfo
+if(refUserDocsMap.getDocsSubmissionInfo()!=null && !refUserDocsMap.getDocsSubmissionInfo().isEmpty()){
+	refUserDocsMap.setDocsSubmissionInfoMaster(new DocsSubmissionInfo(refUserDocsMap.getDocsSubmissionInfo()));
+}
+
+//RequestSubmissionType
+if(refUserDocsMap.getRequestSubmissionType()!=null && !refUserDocsMap.getRequestSubmissionType().isEmpty()){
+	refUserDocsMap.setRequestSubmissionTypeMaster(new RequestSubmissionType(refUserDocsMap.getRequestSubmissionType()));
+}
+
+if (refUserDocsMap.getIsExtraDocInfoRequired() == null)
+	refUserDocsMap.setIsExtraDocInfoRequired(false);
+
+if (refUserDocsMap.getIsMandatory() == null)
+	refUserDocsMap.setIsMandatory(false);
+
+if (refUserDocsMap.getIsActive() == null)
+	refUserDocsMap.setIsActive(false);
+
+//refUserDocsMap.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//refUserDocsMap.setCreaterRemarks(userSessionParam.getUserFullName());
+//refUserDocsMap.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//refUserDocsMap.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+//Update existing data
+	RefUserDocsMap existingRefUserDocsMap = commonMasterService.getRefUserDocsMapById(refUserDocsMap.getUserDocsMapGuid());
+
+if (existingRefUserDocsMap != null) {
+	existingRefUserDocsMap.setUserType(!Util.isNullOrEmpty(refUserDocsMap.getUserType()) ? refUserDocsMap.getUserType().toUpperCase().trim() : null);
+	existingRefUserDocsMap.setIsExtraDocInfoRequired(refUserDocsMap.getIsExtraDocInfoRequired() != null ? refUserDocsMap.getIsExtraDocInfoRequired() : existingRefUserDocsMap.getIsExtraDocInfoRequired());
+	existingRefUserDocsMap.setIsMandatory(refUserDocsMap.getIsMandatory() != null ? refUserDocsMap.getIsMandatory() : existingRefUserDocsMap.getIsMandatory());	
+	existingRefUserDocsMap.setIsActive(refUserDocsMap.getIsActive() != null ? refUserDocsMap.getIsActive() : existingRefUserDocsMap.getIsActive());
+
+	existingRefUserDocsMap.setModifiedIpAddr(request.getRemoteAddr());
+	existingRefUserDocsMap.setModifiedDate(new Date());
+	existingRefUserDocsMap.setModifiedBy("admin");
+//existingRefUserDocsMap.setModifiedByGuid("admin");
+
+//dropdown
+	existingRefUserDocsMap.setAssessmentYear(refUserDocsMap.getAssessmentYearGuid());
+	existingRefUserDocsMap.setDocsSubmissionInfo(refUserDocsMap.getDocsSubmissionInfoGuid());
+	existingRefUserDocsMap.setRequestSubmissionType(refUserDocsMap.getRequestSubmissionTypeGuid());
+
+//AssessmentYear
+if(existingRefUserDocsMap.getAssessmentYear()!=null && !existingRefUserDocsMap.getAssessmentYear().isEmpty()){
+	existingRefUserDocsMap.setAssessmentYearMaster(new AssessmentYear(existingRefUserDocsMap.getAssessmentYear()));
+}
+
+//DocsSubmissionInfo
+if(existingRefUserDocsMap.getDocsSubmissionInfo()!=null && !existingRefUserDocsMap.getDocsSubmissionInfo().isEmpty()){
+	existingRefUserDocsMap.setDocsSubmissionInfoMaster(new DocsSubmissionInfo(existingRefUserDocsMap.getDocsSubmissionInfo()));
+}
+
+//RequestSubmissionType
+if(existingRefUserDocsMap.getRequestSubmissionType()!=null && !existingRefUserDocsMap.getRequestSubmissionType().isEmpty()){
+	existingRefUserDocsMap.setRequestSubmissionTypeMaster(new RequestSubmissionType(existingRefUserDocsMap.getRequestSubmissionType()));
+}
+
+if (existingRefUserDocsMap.getIsExtraDocInfoRequired() == null)
+	existingRefUserDocsMap.setIsExtraDocInfoRequired(false);
+
+if (existingRefUserDocsMap.getIsMandatory() == null)
+	existingRefUserDocsMap.setIsMandatory(false);
+
+if (existingRefUserDocsMap.getIsActive() == null)
+	existingRefUserDocsMap.setIsActive(false);
+
+refUserDocsMap = existingRefUserDocsMap; // Use the updated existing country object
+} else {
+log.error("RefUserDocsMap not found");
+resultData.setStatus(false);
+resultData.setMessage("RefUserDocsMap not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateRefUserDocsMap(refUserDocsMap);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (refUserDocsMap.getIsExtraDocInfoRequired() == null) refUserDocsMap.setIsExtraDocInfoRequired(false);
+if (refUserDocsMap.getIsMandatory() == null) refUserDocsMap.setIsMandatory(false);
+if (refUserDocsMap.getIsActive() == null) refUserDocsMap.setIsActive(false);
+refUserDocsMap.setUserType(!Util.isNullOrEmpty(refUserDocsMap.getUserType()) ? refUserDocsMap.getUserType().toUpperCase().trim() : null);
+//refUserDocsMap.setZoneNameEn(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameEn()) ? geoZoneMCD.getZoneNameEn().toUpperCase().trim() : null);
+
+try {
+	refUserDocsMapRepo.save(refUserDocsMap);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getRefUserDocsMapByGuid/{userDocsMapGuid}")
+public ResponseEntity<RefUserDocsMap> getRefUserDocsMapByGuid(@PathVariable("userDocsMapGuid") String userDocsMapGuid) {
+	RefUserDocsMap refUserDocsMap = refUserDocsMapRepo.findById(userDocsMapGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with userDocsMapGuid : " + userDocsMapGuid));
+return new ResponseEntity<>(refUserDocsMap, HttpStatus.OK);
+}
+
+/////////////////////////////////////RefUserDocsMap End///////////////////////////////////
+
+
 
 }

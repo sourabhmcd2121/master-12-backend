@@ -8,14 +8,17 @@ package com.master.app.pims.entities.schemas.mst;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.*;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "docs_submission_info", schema="mst")
 //@XmlRootElement
@@ -83,6 +86,11 @@ public class DocsSubmissionInfo implements Serializable {
 
     @Column(name = "modifier_remarks")
     private String modiferRemarks;
+
+	public DocsSubmissionInfo(String docsSubmissionInfoGuid) {
+		super();
+		this.docsSubmissionInfoGuid = docsSubmissionInfoGuid;
+	}
 
 
 	

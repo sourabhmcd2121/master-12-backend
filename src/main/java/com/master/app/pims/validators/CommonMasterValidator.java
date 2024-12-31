@@ -3,6 +3,7 @@ package com.master.app.pims.validators;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
@@ -16,17 +17,20 @@ import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
+import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
@@ -37,11 +41,13 @@ import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
+import com.master.app.pims.repositories.mst.RefDocsCategoryMapRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
+import com.master.app.pims.repositories.usr.RefUserDocsMapRepo;
 import com.master.app.pims.utils.PropertyReader;
 import com.master.app.pims.utils.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +120,15 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private GeoZoneMCDRepository geoZoneMCDRepository;
+    
+    @Autowired
+	private OrgRadiusRepository orgRadiusRepository;
+    
+    @Autowired
+   	private RefDocsCategoryMapRepository refDocsCategoryMapRepository;
+    
+    @Autowired
+   	private RefUserDocsMapRepo refUserDocsMapRepo;
     
     //mst country validation
     @Override
@@ -1130,7 +1145,114 @@ public BaseResponse validateGeoZoneMCD(GeoZoneMCD geoZoneMcd) {
     	 
      } catch (Exception e) {
          resultData.setStatus(false);
-         resultData.setMessage("Error validating orgWrapper: " + e.getMessage());
+         resultData.setMessage("Error validating GeoZoneMCD: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateOrgRadius(OrgRadius orgRadius) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    		if (Util.isNullOrEmpty(orgRadius.getOrgUnitName())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.orgRadius.orgUnitName.required"));
+				return resultData;
+			}
+			
+			if (Util.isNullOrZero(orgRadius.getInRadius())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.orgRadius.inRadius.valid"));
+				return resultData;
+			}
+			if (Util.isNullOrZero(orgRadius.getOutRadius())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.orgRadius.outRadius.valid"));
+				return resultData;
+			}
+    	
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating OrgRadius: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRefDocsCategoryMap(RefDocsCategoryMap refDocsCategoryMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    		
+    	 if (Util.isNullOrEmpty(refDocsCategoryMap.getAssessmentYear())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.refDocsCategoryMap.assessmentYear.required"));
+				return resultData;
+			}
+
+			if (Util.isNullOrEmpty(refDocsCategoryMap.getDocsCategoryInfo())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.refDocsCategoryMap.docsCategoryInfo.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refDocsCategoryMap.getDocsSubmissionInfo())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.refDocsCategoryMap.docsSubmissioninfo.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refDocsCategoryMap.getRequestSubmissionType())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.refDocsCategoryMap.requestSubmissionType.required"));
+				return resultData;
+			}
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating RefDocsCategoryMap: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRefUserDocsMap(RefUserDocsMap refUserDocsMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    		if (Util.isNullOrEmpty(refUserDocsMap.getAssessmentYear())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.usrRefUserDocsMap.assessmentYear.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refUserDocsMap.getDocsSubmissionInfo())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.usrRefUserDocsMap.docsSubmissioninfo.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refUserDocsMap.getRequestSubmissionType())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.usrRefUserDocsMap.requestSubmissionType.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refUserDocsMap.getUserType())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.usrRefUserDocsMap.userType.required"));
+				return resultData;
+			}
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating RefUserDocsMap: " + e.getMessage());
      }
      return resultData;
 }

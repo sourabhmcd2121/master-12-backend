@@ -4,13 +4,17 @@ import java.io.Serializable;
 import java.util.Date;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "docs_category_info", schema = "mst")
 public class DocsCategoryInfo implements Serializable{
@@ -80,6 +84,11 @@ public class DocsCategoryInfo implements Serializable{
 
 	@Column(name = "modified_uri")
 	private String modifiedUri;
+
+	public DocsCategoryInfo(String docsCategoryInfoGuid) {
+		super();
+		this.docsCategoryInfoGuid = docsCategoryInfoGuid;
+	}
 
 	
 }

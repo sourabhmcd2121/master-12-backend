@@ -2,6 +2,7 @@ package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
@@ -15,16 +16,19 @@ import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
+import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
@@ -35,11 +39,13 @@ import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
+import com.master.app.pims.repositories.mst.RefDocsCategoryMapRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
 import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
+import com.master.app.pims.repositories.usr.RefUserDocsMapRepo;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +116,14 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     @Autowired
     private GeoZoneMCDRepository geoZoneMCDRepository;
     
+    @Autowired
+	private OrgRadiusRepository orgRadiusRepository;
+    
+    @Autowired
+   	private RefDocsCategoryMapRepository refDocsCategoryMapRepository;
+    
+    @Autowired
+   	private RefUserDocsMapRepo refUserDocsMapRepo;
     
     
     
@@ -342,6 +356,41 @@ public class CommonMasterServiceImpl implements CommonMasterService {
         return geoZoneMCDRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
+
+	@Override
+	public OrgRadius saveOrgRadius(OrgRadius orgRadius) {
+		 return orgRadiusRepository.save(orgRadius);
+	}
+
+	@Override
+	public OrgRadius getOrgRadiusById(String id) {
+        return orgRadiusRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RefDocsCategoryMap saveRefDocsCategoryMap(RefDocsCategoryMap refDocsCategoryMap) {
+		 return refDocsCategoryMapRepository.save(refDocsCategoryMap);
+	}
+
+	@Override
+	public RefDocsCategoryMap getRefDocsCategoryMapById(String id) {
+        return refDocsCategoryMapRepository.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RefUserDocsMap saveRefUserDocsMap(RefUserDocsMap refUserDocsMap) {
+		 return refUserDocsMapRepo.save(refUserDocsMap);
+	}
+
+	@Override
+	public RefUserDocsMap getRefUserDocsMapById(String id) {
+        return refUserDocsMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	
 
 	
 	

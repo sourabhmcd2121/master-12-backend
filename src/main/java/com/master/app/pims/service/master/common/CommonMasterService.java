@@ -2,6 +2,7 @@ package com.master.app.pims.service.master.common;
 
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
@@ -15,11 +16,13 @@ import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
+import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
 import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 
 
 public interface CommonMasterService {
@@ -102,5 +105,17 @@ public interface CommonMasterService {
     ///for OrgWrapper join with master schema
     GeoZoneMCD saveGeoZoneMCD(GeoZoneMCD geoZoneMCD);
     GeoZoneMCD getGeoZoneMCDById(String id);
+    
+    ///for OrgRadius join with attendance schema
+    OrgRadius saveOrgRadius(OrgRadius orgRadius);
+    OrgRadius getOrgRadiusById(String id);
+    
+  ///for RefDocsCategoryMap join with mst schema
+    RefDocsCategoryMap saveRefDocsCategoryMap(RefDocsCategoryMap refDocsCategoryMap);
+    RefDocsCategoryMap getRefDocsCategoryMapById(String id);
+    
+    ///for RefUserDocsMap join with usr schema
+    RefUserDocsMap saveRefUserDocsMap(RefUserDocsMap refUserDocsMap);
+    RefUserDocsMap getRefUserDocsMapById(String id);
     
 }

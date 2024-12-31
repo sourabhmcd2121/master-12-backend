@@ -1,12 +1,15 @@
 package com.master.app.pims.controller.master;
 
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
+import com.master.app.pims.entities.schemas.master.OrgUnit;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.models.response.MasterGeoCountryResponse;
 import com.master.app.pims.repositories.DesignationAppointmentTypeRepository;
 import com.master.app.pims.repositories.master.GeoCountryMasterRepo;
 import com.master.app.pims.repositories.master.GeoDistrictRepo;
+import com.master.app.pims.repositories.master.OrgUnitRepository;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,9 @@ public class MasterGeoController {
 
     @Autowired
     private GeoDistrictRepo geoDistrictRepo;
+    
+    @Autowired
+    private OrgUnitRepository orgUnitRepository;
 
 //    @Autowired
 //    private GeoStateMasterRepository geoStateMasterRepository;
@@ -169,6 +175,25 @@ public class MasterGeoController {
         GeoCountryMaster geoCountry = geoCountryMasterRepo.findById(countryMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMasterGuid : " + countryMasterGuid));
         return new ResponseEntity<>(geoCountry, HttpStatus.OK);
     }
+    
+    
+    //////////////////////////////////////////////////////OrgUnit Start//////////////////////////////
+    //get all data from table
+    @GetMapping("/getOrgUnitList")
+    public ResponseEntity<BaseResponse> getOrgUnitList() {
+        BaseResponse response = new BaseResponse();
+        // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        List<OrgUnit> list = orgUnitRepository.findAll();
+        response.setMessage("success");
+        response.setStatus(true);
+        response.setTotalDataCount(list.size());
+        response.setOrgUnit(list);
+        return ResponseEntity.ok(response);
+    }
+    
+    
+    
+    //////////////////////////////////////////////////////OrgUnit Start//////////////////////////////
 
 
 }

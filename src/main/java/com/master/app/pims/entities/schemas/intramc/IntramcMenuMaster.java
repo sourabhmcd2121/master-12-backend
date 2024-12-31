@@ -3,8 +3,22 @@ package com.master.app.pims.entities.schemas.intramc;
 import java.io.Serializable;
 import java.util.Date;
 
-import jakarta.persistence.*;
+import com.master.app.pims.entities.schemas.mst.AssessmentYear;
+import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
+import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
+import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "menu_master", schema = "intramc")
 public class IntramcMenuMaster implements Serializable{
@@ -86,191 +100,11 @@ public class IntramcMenuMaster implements Serializable{
 	@Column(name = "is_attested")
 	private Boolean isAttested;
 
-	public IntramcMenuMaster() {
-		super();
-	}
 	public IntramcMenuMaster(String menuMasterGuid) {
 		super();
 		this.menuMasterGuid = menuMasterGuid;
 	}
 
-	public String getMenuMasterGuid() {
-		return menuMasterGuid;
-	}
-
-	public void setMenuMasterGuid(String menuMasterGuid) {
-		this.menuMasterGuid = menuMasterGuid;
-	}
-
-	public String getIntraMenuCode() {
-		return intraMenuCode;
-	}
-
-	public void setIntraMenuCode(String intraMenuCode) {
-		this.intraMenuCode = intraMenuCode;
-	}
-
-	public String getIntraMenuNameEn() {
-		return intraMenuNameEn;
-	}
-
-	public void setIntraMenuNameEn(String intraMenuNameEn) {
-		this.intraMenuNameEn = intraMenuNameEn;
-	}
-
-	public String getIntraMenuNameHi() {
-		return intraMenuNameHi;
-	}
-
-	public void setIntraMenuNameHi(String intraMenuNameHi) {
-		this.intraMenuNameHi = intraMenuNameHi;
-	}
-
-	public String getIntraMenuDesc() {
-		return intraMenuDesc;
-	}
-
-	public void setIntraMenuDesc(String intraMenuDesc) {
-		this.intraMenuDesc = intraMenuDesc;
-	}
-
-	public String getIntraMenuUri() {
-		return intraMenuUri;
-	}
-
-	public String getAppCode() {
-		return appCode;
-	}
-	public void setAppCode(String appCode) {
-		this.appCode = appCode;
-	}
-	public void setIntraMenuUri(String intraMenuUri) {
-		this.intraMenuUri = intraMenuUri;
-	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public Boolean getIsRecordActive() {
-		return isRecordActive;
-	}
-
-	public void setIsRecordActive(Boolean isRecordActive) {
-		this.isRecordActive = isRecordActive;
-	}
-
-	public String getCreatedByGuid() {
-		return createdByGuid;
-	}
-
-	public void setCreatedByGuid(String createdByGuid) {
-		this.createdByGuid = createdByGuid;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getCreaterIp() {
-		return createrIp;
-	}
-
-	public void setCreaterIp(String createrIp) {
-		this.createrIp = createrIp;
-	}
-
-	public String getCreaterMacId() {
-		return createrMacId;
-	}
-
-	public void setCreaterMacId(String createrMacId) {
-		this.createrMacId = createrMacId;
-	}
-
-	public String getModifiedByGuid() {
-		return modifiedByGuid;
-	}
-
-	public void setModifiedByGuid(String modifiedByGuid) {
-		this.modifiedByGuid = modifiedByGuid;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
-
-	public String getModifierIp() {
-		return modifierIp;
-	}
-
-	public void setModifierIp(String modifierIp) {
-		this.modifierIp = modifierIp;
-	}
-
-	public String getModifierMacId() {
-		return modifierMacId;
-	}
-
-	public void setModifierMacId(String modifierMacId) {
-		this.modifierMacId = modifierMacId;
-	}
-
-	public Boolean getIsVerified() {
-		return isVerified;
-	}
-
-	public void setIsVerified(Boolean isVerified) {
-		this.isVerified = isVerified;
-	}
-
-	public Boolean getIsModified() {
-		return isModified;
-	}
-
-	public void setIsModified(Boolean isModified) {
-		this.isModified = isModified;
-	}
-
-	public Boolean getIsAttested() {
-		return isAttested;
-	}
-
-	public void setIsAttested(Boolean isAttested) {
-		this.isAttested = isAttested;
-	}
-	public String getCreatedRemarks() {
-		return createdRemarks;
-	}
-	public void setCreatedRemarks(String createdRemarks) {
-		this.createdRemarks = createdRemarks;
-	}
-	public String getModifiedRemarks() {
-		return modifiedRemarks;
-	}
-	public void setModifiedRemarks(String modifiedRemarks) {
-		this.modifiedRemarks = modifiedRemarks;
-	}
-
+	
 
 }

@@ -480,10 +480,6 @@ public class MasterControllerMCDGeo {
 
         // Check if guid is provided (indicating an update)
         if (geoZoneMCD.getZoneGuid() == null || geoZoneMCD.getZoneGuid().isEmpty()) {
-        	  
-        	//dropdown
-        	geoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
-        	geoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
         	
             // Add new data
         	geoZoneMCD.setCreaterIp(request.getRemoteAddr());
@@ -495,7 +491,8 @@ public class MasterControllerMCDGeo {
         	geoZoneMCD.setCreatedByGuid(request.getRemoteAddr());
         	
         	//for dropdown
-        	
+        	geoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
+        	geoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
         	if(geoZoneMCD.getOrgPrimary()!=null && !geoZoneMCD.getOrgPrimary().isEmpty()){
         		geoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(geoZoneMCD.getOrgPrimary()));
 			}
@@ -504,6 +501,8 @@ public class MasterControllerMCDGeo {
         		geoZoneMCD.setWrapperMaster(new OrgWrapper(geoZoneMCD.getOrgWrapper()));
 			}
             
+        	 if (geoZoneMCD.getIsActive() == null)
+        		 geoZoneMCD.setIsActive(false);
 //			geoZoneMCD.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			geoZoneMCD.setCreaterRemarks(userSessionParam.getUserFullName());
             //geoZoneMCD.setCreaterMacId(HttpSessionHelper.getMacAddress());
@@ -535,10 +534,10 @@ public class MasterControllerMCDGeo {
             	if(existingGeoZoneMCD.getOrgWrapper()!=null && !existingGeoZoneMCD.getOrgWrapper().isEmpty()){
             		existingGeoZoneMCD.setWrapperMaster(new OrgWrapper(existingGeoZoneMCD.getOrgWrapper()));
     			}
-                
             	
-                //existingGeoZoneMCD.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
-                //existingGeoZoneMCD.setModifierMacId(HttpSessionHelper.getMacAddress());
+            	 if (existingGeoZoneMCD.getIsActive() == null)
+            		 existingGeoZoneMCD.setIsActive(false);
+                
                	geoZoneMCD = existingGeoZoneMCD; // Use the updated existing country object
             } else {
                 log.error("Zone not found");

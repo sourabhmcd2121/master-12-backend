@@ -9,11 +9,17 @@ import java.io.Serializable;
 import java.util.Date;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- *
- * @author Sourbh
- */
+@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "assessment_year", schema = "mst")
 //@XmlRootElement
@@ -83,180 +89,13 @@ public class AssessmentYear implements Serializable {
 	private String modifierMacId;
 //	@Column(name = "modified_remarks")
 //	private String modiferRemarks;
-
-	public AssessmentYear() {
-
-	}
-
 	public AssessmentYear(String assessmentYearGuid) {
 		super();
 		this.assessmentYearGuid = assessmentYearGuid;
 	}
 
-	public String getAssessmentYearGuid() {
-		return assessmentYearGuid;
-	}
+	
 
-	public void setAssessmentYearGuid(String assessmentYearGuid) {
-		this.assessmentYearGuid = assessmentYearGuid;
-	}
-
-	public String getAssessmentYearCode() {
-		return assessmentYearCode;
-	}
-
-	public void setAssessmentYearCode(String assessmentYearCode) {
-		this.assessmentYearCode = assessmentYearCode;
-	}
-
-
-
-
-
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public Date getGeneralStartDate() {
-		return generalStartDate;
-	}
-
-	public void setGeneralStartDate(Date generalStartDate) {
-		this.generalStartDate = generalStartDate;
-	}
-
-	public Date getGeneralEndDate() {
-		return generalEndDate;
-	}
-
-	public void setGeneralEndDate(Date generalEndDate) {
-		this.generalEndDate = generalEndDate;
-	}
-
-
-	public Integer getStartYear() {
-		return startYear;
-	}
-
-	public void setStartYear(Integer startYear) {
-		this.startYear = startYear;
-	}
-
-	public Integer getEndYear() {
-		return endYear;
-	}
-
-	public void setEndYear(Integer endYear) {
-		this.endYear = endYear;
-	}
-
-	public String getAssessmentYearDesc() {
-		return assessmentYearDesc;
-	}
-
-	public void setAssessmentYearDesc(String assessmentYearDesc) {
-		this.assessmentYearDesc = assessmentYearDesc;
-	}
-
-	public String getCreatedByGuid() {
-		return createdByGuid;
-	}
-
-	public void setCreatedByGuid(String createdByGuid) {
-		this.createdByGuid = createdByGuid;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getCreaterIp() {
-		return createrIp;
-	}
-
-	public void setCreaterIp(String createrIp) {
-		this.createrIp = createrIp;
-	}
-
-	public String getCreaterMacId() {
-		return createrMacId;
-	}
-
-	public void setCreaterMacId(String createrMacId) {
-		this.createrMacId = createrMacId;
-	}
-
-	public String getModifiedByGuid() {
-		return modifiedByGuid;
-	}
-
-	public void setModifiedByGuid(String modifiedByGuid) {
-		this.modifiedByGuid = modifiedByGuid;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
-
-	public String getModifierIp() {
-		return modifierIp;
-	}
-
-	public void setModifierIp(String modifierIp) {
-		this.modifierIp = modifierIp;
-	}
-
-	public String getModifierMacId() {
-		return modifierMacId;
-	}
-
-	public void setModifierMacId(String modifierMacId) {
-		this.modifierMacId = modifierMacId;
-	}
-
-//	public String getCreaterRemarks() {
-//		return createrRemarks;
-//	}
-//
-//	public void setCreaterRemarks(String createrRemarks) {
-//		this.createrRemarks = createrRemarks;
-//	}
-
-//	public String getModiferRemarks() {
-//		return modiferRemarks;
-//	}
-//
-//	public void setModiferRemarks(String modiferRemarks) {
-//		this.modiferRemarks = modiferRemarks;
-//	}
+	
 
 }
