@@ -1,6 +1,7 @@
 package com.master.app.pims.validators;
 
 
+import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -28,6 +29,7 @@ import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+import com.master.app.pims.repositories.citizen.HeaderRibbonRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
@@ -129,6 +131,10 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private RefUserDocsMapRepo refUserDocsMapRepo;
+    
+    @Autowired
+   	private HeaderRibbonRepo headerRibbonRepo;
+    
     
     //mst country validation
     @Override
@@ -1253,6 +1259,21 @@ public BaseResponse validateRefUserDocsMap(RefUserDocsMap refUserDocsMap) {
      } catch (Exception e) {
          resultData.setStatus(false);
          resultData.setMessage("Error validating RefUserDocsMap: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateHeaderRibbon(HeaderRibbon headerRibbon) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    		
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating HeaderRibbon: " + e.getMessage());
      }
      return resultData;
 }

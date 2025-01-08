@@ -1,5 +1,6 @@
 package com.master.app.pims.validators;
 
+import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -97,5 +98,8 @@ public interface Validator {
     //RefDocsCategoryMap validation
     BaseResponse validateRefUserDocsMap(RefUserDocsMap refUserDocsMap);
     
-   
+    //RefDocsCategoryMap validation
+    BaseResponse validateHeaderRibbon(HeaderRibbon headerRibbon);
+    
+    
 }

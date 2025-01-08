@@ -1,6 +1,7 @@
 package com.master.app.pims.models.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
@@ -70,7 +71,7 @@ public class BaseResponse {
     private List<OrgUnit> orgUnit;
     private List<RefDocsCategoryMap> refDocsCategoryMap;
     private List<RefUserDocsMap> refUserDocsMap;
-    
+    private List<HeaderRibbon> headerRibbon;
     
     private List<DesignationAppointmentType> designation;
     List<GeoDistrict> districtList;
