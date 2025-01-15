@@ -1,6 +1,5 @@
 package com.master.app.pims.service.master.common;
 
-import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -118,10 +117,5 @@ public interface CommonMasterService {
     ///for RefUserDocsMap join with usr schema
     RefUserDocsMap saveRefUserDocsMap(RefUserDocsMap refUserDocsMap);
     RefUserDocsMap getRefUserDocsMapById(String id);
-    
-    ///for HeaderRibbon join with citizen schema
-    HeaderRibbon saveHeaderRibbon(HeaderRibbon headerRibbon);
-    HeaderRibbon getHeaderRibbonById(String id);
-    
     
 }
