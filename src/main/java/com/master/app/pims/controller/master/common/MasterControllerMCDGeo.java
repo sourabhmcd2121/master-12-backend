@@ -4,23 +4,32 @@ import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
+<<<<<<< HEAD
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoColonyMCD;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
+=======
+import com.master.app.pims.entities.schemas.mst.*;
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoColonyMCDRepo;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+<<<<<<< HEAD
 import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
+=======
+import com.master.app.pims.repositories.mst.GeoWardViewRepository;
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,12 +39,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -48,10 +58,10 @@ public class MasterControllerMCDGeo {
 
     @Autowired
     private GeoStateMasterRepository geoStateMasterRepository;
-    
+
     @Autowired
     private GeoColonyCategoryRepository geoColonyCategoryRepository;
-    
+
     @Autowired
     private GeoZoneMCDRepository geoZoneMCDRepository;
 
@@ -62,11 +72,17 @@ public class MasterControllerMCDGeo {
     private CommonMasterService commonMasterService;
 
     @Autowired
+<<<<<<< HEAD
     private GeoWardMCDRepo geoWardMCDRepo;
     
    @Autowired
     private GeoColonyMCDRepo geoColonyMCDRepo;
     
+=======
+    private GeoWardViewRepository geoWardViewRepository;
+
+
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
     /////////////////////////////////////GeoCountry Mst Start///////////////////////////////////
     //get all data  according to page and size
     @GetMapping("/getMstCountryByPage")
@@ -101,20 +117,20 @@ public class MasterControllerMCDGeo {
 
         // Check if guid is provided (indicating an update)
         if (country.getCountryMstGuid() == null || country.getCountryMstGuid().isEmpty()) {
-        	
-        	country.setMasterCountry(country.getCountryMasterGuid());
-        	
-        	
+
+            country.setMasterCountry(country.getCountryMasterGuid());
+
+
             // Add new data
             country.setCreaterIp(request.getRemoteAddr());
             country.setCountryMstGuid(UUID.randomUUID().toString());
             country.setCreatedDate(new Date());
-            
-            
-        	if(country.getMasterCountry()!=null && !country.getMasterCountry().isEmpty()){
-        		country.setMasterGeoCountryMaster(new GeoCountryMaster(country.getMasterCountry()));
-			}
-            
+
+
+            if (country.getMasterCountry() != null && !country.getMasterCountry().isEmpty()) {
+                country.setMasterGeoCountryMaster(new GeoCountryMaster(country.getMasterCountry()));
+            }
+
 //			country.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			country.setCreaterRemarks(userSessionParam.getUserFullName());
             //country.setCreaterMacId(HttpSessionHelper.getMacAddress());
@@ -136,13 +152,13 @@ public class MasterControllerMCDGeo {
 
                 existingCountry.setModifierIp(request.getRemoteAddr());
                 existingCountry.setModifiedDate(new Date());
-                
+
                 existingCountry.setMasterCountry(country.getCountryMasterGuid());
-                
-               	if(existingCountry.getMasterCountry()!=null && !existingCountry.getMasterCountry().isEmpty()){
-               		existingCountry.setMasterGeoCountryMaster(new GeoCountryMaster(existingCountry.getMasterCountry()));
-    			}
-                
+
+                if (existingCountry.getMasterCountry() != null && !existingCountry.getMasterCountry().isEmpty()) {
+                    existingCountry.setMasterGeoCountryMaster(new GeoCountryMaster(existingCountry.getMasterCountry()));
+                }
+
                 //existingCountry.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
                 //existingCountry.setModifierMacId(HttpSessionHelper.getMacAddress());
                 country = existingCountry; // Use the updated existing country object
@@ -190,21 +206,21 @@ public class MasterControllerMCDGeo {
 //        geoCountryMstRepository.delete(geoCountry);
 //        return ResponseEntity.noContent().build();
 //    }
-    
- // Delete data from table and return success message
+
+    // Delete data from table and return success message
     @DeleteMapping("/deleteMstCountry/{countryMstGuid}")
     public ResponseEntity<BaseResponse> deleteMstCountry(@PathVariable("countryMstGuid") String countryMstGuid) {
         BaseResponse response = new BaseResponse();
-        
+
         GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid)
                 .orElseThrow(() -> new ResourceNotFoundException("Data not found with countryMstGuid: " + countryMstGuid));
-        
+
         geoCountryMstRepository.delete(geoCountry);
-        
+
         response.setMessage("Data deleted successfully");
         response.setStatus(true);
         response.setTotalDataCount(0);  // No data to return after delete
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -215,8 +231,8 @@ public class MasterControllerMCDGeo {
         GeoCountryMst geoCountry = geoCountryMstRepository.findById(countryMstGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with countryMstGuid : " + countryMstGuid));
         return new ResponseEntity<>(geoCountry, HttpStatus.OK);
     }
-    
- // Get data by ID with a custom response
+
+    // Get data by ID with a custom response
 //    @GetMapping("/getMstCountryByGuid/{countryMstGuid}")
 //    public ResponseEntity<BaseResponse> getMstCountryByGuid(@PathVariable("countryMstGuid") String countryMstGuid) {
 //        BaseResponse response = new BaseResponse();
@@ -236,9 +252,8 @@ public class MasterControllerMCDGeo {
 
 
     //////////////////////////////////////////MasterState Start/////////////////////////////////
-    
-   
-    
+
+
     //get all data from table
     @GetMapping("/getMasterStateList")
     public ResponseEntity<BaseResponse> getMasterStateList() {
@@ -251,28 +266,28 @@ public class MasterControllerMCDGeo {
         response.setMasterState(list);
         return ResponseEntity.ok(response);
     }
-    
-   
+
+
     @PostMapping("/submitOrUpdateMasterState")
     public BaseResponse submitOrUpdateMasterState(@RequestBody GeoStateMaster state, HttpServletRequest request) {
         BaseResponse resultData = new BaseResponse();
 
         // Check if guid is provided (indicating an update)
         if (state.getStateMasterGuid() == null || state.getStateMasterGuid().isEmpty()) {
-        	
-        	
+
+
             // Add new data
-        	state.setCreaterIp(request.getRemoteAddr());
-        	state.setStateMasterGuid(UUID.randomUUID().toString());
-        	state.setCreatedDate(new Date());
-        	
-        	//country dropdown
-        	state.setMasterCountry(state.getCountryMasterGuid());
-        	if(state.getMasterCountry()!=null && !state.getMasterCountry().isEmpty()){
-        		state.setMasterGeoCountryMaster(new GeoCountryMaster(state.getMasterCountry()));
-			}
-        	
-            if(state.getIsRecordActive()==null)
+            state.setCreaterIp(request.getRemoteAddr());
+            state.setStateMasterGuid(UUID.randomUUID().toString());
+            state.setCreatedDate(new Date());
+
+            //country dropdown
+            state.setMasterCountry(state.getCountryMasterGuid());
+            if (state.getMasterCountry() != null && !state.getMasterCountry().isEmpty()) {
+                state.setMasterGeoCountryMaster(new GeoCountryMaster(state.getMasterCountry()));
+            }
+
+            if (state.getIsRecordActive() == null)
                 state.setIsRecordActive(false);
 //			state.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			state.setCreaterRemarks(userSessionParam.getUserFullName());
@@ -280,31 +295,31 @@ public class MasterControllerMCDGeo {
 //			state.setCreaterMacId(HttpSessionHelper.getMacAddress());
         } else {
             // Update existing data
-        	GeoStateMaster existingState = commonMasterService.getGeoStateMasterById(state.getStateMasterGuid());
+            GeoStateMaster existingState = commonMasterService.getGeoStateMasterById(state.getStateMasterGuid());
 
             if (existingState != null) {
-            	existingState.setStateCode(!Util.isNullOrEmpty(state.getStateCode()) ? state.getStateCode().toUpperCase().trim() : null);
-            	existingState.setStateNameEn(!Util.isNullOrEmpty(state.getStateNameEn()) ? state.getStateNameEn().toUpperCase().trim() : null);
+                existingState.setStateCode(!Util.isNullOrEmpty(state.getStateCode()) ? state.getStateCode().toUpperCase().trim() : null);
+                existingState.setStateNameEn(!Util.isNullOrEmpty(state.getStateNameEn()) ? state.getStateNameEn().toUpperCase().trim() : null);
 
-            	existingState.setStateNameHi(!Util.isNullOrEmpty(state.getStateNameHi()) ? state.getStateNameHi().toUpperCase().trim() : null);
-            	existingState.setStateNameRl(!Util.isNullOrEmpty(state.getStateNameRl()) ? state.getStateNameRl().trim() : null);
-            	existingState.setStateDescription(!Util.isNullOrEmpty(state.getStateDescription()) ? state.getStateDescription().trim() : null);
+                existingState.setStateNameHi(!Util.isNullOrEmpty(state.getStateNameHi()) ? state.getStateNameHi().toUpperCase().trim() : null);
+                existingState.setStateNameRl(!Util.isNullOrEmpty(state.getStateNameRl()) ? state.getStateNameRl().trim() : null);
+                existingState.setStateDescription(!Util.isNullOrEmpty(state.getStateDescription()) ? state.getStateDescription().trim() : null);
 
-            	existingState.setToDate(state.getToDate());
-            	existingState.setFromDate(state.getFromDate());
-            	existingState.setIsRecordActive(state.getIsRecordActive() != null ? state.getIsRecordActive() : existingState.getIsRecordActive());
+                existingState.setToDate(state.getToDate());
+                existingState.setFromDate(state.getFromDate());
+                existingState.setIsRecordActive(state.getIsRecordActive() != null ? state.getIsRecordActive() : existingState.getIsRecordActive());
 
-            	existingState.setModifierIp(request.getRemoteAddr());
-            	existingState.setModifiedDate(new Date());
-            	existingState.setIsModified(true);
-            	
-            	//country dropdown
-            	existingState.setMasterCountry(state.getCountryMasterGuid());
-             	if(existingState.getMasterCountry()!=null && !existingState.getMasterCountry().isEmpty()){
-             		existingState.setMasterGeoCountryMaster(new GeoCountryMaster(existingState.getMasterCountry()));
-    			}
-            	//existingState.setModifierMacId(HttpSessionHelper.getMacAddress());	
-            	//existingState.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
+                existingState.setModifierIp(request.getRemoteAddr());
+                existingState.setModifiedDate(new Date());
+                existingState.setIsModified(true);
+
+                //country dropdown
+                existingState.setMasterCountry(state.getCountryMasterGuid());
+                if (existingState.getMasterCountry() != null && !existingState.getMasterCountry().isEmpty()) {
+                    existingState.setMasterGeoCountryMaster(new GeoCountryMaster(existingState.getMasterCountry()));
+                }
+                //existingState.setModifierMacId(HttpSessionHelper.getMacAddress());
+                //existingState.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
                 state = existingState; // Use the updated existing country object
             } else {
                 log.error("State not found");
@@ -324,15 +339,15 @@ public class MasterControllerMCDGeo {
         // If validation passes, proceed to save or update
         if (state.getIsRecordActive() == null) state.setIsRecordActive(false);
         state.setStateCode(!Util.isNullOrEmpty(state.getStateCode()) ? state.getStateCode().toUpperCase().trim() : null);
-        
+
         state.setStateNameEn(!Util.isNullOrEmpty(state.getStateNameEn()) ? state.getStateNameEn().toUpperCase().trim() : null);
         state.setStateNameHi(!Util.isNullOrEmpty(state.getStateNameHi()) ? state.getStateNameHi().toUpperCase().trim() : null);
         state.setStateNameRl(!Util.isNullOrEmpty(state.getStateNameRl()) ? state.getStateNameRl().trim() : null);
-        state.setStateDescription(!Util.isNullOrEmpty(state.getStateDescription()) ? state.getStateDescription().trim() : null);    
-        
-        
+        state.setStateDescription(!Util.isNullOrEmpty(state.getStateDescription()) ? state.getStateDescription().trim() : null);
+
+
         try {
-        	 geoStateMasterRepository.save(state);
+            geoStateMasterRepository.save(state);
             log.info("Record SaveOrUpdate Successfully");
             resultData.setStatus(true);
             resultData.setMessage("Record saved or updated successfully");
@@ -344,19 +359,19 @@ public class MasterControllerMCDGeo {
 
         return resultData;
     }
-    
+
     //get data by id
     @GetMapping("/getMasterStateByGuid/{stateMasterGuid}")
     public ResponseEntity<GeoStateMaster> getMasterStateByGuid(@PathVariable("stateMasterGuid") String stateMasterGuid) {
-    	GeoStateMaster masterState = geoStateMasterRepository.findById(stateMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with stateMasterGuid : " + stateMasterGuid));
+        GeoStateMaster masterState = geoStateMasterRepository.findById(stateMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with stateMasterGuid : " + stateMasterGuid));
         return new ResponseEntity<>(masterState, HttpStatus.OK);
     }
-    
-    
+
+
     //////////////////////////////////////////////////GeoStateMaster End////////////////////////////////////////////
-    
+
     ///////////////////////////////////////GeoColonyCategory Start//////////////////////////////////////////////
- 
+
     //get all data from table
     @GetMapping("/getGeoColonyCategoryList")
     public ResponseEntity<BaseResponse> getGeoColonyCategoryList() {
@@ -369,7 +384,7 @@ public class MasterControllerMCDGeo {
         response.setColonyCategory(list);
         return ResponseEntity.ok(response);
     }
-    
+
     // Create New Data And Update
     @PostMapping("/submitOrUpdateGeoColonyCategory")
     public BaseResponse submitOrUpdateGeoColonyCategory(@RequestBody GeoColonyCategory colonyCategory, HttpServletRequest request) {
@@ -378,34 +393,34 @@ public class MasterControllerMCDGeo {
         // Check if guid is provided (indicating an update)
         if (colonyCategory.getColonyCategoryGuid() == null || colonyCategory.getColonyCategoryGuid().isEmpty()) {
             // Add new data
-        	colonyCategory.setCreaterIp(request.getRemoteAddr());
-        	colonyCategory.setColonyCategoryGuid(UUID.randomUUID().toString());
-        	colonyCategory.setCreatedDate(new Date());
-        	colonyCategory.setModifierIp(null);
-        	colonyCategory.setModifiedByGuid(null);
-        	colonyCategory.setModifiedDate(null);
-    		colonyCategory.setCreatedByGuid(request.getRemoteAddr());
+            colonyCategory.setCreaterIp(request.getRemoteAddr());
+            colonyCategory.setColonyCategoryGuid(UUID.randomUUID().toString());
+            colonyCategory.setCreatedDate(new Date());
+            colonyCategory.setModifierIp(null);
+            colonyCategory.setModifiedByGuid(null);
+            colonyCategory.setModifiedDate(null);
+            colonyCategory.setCreatedByGuid(request.getRemoteAddr());
 
             if (colonyCategory.getIsActive() == null)
                 colonyCategory.setIsActive(false);
 //			colonyCategory.setCreaterRemarks(userSessionParam.getUserFullName());
             //colonyCategory.setCreaterMacId(HttpSessionHelper.getMacAddress());
             //colonyCategory.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
-        		
-        	
+
+
         } else {
             // Update existing data
-        	GeoColonyCategory existingColony = commonMasterService.getGeoColonyCategoryById(colonyCategory.getColonyCategoryGuid());
+            GeoColonyCategory existingColony = commonMasterService.getGeoColonyCategoryById(colonyCategory.getColonyCategoryGuid());
 
             if (existingColony != null) {
-            	existingColony.setColonyCategoryCode(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode()) ? colonyCategory.getColonyCategoryCode().toUpperCase().trim() : null);
-            	existingColony.setColonyCategoryNameEn(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameEn()) ? colonyCategory.getColonyCategoryNameEn().toUpperCase().trim() : null);
+                existingColony.setColonyCategoryCode(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryCode()) ? colonyCategory.getColonyCategoryCode().toUpperCase().trim() : null);
+                existingColony.setColonyCategoryNameEn(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameEn()) ? colonyCategory.getColonyCategoryNameEn().toUpperCase().trim() : null);
 
-            	existingColony.setColonyCategoryNameHi(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameHi()) ? colonyCategory.getColonyCategoryNameHi().toUpperCase().trim() : null);
+                existingColony.setColonyCategoryNameHi(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameHi()) ? colonyCategory.getColonyCategoryNameHi().toUpperCase().trim() : null);
                 existingColony.setColonyCategoryNameRl(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryNameRl()) ? colonyCategory.getColonyCategoryNameRl().trim() : null);
                 existingColony.setColonyCategoryDesc(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryDesc()) ? colonyCategory.getColonyCategoryDesc().trim() : null);
 
-             
+
                 existingColony.setIsActive(colonyCategory.getIsActive() != null ? colonyCategory.getIsActive() : existingColony.getIsActive());
 
                 existingColony.setModifierIp(request.getRemoteAddr());
@@ -440,8 +455,6 @@ public class MasterControllerMCDGeo {
         colonyCategory.setColonyCategoryDesc(!Util.isNullOrEmpty(colonyCategory.getColonyCategoryDesc()) ? colonyCategory.getColonyCategoryDesc().trim() : null);
 
 
-     
-
         try {
             geoColonyCategoryRepository.save(colonyCategory);
             log.info("Record SaveOrUpdate Successfully");
@@ -452,23 +465,21 @@ public class MasterControllerMCDGeo {
             resultData.setStatus(false);
             resultData.setMessage("Error saving or updating record: " + e.getMessage());
         }
-
         return resultData;
     }
 
- 	
     //get data by id
     @GetMapping("/getColonyCategoryByGuid/{colonyCategoryGuid}")
     public ResponseEntity<GeoColonyCategory> getColonyCategoryByGuid(@PathVariable("colonyCategoryGuid") String colonyCategoryGuid) {
-    	GeoColonyCategory colonyCategory = geoColonyCategoryRepository.findById(colonyCategoryGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with stateMasterGuid : " + colonyCategoryGuid));
+        GeoColonyCategory colonyCategory = geoColonyCategoryRepository.findById(colonyCategoryGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with stateMasterGuid : " + colonyCategoryGuid));
         return new ResponseEntity<>(colonyCategory, HttpStatus.OK);
     }
-    
- 	
- 	//////////////////////////////////////////////////GeoColonyCategory End///////////////////////////////////////////
- 	
+
+
+    //////////////////////////////////////////////////GeoColonyCategory End///////////////////////////////////////////
+
 /////////////////////////////////////GeoZoneMcd Start///////////////////////////////////
-    
+
     //get all data from table
     @GetMapping("/getGeoZoneMCDList")
     public ResponseEntity<BaseResponse> getGeoZoneMCDList() {
@@ -481,7 +492,7 @@ public class MasterControllerMCDGeo {
         response.setGeoZoneMCD(list);
         return ResponseEntity.ok(response);
     }
-    
+
     // Create New Data And Update
     @PostMapping("/submitGeoZoneMCD")
     public BaseResponse submitGeoZoneMCD(@RequestBody GeoZoneMCD geoZoneMCD, HttpServletRequest request) {
@@ -489,65 +500,65 @@ public class MasterControllerMCDGeo {
 
         // Check if guid is provided (indicating an update)
         if (geoZoneMCD.getZoneGuid() == null || geoZoneMCD.getZoneGuid().isEmpty()) {
-        	
+
             // Add new data
-        	geoZoneMCD.setCreaterIp(request.getRemoteAddr());
-        	geoZoneMCD.setZoneGuid(UUID.randomUUID().toString());
-        	geoZoneMCD.setCreatedDate(new Date());
-        	geoZoneMCD.setModifierIp(null);
-        	geoZoneMCD.setModifiedByGuid(null);
-        	geoZoneMCD.setModifiedDate(null);
-        	geoZoneMCD.setCreatedByGuid(request.getRemoteAddr());
-        	
-        	//for dropdown
-        	geoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
-        	geoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
-        	if(geoZoneMCD.getOrgPrimary()!=null && !geoZoneMCD.getOrgPrimary().isEmpty()){
-        		geoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(geoZoneMCD.getOrgPrimary()));
-			}
-        	
-        	if(geoZoneMCD.getOrgWrapper()!=null && !geoZoneMCD.getOrgWrapper().isEmpty()){
-        		geoZoneMCD.setWrapperMaster(new OrgWrapper(geoZoneMCD.getOrgWrapper()));
-			}
-            
-        	 if (geoZoneMCD.getIsActive() == null)
-        		 geoZoneMCD.setIsActive(false);
+            geoZoneMCD.setCreaterIp(request.getRemoteAddr());
+            geoZoneMCD.setZoneGuid(UUID.randomUUID().toString());
+            geoZoneMCD.setCreatedDate(new Date());
+            geoZoneMCD.setModifierIp(null);
+            geoZoneMCD.setModifiedByGuid(null);
+            geoZoneMCD.setModifiedDate(null);
+            geoZoneMCD.setCreatedByGuid(request.getRemoteAddr());
+
+            //for dropdown
+            geoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
+            geoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
+            if (geoZoneMCD.getOrgPrimary() != null && !geoZoneMCD.getOrgPrimary().isEmpty()) {
+                geoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(geoZoneMCD.getOrgPrimary()));
+            }
+
+            if (geoZoneMCD.getOrgWrapper() != null && !geoZoneMCD.getOrgWrapper().isEmpty()) {
+                geoZoneMCD.setWrapperMaster(new OrgWrapper(geoZoneMCD.getOrgWrapper()));
+            }
+
+            if (geoZoneMCD.getIsActive() == null)
+                geoZoneMCD.setIsActive(false);
 //			geoZoneMCD.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			geoZoneMCD.setCreaterRemarks(userSessionParam.getUserFullName());
             //geoZoneMCD.setCreaterMacId(HttpSessionHelper.getMacAddress());
             //geoZoneMCD.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
         } else {
             // Update existing data
-        	GeoZoneMCD existingGeoZoneMCD = commonMasterService.getGeoZoneMCDById(geoZoneMCD.getZoneGuid());
+            GeoZoneMCD existingGeoZoneMCD = commonMasterService.getGeoZoneMCDById(geoZoneMCD.getZoneGuid());
 
             if (existingGeoZoneMCD != null) {
-            	existingGeoZoneMCD.setZoneCode(!Util.isNullOrEmpty(geoZoneMCD.getZoneCode()) ? geoZoneMCD.getZoneCode().toUpperCase().trim() : null);
-            	existingGeoZoneMCD.setZoneNameEn(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameEn()) ? geoZoneMCD.getZoneNameEn().toUpperCase().trim() : null);
+                existingGeoZoneMCD.setZoneCode(!Util.isNullOrEmpty(geoZoneMCD.getZoneCode()) ? geoZoneMCD.getZoneCode().toUpperCase().trim() : null);
+                existingGeoZoneMCD.setZoneNameEn(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameEn()) ? geoZoneMCD.getZoneNameEn().toUpperCase().trim() : null);
 
-            	existingGeoZoneMCD.setZoneNameHi(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameHi()) ? geoZoneMCD.getZoneNameHi().toUpperCase().trim() : null);
-            	existingGeoZoneMCD.setZoneNameRl(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameRl()) ? geoZoneMCD.getZoneNameRl().trim() : null);
-            	existingGeoZoneMCD.setZonalAddress(!Util.isNullOrEmpty(geoZoneMCD.getZonalAddress()) ? geoZoneMCD.getZonalAddress().trim() : null);
-            	existingGeoZoneMCD.setZoneDesc(!Util.isNullOrEmpty(geoZoneMCD.getZoneDesc()) ? geoZoneMCD.getZoneDesc().trim() : null);
-            	existingGeoZoneMCD.setIsActive(geoZoneMCD.getIsActive() != null ? geoZoneMCD.getIsActive() : existingGeoZoneMCD.getIsActive());
+                existingGeoZoneMCD.setZoneNameHi(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameHi()) ? geoZoneMCD.getZoneNameHi().toUpperCase().trim() : null);
+                existingGeoZoneMCD.setZoneNameRl(!Util.isNullOrEmpty(geoZoneMCD.getZoneNameRl()) ? geoZoneMCD.getZoneNameRl().trim() : null);
+                existingGeoZoneMCD.setZonalAddress(!Util.isNullOrEmpty(geoZoneMCD.getZonalAddress()) ? geoZoneMCD.getZonalAddress().trim() : null);
+                existingGeoZoneMCD.setZoneDesc(!Util.isNullOrEmpty(geoZoneMCD.getZoneDesc()) ? geoZoneMCD.getZoneDesc().trim() : null);
+                existingGeoZoneMCD.setIsActive(geoZoneMCD.getIsActive() != null ? geoZoneMCD.getIsActive() : existingGeoZoneMCD.getIsActive());
 
-            	existingGeoZoneMCD.setModifierIp(request.getRemoteAddr());
-            	existingGeoZoneMCD.setModifiedDate(new Date());
-            	existingGeoZoneMCD.setModifiedByGuid("admin");
-              
-            	//dropdown
-            	existingGeoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
-            	existingGeoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
-               	if(existingGeoZoneMCD.getOrgPrimary()!=null && !existingGeoZoneMCD.getOrgPrimary().isEmpty()){
-               		existingGeoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(existingGeoZoneMCD.getOrgPrimary()));
-    			}
-            	if(existingGeoZoneMCD.getOrgWrapper()!=null && !existingGeoZoneMCD.getOrgWrapper().isEmpty()){
-            		existingGeoZoneMCD.setWrapperMaster(new OrgWrapper(existingGeoZoneMCD.getOrgWrapper()));
-    			}
-            	
-            	 if (existingGeoZoneMCD.getIsActive() == null)
-            		 existingGeoZoneMCD.setIsActive(false);
-                
-               	geoZoneMCD = existingGeoZoneMCD; // Use the updated existing country object
+                existingGeoZoneMCD.setModifierIp(request.getRemoteAddr());
+                existingGeoZoneMCD.setModifiedDate(new Date());
+                existingGeoZoneMCD.setModifiedByGuid("admin");
+
+                //dropdown
+                existingGeoZoneMCD.setOrgPrimary(geoZoneMCD.getOrgPrimaryGuid());
+                existingGeoZoneMCD.setOrgWrapper(geoZoneMCD.getWrapperGuid());
+                if (existingGeoZoneMCD.getOrgPrimary() != null && !existingGeoZoneMCD.getOrgPrimary().isEmpty()) {
+                    existingGeoZoneMCD.setOrgPrimaryMaster(new OrgPrimary(existingGeoZoneMCD.getOrgPrimary()));
+                }
+                if (existingGeoZoneMCD.getOrgWrapper() != null && !existingGeoZoneMCD.getOrgWrapper().isEmpty()) {
+                    existingGeoZoneMCD.setWrapperMaster(new OrgWrapper(existingGeoZoneMCD.getOrgWrapper()));
+                }
+
+                if (existingGeoZoneMCD.getIsActive() == null)
+                    existingGeoZoneMCD.setIsActive(false);
+
+                geoZoneMCD = existingGeoZoneMCD; // Use the updated existing country object
             } else {
                 log.error("Zone not found");
                 resultData.setStatus(false);
@@ -585,16 +596,15 @@ public class MasterControllerMCDGeo {
 
         return resultData;
     }
-    
+
     //get data by id
     @GetMapping("/getGeoZoneMCDByGuid/{zoneGuid}")
     public ResponseEntity<GeoZoneMCD> getGeoZoneMCDByGuid(@PathVariable("zoneGuid") String zoneGuid) {
-    	GeoZoneMCD geoZoneMCD = geoZoneMCDRepository.findById(zoneGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with zoneGuid : " + zoneGuid));
+        GeoZoneMCD geoZoneMCD = geoZoneMCDRepository.findById(zoneGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with zoneGuid : " + zoneGuid));
         return new ResponseEntity<>(geoZoneMCD, HttpStatus.OK);
     }
-    
-/////////////////////////////////////GeoZoneMcd End///////////////////////////////////
 
+<<<<<<< HEAD
 
 /////////////////////////////////////GeoWardMCD Start///////////////////////////////////
     
@@ -867,4 +877,221 @@ return new ResponseEntity<>(geoColonyMCD, HttpStatus.OK);
 }
 
 /////////////////////////////////////GeoColonyMCD End///////////////////////////////////
+=======
+    /////////////////////////////////////GeoZoneMcd End///////////////////////////////////
+    @GetMapping("/getGeoWardMCDList")
+    public ResponseEntity<BaseResponse> getGeoWardList() {
+        BaseResponse response = new BaseResponse();
+        log.info("Received request to fetch Geo Ward data.");
+        List<GeoWardView> geoWardData = geoWardViewRepository.findAll();
+        response.setMessage("success");
+        response.setStatus(true);
+        response.setTotalDataCount(geoWardData.size());
+        log.info("total record fetched : " + geoWardData.size());
+        response.setGeoWardViews(geoWardData);
+        return ResponseEntity.ok(response);
+    }
+
+    @SuppressWarnings("unchecked")
+    @PostMapping("/submitCommonMasterAppAlert")
+    public BaseResponse submitCommonMasterAppAlert(@RequestBody CommonMasterAppAlert obj,
+                                                   MultipartFile request) {
+        BaseResponse resultData = new BaseResponse();
+        try {
+            if (obj.getAppAlertGuid() == null || obj.getAppAlertGuid().isEmpty()) {
+                obj.setAppAlertGuid(UUID.randomUUID().toString());
+                obj.setAppAlertSubjectEn(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
+                obj.setAppAlertSubjectHi(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
+
+                if (obj.getAppAlertContentEn() == null || obj.getAppAlertContentEn().isEmpty()) {
+                    obj.setAppAlertContentEn(null);
+                } else {
+                    obj.setAppAlertContentEn(obj.getAppAlertContentEn().replaceAll("\"", "'"));
+                }
+                obj.setCreatedDate(new Date());
+                obj.setModifiedDate(null);
+                obj.setModifiedBy(null);
+                obj.setModifiedIpAddr(null);
+                obj.setModifiedMacAddr(null);
+                obj.setModifiedRemarks(null);
+                if (obj.getIsActive() == null)
+                    obj.setIsActive(false);
+            } else {
+                /* Log Print Method starts for before change */
+                List<CommonMasterAppAlert> list = referenceDAO.getMasterEntityListByGuid1(
+                        CommonMasterAppAlert.class.getName(), "appAlertGuid", obj.getAppAlertGuid());
+                if (list != null && list.size() > 0) {
+                    for (CommonMasterAppAlert obj1 : list) {
+                        Map obj2 = new LinkedHashMap();
+                        obj2.put("appAlertGuid", obj1.getAppAlertGuid().trim());
+                        obj2.put("appMaster",
+                                obj1.getApplicationMaster() != null
+                                        ? obj1.getApplicationMaster().getApplicationMasterName().trim()
+                                        : "");
+                        obj2.put("appAlertSubjectEn", obj1.getAppAlertSubjectEn().trim());
+                        obj2.put("appAlertContentEn", obj1.getAppAlertContentEn().trim());
+                        obj2.put("priority", obj1.getPriority() != null ? obj1.getPriority() : "");
+                        obj2.put("redirectUrl", obj1.getRedirectUrl() != null ? obj1.getRedirectUrl().trim() : "");
+                        obj2.put("pdfFileName", obj1.getPdfFileName1() != null ? obj1.getPdfFileName1() : "");
+                        obj2.put("activeFromDate",
+                                obj1.getActiveFromDate() != null ? outputFormatter.format(obj1.getActiveFromDate())
+                                        : "");
+                        obj2.put("activeTill",
+                                obj1.getActiveTill() != null ? outputFormatter.format(obj1.getActiveTill()) : "");
+                        obj2.put("isActive", obj1.getIsActive());
+                        obj2.put("createdBy", obj1.getCreatedBy());
+                        obj2.put("createdDate",
+                                obj1.getCreatedDate() != null ? outputFormatter.format(obj1.getCreatedDate()) : "");
+                        obj2.put("createdIpAddr", obj1.getCreatedIpAddr());
+                        obj2.put("createdMacAddr", obj1.getCreatedMacAddr());
+                        obj2.put("createdRemarks", obj1.getCreatedRemarks());
+                        obj2.put("modifiedBy", obj1.getModifiedBy());
+                        obj2.put("modifiedDate",
+                                obj1.getModifiedDate() != null ? outputFormatter.format(obj1.getModifiedDate())
+                                        : "");
+                        obj2.put("modifiedIpAddr", obj1.getModifiedIpAddr());
+                        obj2.put("modifiedMacAddr", obj1.getModifiedMacAddr());
+                        obj2.put("modifiedRemarks", obj1.getModifiedRemarks());
+
+                        String jsonString = mapper.writeValueAsString(obj2);
+                        logger.info("\n Login-id || " + httpSession.getAttribute("loginID") + " || IP-Address "
+                                + HttpSessionHelper.getClientIPAddress(request) + " || Mac-Address : "
+                                + HttpSessionHelper.getMacAddress());
+                        logger.info("\n Parameters of CommonMasterAppAlert before : " + jsonString);
+                    }
+                }
+                /* Log Print Method ends for before change */
+                obj.setAppAlertSubjectEn(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
+                obj.setAppAlertSubjectHi(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
+
+                if (obj.getAppAlertContentEn() == null || obj.getAppAlertContentEn().isEmpty()) {
+                    obj.setAppAlertContentEn(null);
+                } else {
+                    obj.setAppAlertContentEn(obj.getAppAlertContentEn().replaceAll("\"", "'"));
+                }
+
+                obj.setModifiedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+                obj.setModifiedBy(userSessionParam.getEmpBasicGUID());
+                obj.setModifiedMacAddr(HttpSessionHelper.getMacAddress());
+                obj.setModifiedDate(new Date());
+                if (obj.getIsActive() == null)
+                    obj.setIsActive(false);
+
+            }
+            if (obj.getAppMaster() != null) {
+                obj.setApplicationMaster(new ApplicationMaster(obj.getAppMaster()));
+            }
+            if ((obj.getPdfFileName() != null && obj.getPdfFileName().getSize() == 0
+                    && obj.getAppAlertGuid() != null && !obj.getAppAlertGuid().isEmpty())
+                    || (obj.getImageFileName() != null && obj.getImageFileName().getSize() == 0
+                    && obj.getAppAlertGuid() != null && !obj.getAppAlertGuid().isEmpty())) {
+                obj.setPdfFileName1(obj.getAppAlertGuid());
+                obj.setImageUri(obj.getAppAlertGuid());
+            } else {
+//                        String pdfFileName = obj.getPdfFileName().getOriginalFilename();
+//                        String imageFileName = obj.getImageFileName().getOriginalFilename();
+                Date dNow = new Date();
+                SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+                String datetime = ft.format(dNow);
+                String ext = null;
+                // for pdf
+                String originalPdfFileName1 = obj.getPdfFileName().getOriginalFilename();
+                String originalPdfFileName = originalPdfFileName1.replaceAll(" ", "_").toLowerCase();
+                if (originalPdfFileName != null && originalPdfFileName.lastIndexOf('.') != -1) {
+                    ext = originalPdfFileName.substring(originalPdfFileName.lastIndexOf('.'));
+                }
+                String pdfFileName1 = originalPdfFileName.substring(0, originalPdfFileName.lastIndexOf('.'));
+                String uniquePdfFileName = pdfFileName1 + "_" + datetime + ext;
+                obj.setPdfFileName1(uniquePdfFileName);
+                // for image
+                String originalImageFileName1 = obj.getImageFileName().getOriginalFilename();
+                String originalImageFileName = originalImageFileName1.replaceAll(" ", "_").toLowerCase();
+                if (originalImageFileName != null && originalImageFileName.lastIndexOf('.') != -1) {
+                    ext = originalImageFileName.substring(originalImageFileName.lastIndexOf('.'));
+                }
+                String imageFileName1 = originalImageFileName.substring(0,
+                        originalImageFileName.lastIndexOf('.'));
+                String uniqueImageFileName = imageFileName1 + "_" + datetime + ext;
+                obj.setImageUri(uniqueImageFileName);
+
+                //String contextPath = request.getServletContext().getRealPath("/");
+                MultipartFile file1 = obj.getPdfFileName();
+                String fileUploadStatus = pdfRead(uniquePdfFileName, pdfFile, file1);
+
+                MultipartFile file2 = obj.getImageFileName();
+                String fileUploadStatu2 = pdfRead(uniqueImageFileName, pdfFile, file2);
+            }
+
+            resultData = validateCommonMasterAppAlert(obj);
+            if (resultData != null && resultData.getStatus()) {
+                referenceDAO.saveorUpdateMasterObj(obj);
+                /* Log Print Method starts for after change */
+                List<CommonMasterAppAlert> list = referenceDAO.getMasterEntityListByGuid1(
+                        CommonMasterAppAlert.class.getName(), "appAlertGuid", obj.getAppAlertGuid());
+                for (CommonMasterAppAlert obj1 : list) {
+                    Map obj2 = new LinkedHashMap();
+                    obj2.put("appAlertGuid", obj1.getAppAlertGuid().trim());
+                    obj2.put("appMaster",
+                            obj1.getApplicationMaster() != null
+                                    ? obj1.getApplicationMaster().getApplicationMasterName().trim()
+                                    : "");
+                    obj2.put("appAlertSubjectEn", obj1.getAppAlertSubjectEn().trim());
+                    obj2.put("appAlertContentEn", obj1.getAppAlertContentEn().trim());
+                    obj2.put("priority", obj1.getPriority() != null ? obj1.getPriority() : "");
+                    obj2.put("redirectUrl", obj1.getRedirectUrl() != null ? obj1.getRedirectUrl().trim() : "");
+                    obj2.put("pdfFileName", obj1.getPdfFileName1() != null ? obj1.getPdfFileName1() : "");
+                    obj2.put("activeFromDate",
+                            obj1.getActiveFromDate() != null ? outputFormatter.format(obj1.getActiveFromDate())
+                                    : "");
+                    obj2.put("activeTill",
+                            obj1.getActiveTill() != null ? outputFormatter.format(obj1.getActiveTill()) : "");
+                    obj2.put("isActive", obj1.getIsActive());
+                    obj2.put("createdBy", obj1.getCreatedBy());
+                    obj2.put("createdDate",
+                            obj1.getCreatedDate() != null ? outputFormatter.format(obj1.getCreatedDate()) : "");
+                    obj2.put("createdIpAddr", obj1.getCreatedIpAddr());
+                    obj2.put("createdMacAddr", obj1.getCreatedMacAddr());
+                    obj2.put("createdRemarks", obj1.getCreatedRemarks());
+                    obj2.put("modifiedBy", obj1.getModifiedBy());
+                    obj2.put("modifiedDate",
+                            obj1.getModifiedDate() != null ? outputFormatter.format(obj1.getModifiedDate())
+                                    : "");
+                    obj2.put("modifiedIpAddr", obj1.getModifiedIpAddr());
+                    obj2.put("modifiedMacAddr", obj1.getModifiedMacAddr());
+                    obj2.put("modifiedRemarks", obj1.getModifiedRemarks());
+
+                    String jsonString = mapper.writeValueAsString(obj2);
+                    log.info("\n Login-id || " + httpSession.getAttribute("loginID") + " || IP-Address "
+                            + HttpSessionHelper.getClientIPAddress(request) + " || Mac-Address : "
+                            + HttpSessionHelper.getMacAddress());
+                    log.info("\n Parameters of CommonMasterAppAlert after : " + jsonString);
+                }
+                /* Log Print Method ends for after change */
+            }
+            log.info(resultData.getMessage() + "\n");
+
+            return resultData;
+        } catch (Exception e1) {
+            log.info("Exception Occured === " + e1);
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+    public String pdfRead(String fileName, String directory, MultipartFile file2) {
+        File dir = new File(directory);
+        if (!dir.mkdir()) {
+            dir.mkdirs();
+        }
+        String filePath = directory + File.separator + fileName;
+        File file = new File(filePath);
+        try {
+            file.createNewFile();
+            file2.transferTo(file);
+        } catch (Exception e) {
+            return "failure";
+        }
+        return "success";
+    }
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 }

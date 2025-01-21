@@ -1,8 +1,11 @@
 package com.master.app.pims.service.master.impl.common;
 
+<<<<<<< HEAD
 import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
+=======
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -32,9 +35,12 @@ import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+<<<<<<< HEAD
 import com.master.app.pims.repositories.citizen.HeaderRibbonRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
+=======
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
@@ -140,6 +146,7 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     @Autowired
    	private RefUserDocsMapRepo refUserDocsMapRepo;
     
+<<<<<<< HEAD
     @Autowired
    	private GeoWardMCDRepo geoWardMCDRepo;
    
@@ -148,6 +155,10 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
    	private HeaderRibbonRepo headerRibbonRepo;
+=======
+    
+    
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
     
     @Autowired
    	private IntramcMenuMasterRepo intramcMenuMasterRepo;
@@ -416,6 +427,7 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 
 	}
 
+<<<<<<< HEAD
 	@Override
 	public HeaderRibbon saveHeaderRibbon(HeaderRibbon headerRibbon) {
 		 return headerRibbonRepo.save(headerRibbon);
@@ -431,6 +443,8 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	public GeoWardMCD saveGeoWardMCD(GeoWardMCD geoWardMCD) {
 		 return geoWardMCDRepo.save(geoWardMCD);
 	}
+=======
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 	
 	@Override
 	public GeoWardMCD getGeoWardMCDById(String id) {

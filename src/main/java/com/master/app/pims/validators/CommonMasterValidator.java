@@ -1,9 +1,12 @@
 package com.master.app.pims.validators;
 
 
+<<<<<<< HEAD
 import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
+=======
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -34,9 +37,12 @@ import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+<<<<<<< HEAD
 import com.master.app.pims.repositories.citizen.HeaderRibbonRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
+=======
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
@@ -145,6 +151,7 @@ public class CommonMasterValidator implements Validator {
     @Autowired
    	private RefUserDocsMapRepo refUserDocsMapRepo;
     
+<<<<<<< HEAD
     @Autowired
    	private HeaderRibbonRepo headerRibbonRepo;
     
@@ -160,6 +167,8 @@ public class CommonMasterValidator implements Validator {
     @Autowired
    	private IntramcRoleMenuMapRepo intramcRoleMenuMapRepo;
     
+=======
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
     //mst country validation
     @Override
     public BaseResponse validateMstCountry(GeoCountryMst country) {
@@ -1287,6 +1296,7 @@ public BaseResponse validateRefUserDocsMap(RefUserDocsMap refUserDocsMap) {
      return resultData;
 }
 
+<<<<<<< HEAD
 @Override
 public BaseResponse validateHeaderRibbon(HeaderRibbon headerRibbon) {
 	 BaseResponse resultData = new BaseResponse();
@@ -1520,4 +1530,7 @@ public BaseResponse validateIntramcRoleMenuMap(IntramcRoleMenuMap intramcRoleMen
 }
 
 
+=======
+	
+>>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 }
