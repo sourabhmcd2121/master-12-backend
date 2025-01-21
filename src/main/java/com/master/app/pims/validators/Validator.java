@@ -1,6 +1,8 @@
 package com.master.app.pims.validators;
 
 import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
+import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
+import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -8,12 +10,15 @@ import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
+import com.master.app.pims.entities.schemas.mst.GeoColonyMCD;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
@@ -100,6 +105,21 @@ public interface Validator {
     
     //RefDocsCategoryMap validation
     BaseResponse validateHeaderRibbon(HeaderRibbon headerRibbon);
+    
+    //GeoWardMCD validation
+    BaseResponse validateGeoWardMCD(GeoWardMCD geoWardMCD);
+    
+    //GeoColonyMCD validation
+    BaseResponse validateGeoColonyMCD(GeoColonyMCD geoColonyMCD);
+    
+    //CommonMasterAppAlert validation
+    BaseResponse validateCommonMasterAppAlert(CommonMasterAppAlert commonMasterAppAlert);
+    
+    //IntramcMenuMaster validation
+    BaseResponse validateIntramcMenuMaster(IntramcMenuMaster intramcMenuMaster);
+    
+    //IntramcRoleMenuMap validation
+    BaseResponse validateIntramcRoleMenuMap(IntramcRoleMenuMap intramcRoleMenuMap);
     
     
 }

@@ -2,6 +2,8 @@ package com.master.app.pims.models.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
+import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
+import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
@@ -13,12 +15,15 @@ import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
+import com.master.app.pims.entities.schemas.mst.GeoColonyMCD;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
@@ -49,6 +54,8 @@ public class BaseResponse {
     private List<GeoCountryMst> data;
     private List<GeoCountryMaster> masterCountry;
     private List<GeoStateMaster> masterState;
+    private List<GeoWardMCD> geoWardMCD;
+    private List<GeoColonyMCD> geoColonyMCD;
     private List<GeoColonyCategory> colonyCategory;
     private List<ApplicationMaster> applicationMaster;
     private List<AssessmentYear> assessmentYear;
@@ -70,10 +77,13 @@ public class BaseResponse {
     private List<OrgRadius> orgRadius;
     private List<OrgUnit> orgUnit;
     private List<RefDocsCategoryMap> refDocsCategoryMap;
+    private List<CommonMasterAppAlert> commonMasterAppAlert;
     private List<RefUserDocsMap> refUserDocsMap;
     private List<HeaderRibbon> headerRibbon;
-    
     private List<DesignationAppointmentType> designation;
+    private List<IntramcMenuMaster> intramcMenuMaster;
+    private List<IntramcRoleMenuMap> intramcRoleMenuMap;
+    
     List<GeoDistrict> districtList;
 
     public List<GeoDistrict> getDistrictList() {

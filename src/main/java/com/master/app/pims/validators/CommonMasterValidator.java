@@ -2,6 +2,8 @@ package com.master.app.pims.validators;
 
 
 import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
+import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
+import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -9,12 +11,15 @@ import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
+import com.master.app.pims.entities.schemas.mst.GeoColonyMCD;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
@@ -30,16 +35,21 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.HeaderRibbonRepo;
+import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
+import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
+import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
+import com.master.app.pims.repositories.mst.GeoColonyMCDRepo;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
@@ -77,6 +87,9 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
     private AssessmentYearRepository assessmentYearRepository;
+    
+    @Autowired
+    private CommonMasterAppAlertRepo commonMasterAppAlertRepo;
     
     @Autowired
     private AssociatedChargesInfoRepository associatedChargesInfoRepository;
@@ -135,6 +148,17 @@ public class CommonMasterValidator implements Validator {
     @Autowired
    	private HeaderRibbonRepo headerRibbonRepo;
     
+    @Autowired
+    private GeoWardMCDRepo geoWardMCDRepo;
+   
+    @Autowired
+   	private GeoColonyMCDRepo geoColonyMCDRepo;
+    
+    @Autowired
+   	private IntramcMenuMasterRepo intramcMenuMasterRepo;
+    
+    @Autowired
+   	private IntramcRoleMenuMapRepo intramcRoleMenuMapRepo;
     
     //mst country validation
     @Override
@@ -1278,5 +1302,222 @@ public BaseResponse validateHeaderRibbon(HeaderRibbon headerRibbon) {
      return resultData;
 }
 
-	
+@Override
+public BaseResponse validateGeoWardMCD(GeoWardMCD geoWardMCD) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(geoWardMCD.getZone())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.ward.zone.name.required"));
+			}
+			if (Util.isNullOrEmpty(geoWardMCD.getWardCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geoward.geoWardCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoWardMCD.getWardCode())
+					&& geoWardMCDRepo.isExistGeoWardCode(geoWardMCD.getWardCode(), geoWardMCD.getWardGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geoward.geoWardCode.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(geoWardMCD.getWardNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geoward.geoWardNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoWardMCD.getWardNameEn())
+					&& geoWardMCDRepo.isExistGeoWardNameEn(geoWardMCD.getWardNameEn(), geoWardMCD.getWardGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geoward.geoWardNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoWardMCD.getWardNameHi())
+					&& geoWardMCDRepo.isExistGeoWardNameHi(geoWardMCD.getWardNameHi(), geoWardMCD.getWardGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geoward.geoWardNameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(geoWardMCD.getWardNameRl())
+					&& geoWardMCDRepo.isExistGeoWardNameRl(geoWardMCD.getWardNameRl(), geoWardMCD.getWardGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geoward.geoWardNameRl.unique"));
+				return resultData;
+			}
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating GeoWardMCD: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateGeoColonyMCD(GeoColonyMCD colony) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(colony.getWard())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.colony.ward.name.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(colony.getColonyCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.geocolony.geocolonyCode.required"));
+				return resultData;
+			}
+//			if (!Util.isNullOrEmpty(colony.getColonyCode())
+//					&& geoColonyMCDRepo.isExistGeoColonyCode(colony.getColonyCode(), colony.getColonyGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.geocolony.geocolonyCode.unique"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(colony.getColonyNameEn()) && geoColonyMCDRepo
+//					.isExistGeoColonyNameEn(colony.getColonyNameEn(), colony.getColonyGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.geocolony.geocolonyNameEn.unique"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(colony.getColonyNameHi()) && geoColonyMCDRepo
+//					.isExistGeoColonyNameHi(colony.getColonyNameHi(), colony.getColonyGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.geocolony.geocolonyNameHi.unique"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(colony.getColonyNameRl()) && geoColonyMCDRepo
+//					.isExistGeoColonyNameRl(colony.getColonyNameRl(), colony.getColonyGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.geocolony.geocolonyNameRl.unique"));
+//				return resultData;
+//			}
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating GeoColonyMCD: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateCommonMasterAppAlert(CommonMasterAppAlert obj) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(obj.getAppMaster())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.appMaster.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(obj.getAppAlertSubjectEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.appAlertSubjectEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(obj.getAppAlertSubjectEn()) && commonMasterAppAlertRepo
+					.isExistCommonMasterAppAlertSubjectEn(obj.getAppAlertSubjectEn(), obj.getAppAlertGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.appAlertSubjectEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(obj.getAppAlertContentEn()) && commonMasterAppAlertRepo
+					.isExistCommonMasterAppAlertContentEn(obj.getAppAlertContentEn(), obj.getAppAlertGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.appAlertContentEn.unique"));
+				return resultData;
+			}
+
+			if (obj.getPriority().signum() < 0) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.priority.required"));
+				return resultData;
+			}
+			if (obj.getPriority().signum() < 0 && commonMasterAppAlertRepo
+					.isExistCommonMasterAppAlertPriority(obj.getPriority(), obj.getAppAlertGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.priority.unique"));
+				return resultData;
+			}
+    	
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating Common Master App Alert: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateIntramcMenuMaster(IntramcMenuMaster intramcMenuMaster) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.intraMaster.intraMenuCode.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(intramcMenuMaster.getAppCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.intraMaster.appCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuCode()) && intramcMenuMasterRepo
+					.isExistIntraMenuMasterCode(intramcMenuMaster.getIntraMenuCode(), intramcMenuMaster.getMenuMasterGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.intraMaster.intraMenuCode.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.intraMaster.intraMenuNameEn.required"));
+				return resultData;
+			}
+    	
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating Intramc Menu Master: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateIntramcRoleMenuMap(IntramcRoleMenuMap intramcRoleMenuMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	
+    	 if (Util.isNullOrEmpty(intramcRoleMenuMap.getMenuMaster())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.intramcRoleMenuMap.menuMaster.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(intramcRoleMenuMap.getRoleCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.intramcRoleMenuMap.roleCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(intramcRoleMenuMap.getRoleCode()) && intramcRoleMenuMapRepo
+					.isExistRoleCode(intramcRoleMenuMap.getRoleCode(), intramcRoleMenuMap.getRefRoleMenuMapGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.intramcRoleMenuMap.roleCode.unique"));
+				return resultData;
+			}
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+        // intramcRoleMenuMapRepo
+         resultData.setMessage("Error validating intramc Role Menu Map Master: " + e.getMessage());
+     }
+     return resultData;
+}
+
+
 }

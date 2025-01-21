@@ -55,6 +55,7 @@ public class IntramcMenuMaster implements Serializable{
 	@Column(name = "to_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date toDate;
+	
 
 	@Column(name = "is_record_active")
 	private Boolean isRecordActive;

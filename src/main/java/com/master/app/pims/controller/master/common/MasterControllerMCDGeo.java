@@ -5,13 +5,17 @@ import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
+import com.master.app.pims.entities.schemas.mst.GeoColonyMCD;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
+import com.master.app.pims.repositories.mst.GeoColonyMCDRepo;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
@@ -57,7 +61,12 @@ public class MasterControllerMCDGeo {
     @Autowired
     private CommonMasterService commonMasterService;
 
-
+    @Autowired
+    private GeoWardMCDRepo geoWardMCDRepo;
+    
+   @Autowired
+    private GeoColonyMCDRepo geoColonyMCDRepo;
+    
     /////////////////////////////////////GeoCountry Mst Start///////////////////////////////////
     //get all data  according to page and size
     @GetMapping("/getMstCountryByPage")
@@ -586,6 +595,276 @@ public class MasterControllerMCDGeo {
     
 /////////////////////////////////////GeoZoneMcd End///////////////////////////////////
 
-  
 
+/////////////////////////////////////GeoWardMCD Start///////////////////////////////////
+    
+//get all data from table
+@GetMapping("/getGeoWardMCDList")
+public ResponseEntity<BaseResponse> getGeoWardMCDList() {
+BaseResponse response = new BaseResponse();
+// Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<GeoWardMCD> list = geoWardMCDRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setGeoWardMCD(list);
+return ResponseEntity.ok(response);
+}
+
+// Create New Data And Update
+@PostMapping("/submitGeoWardMCD")
+public BaseResponse submitGeoWardMCD(@RequestBody GeoWardMCD geoWardMCD, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+// Check if guid is provided (indicating an update)
+if (geoWardMCD.getWardGuid() == null || geoWardMCD.getWardGuid().isEmpty()) {
+
+// Add new data
+	geoWardMCD.setCreatedIpAddr(request.getRemoteAddr());
+	geoWardMCD.setWardGuid(UUID.randomUUID().toString());
+	geoWardMCD.setCreatedDate(new Date());
+	geoWardMCD.setModifiedIpAddr(null);
+	geoWardMCD.setModifiedBy(null);
+	geoWardMCD.setModifiedDate(null);
+	geoWardMCD.setCreatedBy(request.getRemoteAddr());
+//	if(geoWardMCD.getLatLongInfo() == null) {
+//		geoWardMCD.setLatLongInfo(null);
+//		
+//	}else {
+//		
+//		geoWardMCD.setLatLongInfo(geoWardMCD.getLatLongInfo());
+//		
+//	}
+
+//for dropdown
+	geoWardMCD.setZone(geoWardMCD.getZoneGuid());
+if(geoWardMCD.getZone()!=null && !geoWardMCD.getZone().isEmpty()){
+	geoWardMCD.setZoneMaster(new GeoZoneMCD(geoWardMCD.getZone()));
+}
+
+if (geoWardMCD.getIsActive() == null)
+	geoWardMCD.setIsActive(false);
+//geoWardMCD.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//geoWardMCD.setCreaterRemarks(userSessionParam.getUserFullName());
+//geoWardMCD.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//geoWardMCD.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+// Update existing data
+	GeoWardMCD existingGeoWardMCD = commonMasterService.getGeoWardMCDById(geoWardMCD.getWardGuid());
+
+if (existingGeoWardMCD != null) {
+	existingGeoWardMCD.setWardCode(!Util.isNullOrEmpty(geoWardMCD.getWardCode()) ? geoWardMCD.getWardCode().toUpperCase().trim() : null);
+	existingGeoWardMCD.setWardNameEn(!Util.isNullOrEmpty(geoWardMCD.getWardNameEn()) ? geoWardMCD.getWardNameEn().toUpperCase().trim() : null);
+
+	existingGeoWardMCD.setWardNameHi(!Util.isNullOrEmpty(geoWardMCD.getWardNameHi()) ? geoWardMCD.getWardNameHi().toUpperCase().trim() : null);
+	existingGeoWardMCD.setWardNameRl(!Util.isNullOrEmpty(geoWardMCD.getWardNameRl()) ? geoWardMCD.getWardNameRl().trim() : null);
+	existingGeoWardMCD.setWardDesc(!Util.isNullOrEmpty(geoWardMCD.getWardDesc()) ? geoWardMCD.getWardDesc().trim() : null);
+	existingGeoWardMCD.setAreaCode(!Util.isNullOrEmpty(geoWardMCD.getAreaCode()) ? geoWardMCD.getAreaCode().trim() : null);
+	existingGeoWardMCD.setWardNo(!Util.isNullOrEmpty(geoWardMCD.getWardNo()) ? geoWardMCD.getWardNo().trim() : null);
+	//existingGeoWardMCD.setLatLongInfo(!Util.isNullOrEmpty(geoWardMCD.getLatLongInfo()) ? geoWardMCD.getLatLongInfo().trim() : null);
+
+	existingGeoWardMCD.setIsActive(geoWardMCD.getIsActive() != null ? geoWardMCD.getIsActive() : existingGeoWardMCD.getIsActive());
+
+	existingGeoWardMCD.setModifiedIpAddr(request.getRemoteAddr());
+	existingGeoWardMCD.setModifiedDate(new Date());
+	existingGeoWardMCD.setModifiedBy("admin");
+//	if(geoWardMCD.getLatLongInfo() == null) {
+//		geoWardMCD.setLatLongInfo(null);
+//		
+//	}else {
+//		
+//		geoWardMCD.setLatLongInfo(geoWardMCD.getLatLongInfo());
+//		
+//	}
+
+//dropdown
+	
+	existingGeoWardMCD.setZone(geoWardMCD.getZoneGuid());
+
+if(existingGeoWardMCD.getZone()!=null && !existingGeoWardMCD.getZone().isEmpty()){
+	existingGeoWardMCD.setZoneMaster(new GeoZoneMCD(existingGeoWardMCD.getZone()));
+}
+
+if (existingGeoWardMCD.getIsActive() == null)
+	existingGeoWardMCD.setIsActive(false);
+
+geoWardMCD = existingGeoWardMCD; // Use the updated existing country object
+} else {
+log.error("Ward not found");
+resultData.setStatus(false);
+resultData.setMessage("Ward not found");
+return resultData;
+}
+}
+
+// Validation
+resultData = validator.validateGeoWardMCD(geoWardMCD);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+// If validation passes, proceed to save or update
+if (geoWardMCD.getIsActive() == null) geoWardMCD.setIsActive(false);
+geoWardMCD.setWardCode(!Util.isNullOrEmpty(geoWardMCD.getWardCode()) ? geoWardMCD.getWardCode().toUpperCase().trim() : null);
+geoWardMCD.setWardNameEn(!Util.isNullOrEmpty(geoWardMCD.getWardNameEn()) ? geoWardMCD.getWardNameEn().toUpperCase().trim() : null);
+geoWardMCD.setWardNameHi(!Util.isNullOrEmpty(geoWardMCD.getWardNameHi()) ? geoWardMCD.getWardNameHi().trim() : null);
+geoWardMCD.setWardNameRl(!Util.isNullOrEmpty(geoWardMCD.getWardNameRl()) ? geoWardMCD.getWardNameRl().trim() : null);
+geoWardMCD.setWardDesc(!Util.isNullOrEmpty(geoWardMCD.getWardDesc()) ? geoWardMCD.getWardDesc().trim() : null);
+geoWardMCD.setAreaCode(!Util.isNullOrEmpty(geoWardMCD.getAreaCode()) ? geoWardMCD.getAreaCode().trim() : null);
+geoWardMCD.setWardNo(!Util.isNullOrEmpty(geoWardMCD.getWardNo()) ? geoWardMCD.getWardNo().trim() : null);
+//geoWardMCD.setLatLongInfo(!Util.isNullOrEmpty(geoWardMCD.getLatLongInfo()) ? geoWardMCD.getLatLongInfo().trim() : null);
+
+try {
+geoWardMCDRepo.save(geoWardMCD);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getGeoWardMCDByGuid/{wardGuid}")
+public ResponseEntity<GeoWardMCD> getGeoWardMCDByGuid(@PathVariable("wardGuid") String wardGuid) {
+GeoWardMCD geoWardMCD = geoWardMCDRepo.findById(wardGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with wardGuid : " + wardGuid));
+return new ResponseEntity<>(geoWardMCD, HttpStatus.OK);
+}
+
+/////////////////////////////////////GeoWardMCD End///////////////////////////////////
+
+/////////////////////////////////////GeoColonyMCD Start///////////////////////////////////
+
+//get all data from table
+@GetMapping("/getGeoColonyMCDList")
+public ResponseEntity<BaseResponse> getGeoColonyMCDList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<GeoColonyMCD> list = geoColonyMCDRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setGeoColonyMCD(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitGeoColonyMCD")
+public BaseResponse submitGeoColonyMCD(@RequestBody GeoColonyMCD geoColonyMCD, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (geoColonyMCD.getColonyGuid() == null || geoColonyMCD.getColonyGuid().isEmpty()) {
+
+//Add new data
+	geoColonyMCD.setCreatedIpAddr(request.getRemoteAddr());
+	geoColonyMCD.setColonyGuid(UUID.randomUUID().toString());
+	geoColonyMCD.setCreatedDate(new Date());
+	geoColonyMCD.setModifiedIpAddr(null);
+	geoColonyMCD.setModifiedBy(null);
+	geoColonyMCD.setModifiedDate(null);
+	
+
+	
+	geoColonyMCD.setCreatedBy(request.getRemoteAddr());
+
+//for dropdown
+	geoColonyMCD.setWard(geoColonyMCD.getWardGuid());
+if(geoColonyMCD.getWard()!=null && !geoColonyMCD.getWard().isEmpty()){
+	geoColonyMCD.setWardMaster(new GeoWardMCD(geoColonyMCD.getWard()));
+}
+
+if (geoColonyMCD.getIsActive() == null)
+	geoColonyMCD.setIsActive(false);
+//geoColonyMCD.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//geoColonyMCD.setCreaterRemarks(userSessionParam.getUserFullName());
+//geoColonyMCD.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//geoColonyMCD.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+//Update existing data
+	GeoColonyMCD existingGeoColonyMCD = commonMasterService.getGeoColonyMCDById(geoColonyMCD.getColonyGuid());
+
+if (existingGeoColonyMCD != null) {
+	existingGeoColonyMCD.setColonyCode(!Util.isNullOrEmpty(geoColonyMCD.getColonyCode()) ? geoColonyMCD.getColonyCode().toUpperCase().trim() : null);
+	existingGeoColonyMCD.setColonyNameEn(!Util.isNullOrEmpty(geoColonyMCD.getColonyNameEn()) ? geoColonyMCD.getColonyNameEn().toUpperCase().trim() : null);
+	existingGeoColonyMCD.setColonyNameHi(!Util.isNullOrEmpty(geoColonyMCD.getColonyNameHi()) ? geoColonyMCD.getColonyNameHi().toUpperCase().trim() : null);
+	existingGeoColonyMCD.setColonyNameRl(!Util.isNullOrEmpty(geoColonyMCD.getColonyNameRl()) ? geoColonyMCD.getColonyNameRl().trim() : null);
+	existingGeoColonyMCD.setColonyDesc(!Util.isNullOrEmpty(geoColonyMCD.getColonyDesc()) ? geoColonyMCD.getColonyDesc().trim() : null);
+	existingGeoColonyMCD.setColonyTypeOther(!Util.isNullOrEmpty(geoColonyMCD.getColonyTypeOther()) ? geoColonyMCD.getColonyTypeOther().trim() : null);
+	existingGeoColonyMCD.setColonyTypeRuralUrban(!Util.isNullOrEmpty(geoColonyMCD.getColonyTypeRuralUrban()) ? geoColonyMCD.getColonyTypeRuralUrban().trim() : null);
+	existingGeoColonyMCD.setNewColonyCode(!Util.isNullOrEmpty(geoColonyMCD.getNewColonyCode()) ? geoColonyMCD.getNewColonyCode().trim() : null);
+	//existingGeoColonyMCD.setLongLatInfo(!Util.isNullOrEmpty(geoColonyMCD.getLongLatInfo()) ? geoColonyMCD.getLongLatInfo().trim() : null);
+
+	existingGeoColonyMCD.setIsActive(geoColonyMCD.getIsActive() != null ? geoColonyMCD.getIsActive() : existingGeoColonyMCD.getIsActive());
+
+	existingGeoColonyMCD.setModifiedIpAddr(request.getRemoteAddr());
+	existingGeoColonyMCD.setModifiedDate(new Date());
+	existingGeoColonyMCD.setModifiedBy("admin");
+	
+//dropdown
+
+	existingGeoColonyMCD.setWard(geoColonyMCD.getWardGuid());
+
+if(existingGeoColonyMCD.getWard()!=null && !existingGeoColonyMCD.getWard().isEmpty()){
+	existingGeoColonyMCD.setWardMaster(new GeoWardMCD(existingGeoColonyMCD.getWard()));
+}
+
+if (existingGeoColonyMCD.getIsActive() == null)
+	existingGeoColonyMCD.setIsActive(false);
+
+geoColonyMCD = existingGeoColonyMCD; // Use the updated existing country object
+} else {
+log.error("Colony not found");
+resultData.setStatus(false);
+resultData.setMessage("Colony not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateGeoColonyMCD(geoColonyMCD);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (geoColonyMCD.getIsActive() == null) geoColonyMCD.setIsActive(false);
+geoColonyMCD.setColonyCode(!Util.isNullOrEmpty(geoColonyMCD.getColonyCode()) ? geoColonyMCD.getColonyCode().toUpperCase().trim() : null);
+geoColonyMCD.setColonyNameEn(!Util.isNullOrEmpty(geoColonyMCD.getColonyNameEn()) ? geoColonyMCD.getColonyNameEn().toUpperCase().trim() : null);
+geoColonyMCD.setColonyNameHi(!Util.isNullOrEmpty(geoColonyMCD.getColonyNameHi()) ? geoColonyMCD.getColonyNameHi().trim() : null);
+geoColonyMCD.setColonyNameRl(!Util.isNullOrEmpty(geoColonyMCD.getColonyNameRl()) ? geoColonyMCD.getColonyNameRl().trim() : null);
+geoColonyMCD.setColonyDesc(!Util.isNullOrEmpty(geoColonyMCD.getColonyDesc()) ? geoColonyMCD.getColonyDesc().trim() : null);
+geoColonyMCD.setColonyTypeOther(!Util.isNullOrEmpty(geoColonyMCD.getColonyTypeOther()) ? geoColonyMCD.getColonyTypeOther().trim() : null);
+geoColonyMCD.setColonyTypeRuralUrban(!Util.isNullOrEmpty(geoColonyMCD.getColonyTypeRuralUrban()) ? geoColonyMCD.getColonyTypeRuralUrban().trim() : null);
+geoColonyMCD.setNewColonyCode(!Util.isNullOrEmpty(geoColonyMCD.getNewColonyCode()) ? geoColonyMCD.getNewColonyCode().trim() : null);
+//geoColonyMCD.setLongLatInfo(!Util.isNullOrEmpty(geoColonyMCD.getLongLatInfo()) ? geoColonyMCD.getLongLatInfo().trim() : null);
+
+try {
+geoColonyMCDRepo.save(geoColonyMCD);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getGeoColonyMCDByGuid/{colonyGuid}")
+public ResponseEntity<GeoColonyMCD> getGeoColonyMCDByGuid(@PathVariable("colonyGuid") String colonyGuid) {
+GeoColonyMCD geoColonyMCD = geoColonyMCDRepo.findById(colonyGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with colonyGuid : " + colonyGuid));
+return new ResponseEntity<>(geoColonyMCD, HttpStatus.OK);
+}
+
+/////////////////////////////////////GeoColonyMCD End///////////////////////////////////
 }

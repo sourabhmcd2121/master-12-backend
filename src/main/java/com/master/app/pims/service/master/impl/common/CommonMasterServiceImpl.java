@@ -1,6 +1,8 @@
 package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
+import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
+import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -8,12 +10,15 @@ import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
+import com.master.app.pims.entities.schemas.mst.GeoColonyMCD;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
@@ -28,16 +33,21 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.HeaderRibbonRepo;
+import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
+import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
+import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
+import com.master.app.pims.repositories.mst.GeoColonyMCDRepo;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
+import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
@@ -68,6 +78,9 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
     private AssessmentYearRepository assessmentYearRepository;
+    
+    @Autowired
+    private CommonMasterAppAlertRepo commonMasterAppAlertRepo;
     
     
     @Autowired
@@ -128,8 +141,19 @@ public class CommonMasterServiceImpl implements CommonMasterService {
    	private RefUserDocsMapRepo refUserDocsMapRepo;
     
     @Autowired
+   	private GeoWardMCDRepo geoWardMCDRepo;
+   
+    @Autowired
+  	private GeoColonyMCDRepo geoColonyMCDRepo;
+    
+    @Autowired
    	private HeaderRibbonRepo headerRibbonRepo;
     
+    @Autowired
+   	private IntramcMenuMasterRepo intramcMenuMasterRepo;
+    
+    @Autowired
+   	private IntramcRoleMenuMapRepo intramcRoleMenuMapRepo;
     
     @Override
     public GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst) {
@@ -403,8 +427,59 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 
 	}
 
+	@Override
+	public GeoWardMCD saveGeoWardMCD(GeoWardMCD geoWardMCD) {
+		 return geoWardMCDRepo.save(geoWardMCD);
+	}
 	
+	@Override
+	public GeoWardMCD getGeoWardMCDById(String id) {
+        return geoWardMCDRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
+	}
+
+	@Override
+	public GeoColonyMCD saveGeoColonyMCD(GeoColonyMCD geoColonyMCD) {
+		 return geoColonyMCDRepo.save(geoColonyMCD);
+	}
 	
+	@Override
+	public GeoColonyMCD getGeoColonyMCDById(String id) {
+        return geoColonyMCDRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public CommonMasterAppAlert saveCommonMasterAppAlert(CommonMasterAppAlert commonMasterAppAlert) {
+		 return commonMasterAppAlertRepo.save(commonMasterAppAlert);
+	}
+
+	@Override
+	public CommonMasterAppAlert getCommonMasterAppAlertById(String id) {
+        return commonMasterAppAlertRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public IntramcMenuMaster saveIntramcMenuMaster(IntramcMenuMaster intramcMenuMaster) {
+		 return intramcMenuMasterRepo.save(intramcMenuMaster);
+	}
+	
+	@Override
+	public IntramcMenuMaster getIntramcMenuMasterById(String id) {
+        return intramcMenuMasterRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public IntramcRoleMenuMap saveIntramcRoleMenuMap(IntramcRoleMenuMap intramcRoleMenuMap) {
+		 return intramcRoleMenuMapRepo.save(intramcRoleMenuMap);
+	}
+	
+	@Override
+	public IntramcRoleMenuMap getIntramcRoleMenuMapById(String id) {
+        return intramcRoleMenuMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
 	
 }

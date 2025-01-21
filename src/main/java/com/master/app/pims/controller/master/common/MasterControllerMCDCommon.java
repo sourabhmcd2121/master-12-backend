@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
+import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgUnit;
@@ -27,6 +29,7 @@ import com.master.app.pims.entities.schemas.master.OrgWrapper;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
+import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
@@ -47,7 +50,10 @@ import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
+import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
+import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
@@ -99,6 +105,9 @@ public class MasterControllerMCDCommon {
 	private SubmittedRequestStageRepository submittedRequestStageRepository;
 
 	@Autowired
+	private CommonMasterAppAlertRepo commonMasterAppAlertRepo;
+	  
+	@Autowired
 	private UnitAreaRepository unitAreaRepository;
 
 	@Autowired
@@ -128,8 +137,14 @@ public class MasterControllerMCDCommon {
 	@Autowired
 	private RefDocsCategoryMapRepository refDocsCategoryMapRepository;
 	
-	 @Autowired
-	 private RefUserDocsMapRepo refUserDocsMapRepo;
+	@Autowired
+	private RefUserDocsMapRepo refUserDocsMapRepo;
+	 
+	@Autowired
+	private IntramcMenuMasterRepo intramcMenuMasterRepo;
+	
+	@Autowired
+	private IntramcRoleMenuMapRepo intramcRoleMenuMapRepo;
 
 	////////////////////////////////////////////// Application Master
 	////////////////////////////////////////////// Start////////////////////////////
@@ -2562,6 +2577,414 @@ return new ResponseEntity<>(refUserDocsMap, HttpStatus.OK);
 }
 
 /////////////////////////////////////RefUserDocsMap End///////////////////////////////////
+
+//////////////////////////////////////////////CommonMasterAppAlert Start////////////////////////////
+
+// get all data from table
+@GetMapping("/getCommonMasterAppAlertList")
+public ResponseEntity<BaseResponse> getCommonMasterAppAlertList() {
+BaseResponse response = new BaseResponse();
+// Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<CommonMasterAppAlert> list = commonMasterAppAlertRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setCommonMasterAppAlert(list);
+return ResponseEntity.ok(response);
+}
+
+// Create New Data And Update
+@PostMapping("/submitCommonMasterAppAlert")
+public BaseResponse submitCommonMasterAppAlert(@RequestBody CommonMasterAppAlert commonMasterAppAlert,
+HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+// Check if guid is provided (indicating an update)
+if (commonMasterAppAlert.getAppAlertGuid() == null || commonMasterAppAlert.getAppAlertGuid().isEmpty()) {
+// Add new data
+	commonMasterAppAlert.setCreatedIpAddr(request.getRemoteAddr());
+	commonMasterAppAlert.setAppAlertGuid(UUID.randomUUID().toString());
+	commonMasterAppAlert.setCreatedDate(new Date());
+	commonMasterAppAlert.setModifiedIpAddr(null);
+	commonMasterAppAlert.setModifiedBy(null);
+	commonMasterAppAlert.setModifiedDate(null);
+	commonMasterAppAlert.setCreatedBy(request.getRemoteAddr());
+//commonMasterAppAlert.setCreatedBy(userSessionParam.getEmpBasicGUID());
+// commonMasterAppAlert.setCreaterRemarks(userSessionParam.getUserFullName());
+// commonMasterAppAlert.setCreaterMacId(HttpSessionHelper.getMacAddress());
+	//for dropdown
+	commonMasterAppAlert.setAppMaster(commonMasterAppAlert.getApplicationMasterGuid());
+	if(commonMasterAppAlert.getAppMaster()!=null && !commonMasterAppAlert.getAppMaster().isEmpty()){
+		commonMasterAppAlert.setApplicationMaster(new ApplicationMaster(commonMasterAppAlert.getAppMaster()));
+	}
+
+if (commonMasterAppAlert.getIsActive() == null)
+	commonMasterAppAlert.setIsActive(false);
+} else {
+// Update existing data
+	CommonMasterAppAlert existingCommonMasterAppAlert = commonMasterService
+.getCommonMasterAppAlertById(commonMasterAppAlert.getAppAlertGuid());
+
+if (existingCommonMasterAppAlert != null) {
+	
+	existingCommonMasterAppAlert.setAppAlertSubjectEn(!Util.isNullOrEmpty(commonMasterAppAlert.getAppAlertSubjectEn()) ? commonMasterAppAlert.getAppAlertSubjectEn().toUpperCase().trim(): null);
+	existingCommonMasterAppAlert.setAppAlertContentEn(!Util.isNullOrEmpty(commonMasterAppAlert.getAppAlertContentEn()) ? commonMasterAppAlert.getAppAlertContentEn().toUpperCase().trim() : null);
+	existingCommonMasterAppAlert.setAppAlertSubjectHi(!Util.isNullOrEmpty(commonMasterAppAlert.getAppAlertSubjectHi()) ? commonMasterAppAlert.getAppAlertSubjectHi().toUpperCase().trim() : null);
+
+	existingCommonMasterAppAlert.setPriority(!Util.isNullOrZero(commonMasterAppAlert.getPriority()) ? commonMasterAppAlert.getPriority(): null);
+	existingCommonMasterAppAlert.setRedirectUrl(!Util.isNullOrEmpty(commonMasterAppAlert.getRedirectUrl()) ? commonMasterAppAlert.getRedirectUrl().toUpperCase().trim() : null);
+	
+
+	existingCommonMasterAppAlert.setActiveFromDate(commonMasterAppAlert.getActiveFromDate());
+	existingCommonMasterAppAlert.setActiveTillDate(commonMasterAppAlert.getActiveTillDate());
+	
+
+	existingCommonMasterAppAlert.setIsActive(commonMasterAppAlert.getIsActive() != null ? commonMasterAppAlert.getIsActive()
+: existingCommonMasterAppAlert.getIsActive());
+
+	existingCommonMasterAppAlert.setModifiedIpAddr(request.getRemoteAddr());
+	existingCommonMasterAppAlert.setModifiedDate(new Date());
+	existingCommonMasterAppAlert.setModifiedBy("admin");
+	
+	//dropdown
+	
+	existingCommonMasterAppAlert.setAppMaster(commonMasterAppAlert.getApplicationMasterGuid());
+
+	if(existingCommonMasterAppAlert.getAppMaster()!=null && !existingCommonMasterAppAlert.getAppMaster().isEmpty()){
+		existingCommonMasterAppAlert.setApplicationMaster(new ApplicationMaster(existingCommonMasterAppAlert.getAppMaster()));
+	}
+
+	
+if (existingCommonMasterAppAlert.getIsActive() == null)
+	existingCommonMasterAppAlert.setIsActive(false);
+
+//existingCommonMasterAppAlert.setModifiedBy(UUID.randomUUID().toString());
+//existingCommonMasterAppAlert.setModifiedMacAddr(UUID.randomUUID().toString());
+
+// existingCommonMasterAppAlert.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
+// existingCommonMasterAppAlert.setModifierMacId(HttpSessionHelper.getMacAddress());
+commonMasterAppAlert = existingCommonMasterAppAlert; // Use the updated existing assessmentYear object
+} else {
+log.error("AppAlert not found");
+resultData.setStatus(false);
+resultData.setMessage("AppAlert not found");
+return resultData;
+}
+}
+
+// Validation
+resultData = validator.validateCommonMasterAppAlert(commonMasterAppAlert);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+// If validation passes, proceed to save or update
+if (commonMasterAppAlert.getIsActive() == null)
+	commonMasterAppAlert.setIsActive(false);
+
+commonMasterAppAlert.setAppAlertSubjectEn(!Util.isNullOrEmpty(commonMasterAppAlert.getAppAlertSubjectEn())
+? commonMasterAppAlert.getAppAlertSubjectEn().toUpperCase().trim()
+: null);
+commonMasterAppAlert.setAppAlertContentEn(!Util.isNullOrEmpty(commonMasterAppAlert.getAppAlertContentEn())
+? commonMasterAppAlert.getAppAlertContentEn().toUpperCase().trim()
+: null);
+commonMasterAppAlert.setAppAlertSubjectHi(!Util.isNullOrEmpty(commonMasterAppAlert.getAppAlertSubjectHi()) ? commonMasterAppAlert.getAppAlertSubjectHi().toUpperCase().trim() : null);
+
+commonMasterAppAlert.setPriority(!Util.isNullOrZero(commonMasterAppAlert.getPriority()) ? commonMasterAppAlert.getPriority(): null);
+commonMasterAppAlert.setRedirectUrl(!Util.isNullOrEmpty(commonMasterAppAlert.getRedirectUrl()) ? commonMasterAppAlert.getRedirectUrl().toUpperCase().trim() : null);
+
+commonMasterAppAlert.setActiveFromDate(commonMasterAppAlert.getActiveFromDate());
+commonMasterAppAlert.setActiveTillDate(commonMasterAppAlert.getActiveTillDate());
+
+try {
+	commonMasterAppAlertRepo.save(commonMasterAppAlert);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+// get data by id
+@GetMapping("/getCommonMasterAppAlertByGuid/{appAlertGuid}")
+public ResponseEntity<CommonMasterAppAlert> getCommonMasterAppAlertByGuid(
+@PathVariable("appAlertGuid") String appAlertGuid) {
+	CommonMasterAppAlert commonMasterAppAlert = commonMasterAppAlertRepo.findById(appAlertGuid)
+.orElseThrow(() -> new ResourceNotFoundException(
+"Resource not found with appAlertGuid : " + appAlertGuid));
+return new ResponseEntity<>(commonMasterAppAlert, HttpStatus.OK);
+}
+
+//////////////////////////////// CommonMasterAppAlert End////////////////////////////
+
+/////////////////////////////////////IntramcMenuMaster Start///////////////////////////////////
+//get all data from table
+@GetMapping("/getIntramcMenuMasterList")
+public ResponseEntity<BaseResponse> getIntramcMenuMasterList() {
+    BaseResponse response = new BaseResponse();
+    // Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+    List<IntramcMenuMaster> list = intramcMenuMasterRepo.findAll();
+    response.setMessage("success");
+    response.setStatus(true);
+    response.setTotalDataCount(list.size());
+    response.setIntramcMenuMaster(list);
+    return ResponseEntity.ok(response);
+}
+
+// Create New Data And Update
+@PostMapping("/submitIntramcMenuMaster")
+public BaseResponse submitIntramcMenuMaster(@RequestBody IntramcMenuMaster intramcMenuMaster, HttpServletRequest request) {
+    BaseResponse resultData = new BaseResponse();
+
+    // Check if guid is provided (indicating an update)
+    if (intramcMenuMaster.getMenuMasterGuid() == null || intramcMenuMaster.getMenuMasterGuid().isEmpty()) {
+        // Add new data
+    	intramcMenuMaster.setCreaterIp(request.getRemoteAddr());
+    	intramcMenuMaster.setMenuMasterGuid(UUID.randomUUID().toString());
+    	intramcMenuMaster.setCreatedDate(new Date());
+    	intramcMenuMaster.setModifierIp(null);
+    	intramcMenuMaster.setModifiedByGuid(null);
+    	intramcMenuMaster.setModifiedDate(null);
+    	intramcMenuMaster.setCreatedByGuid(request.getRemoteAddr());
+
+        if (intramcMenuMaster.getIsRecordActive() == null)
+        	intramcMenuMaster.setIsRecordActive(false);
+        
+        if (intramcMenuMaster.getIsVerified() == null)
+        	intramcMenuMaster.setIsVerified(false);
+        
+        if (intramcMenuMaster.getIsModified() == null)
+        	intramcMenuMaster.setIsModified(false);
+        
+        if (intramcMenuMaster.getIsAttested() == null)
+        	intramcMenuMaster.setIsAttested(false);
+//		orgWrapper.setCreaterRemarks(userSessionParam.getUserFullName());
+        //orgWrapper.setCreaterMacId(HttpSessionHelper.getMacAddress());
+        //orgWrapper.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+    		
+    	
+    } else {
+        // Update existing data
+    	IntramcMenuMaster existingIntramcMenuMaster = commonMasterService.getIntramcMenuMasterById(intramcMenuMaster.getMenuMasterGuid());
+    	
+        if (existingIntramcMenuMaster != null) {
+        	existingIntramcMenuMaster.setIntraMenuCode(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuCode()) ? intramcMenuMaster.getIntraMenuCode().toUpperCase().trim() : null);
+        	existingIntramcMenuMaster.setIntraMenuNameEn(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuNameEn()) ? intramcMenuMaster.getIntraMenuNameEn().toUpperCase().trim() : null);
+
+        	existingIntramcMenuMaster.setIntraMenuNameHi(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuNameHi()) ? intramcMenuMaster.getIntraMenuNameHi().toUpperCase().trim() : null);
+        	existingIntramcMenuMaster.setIntraMenuDesc(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuDesc()) ? intramcMenuMaster.getIntraMenuDesc().trim() : null);
+        	existingIntramcMenuMaster.setIntraMenuUri(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuUri()) ? intramcMenuMaster.getIntraMenuUri().trim() : null);
+        	existingIntramcMenuMaster.setAppCode(!Util.isNullOrEmpty(intramcMenuMaster.getAppCode()) ? intramcMenuMaster.getAppCode().trim() : null);
+        	existingIntramcMenuMaster.setFromDate(intramcMenuMaster.getFromDate());
+        	existingIntramcMenuMaster.setToDate(intramcMenuMaster.getToDate());
+         
+        	existingIntramcMenuMaster.setIsModified(intramcMenuMaster.getIsModified() != null ? intramcMenuMaster.getIsModified() : existingIntramcMenuMaster.getIsModified());
+        	existingIntramcMenuMaster.setIsAttested(intramcMenuMaster.getIsAttested() != null ? intramcMenuMaster.getIsAttested() : existingIntramcMenuMaster.getIsAttested());
+        	existingIntramcMenuMaster.setIsVerified(intramcMenuMaster.getIsVerified() != null ? intramcMenuMaster.getIsVerified() : existingIntramcMenuMaster.getIsVerified());
+        	existingIntramcMenuMaster.setIsRecordActive(intramcMenuMaster.getIsRecordActive() != null ? intramcMenuMaster.getIsRecordActive() : existingIntramcMenuMaster.getIsRecordActive());
+        	
+            if (existingIntramcMenuMaster.getIsRecordActive() == null)
+            	existingIntramcMenuMaster.setIsRecordActive(false);
+            
+            if (existingIntramcMenuMaster.getIsVerified() == null)
+            	existingIntramcMenuMaster.setIsVerified(false);
+            
+            if (existingIntramcMenuMaster.getIsModified() == null)
+            	existingIntramcMenuMaster.setIsModified(false);
+            
+            if (existingIntramcMenuMaster.getIsAttested() == null)
+            	existingIntramcMenuMaster.setIsAttested(false);
+            // for now setting some dummy value to test
+            existingIntramcMenuMaster.setModifierIp(request.getRemoteAddr());
+        	existingIntramcMenuMaster.setModifiedDate(new Date());
+            existingIntramcMenuMaster.setModifiedByGuid(UUID.randomUUID().toString());
+            existingIntramcMenuMaster.setModifierMacId(UUID.randomUUID().toString());
+            intramcMenuMaster = existingIntramcMenuMaster; // Use the updated existing menu master object
+        } else {
+            log.error("IntramcMenu Master not found");
+            resultData.setStatus(false);
+            resultData.setMessage("IntramcMenu Master not found");
+            return resultData;
+        }
+    }
+
+    // Validation
+    resultData = validator.validateIntramcMenuMaster(intramcMenuMaster);
+    if (resultData != null && !resultData.getStatus()) {
+        log.error("Validation failed: {}", resultData.getMessage());
+        return resultData;
+    }
+
+    // If validation passes, proceed to save or update
+    if (intramcMenuMaster.getIsRecordActive() == null) intramcMenuMaster.setIsRecordActive(false);
+    intramcMenuMaster.setIntraMenuCode(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuCode()) ? intramcMenuMaster.getIntraMenuCode().toUpperCase().trim() : null);
+    intramcMenuMaster.setIntraMenuNameEn(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuNameEn()) ? intramcMenuMaster.getIntraMenuNameEn().toUpperCase().trim() : null);
+    intramcMenuMaster.setIntraMenuNameHi(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuNameHi()) ? intramcMenuMaster.getIntraMenuNameHi().trim() : null);
+    intramcMenuMaster.setIntraMenuDesc(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuDesc()) ? intramcMenuMaster.getIntraMenuDesc().trim() : null);
+    intramcMenuMaster.setIntraMenuUri(!Util.isNullOrEmpty(intramcMenuMaster.getIntraMenuUri()) ? intramcMenuMaster.getIntraMenuUri().trim() : null);
+    intramcMenuMaster.setAppCode(!Util.isNullOrEmpty(intramcMenuMaster.getAppCode()) ? intramcMenuMaster.getAppCode().trim() : null);
+    if (intramcMenuMaster.getIsAttested() == null) intramcMenuMaster.setIsAttested(false);
+    if (intramcMenuMaster.getIsModified() == null) intramcMenuMaster.setIsModified(false);
+    if (intramcMenuMaster.getIsVerified() == null) intramcMenuMaster.setIsVerified(false);
+
+    //    orgWrapper.setToDate(orgPrimary.getToDate());
+//    orgWrapper.setFromDate(orgPrimary.getFromDate());
+
+    try {
+        intramcMenuMasterRepo.save(intramcMenuMaster);
+        log.info("Record SaveOrUpdate Successfully");
+        resultData.setStatus(true);
+        resultData.setMessage("Record saved or updated successfully");
+    } catch (Exception e) {
+        log.error("Error saving or updating record: {}", e.getMessage());
+        resultData.setStatus(false);
+        resultData.setMessage("Error saving or updating record: " + e.getMessage());
+    }
+
+    return resultData;
+}
+
+
+	
+//get data by id
+@GetMapping("/getIntramcMenuMasterByGuid/{menuMasterGuid}")
+public ResponseEntity<IntramcMenuMaster> getIntramcMenuMasterByGuid(@PathVariable("menuMasterGuid") String menuMasterGuid) {
+	IntramcMenuMaster intramcMenuMaster = intramcMenuMasterRepo.findById(menuMasterGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with menuMasterGuid : " + menuMasterGuid));
+    return new ResponseEntity<>(intramcMenuMaster, HttpStatus.OK);
+}
+
+/////////////////////////////////////IntramcMenuMaster  End///////////////////////////////////
+
+//////////////////////////////////////////////IntramcRoleMenuMap Start////////////////////////////
+
+//get all data from table
+@GetMapping("/getIntramcRoleMenuMapList")
+public ResponseEntity<BaseResponse> getIntramcRoleMenuMapList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<IntramcRoleMenuMap> list = intramcRoleMenuMapRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setIntramcRoleMenuMap(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitIntramcRoleMenuMap")
+public BaseResponse submitIntramcRoleMenuMap(@RequestBody IntramcRoleMenuMap intramcRoleMenuMap,
+HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (intramcRoleMenuMap.getRefRoleMenuMapGuid() == null || intramcRoleMenuMap.getRefRoleMenuMapGuid().isEmpty()) {
+//Add new data
+	intramcRoleMenuMap.setCreatedIpAddr(request.getRemoteAddr());
+	intramcRoleMenuMap.setRefRoleMenuMapGuid(UUID.randomUUID().toString());
+	intramcRoleMenuMap.setCreatedDate(new Date());
+	intramcRoleMenuMap.setModifiedIpAddr(null);
+	intramcRoleMenuMap.setModifiedBy(null);
+	intramcRoleMenuMap.setModifiedDate(null);
+	intramcRoleMenuMap.setCreatedBy(request.getRemoteAddr());
+//commonMasterAppAlert.setCreatedBy(userSessionParam.getEmpBasicGUID());
+//commonMasterAppAlert.setCreaterRemarks(userSessionParam.getUserFullName());
+//commonMasterAppAlert.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//for dropdown
+	intramcRoleMenuMap.setMenuMaster(intramcRoleMenuMap.getMenuMasterGuid());
+if(intramcRoleMenuMap.getMenuMaster()!=null && !intramcRoleMenuMap.getMenuMaster().isEmpty()){
+	intramcRoleMenuMap.setIntramcMenuMasterMaster(new IntramcMenuMaster(intramcRoleMenuMap.getMenuMaster()));
+}
+
+if (intramcRoleMenuMap.getIsActive() == null)
+	intramcRoleMenuMap.setIsActive(false);
+} else {
+//Update existing data
+	IntramcRoleMenuMap existingIntramcRoleMenuMap = commonMasterService
+.getIntramcRoleMenuMapById(intramcRoleMenuMap.getRefRoleMenuMapGuid());
+
+if (existingIntramcRoleMenuMap != null) {
+
+	existingIntramcRoleMenuMap.setRoleCode(!Util.isNullOrEmpty(intramcRoleMenuMap.getRoleCode()) ? intramcRoleMenuMap.getRoleCode().toUpperCase().trim(): null);
+
+
+existingIntramcRoleMenuMap.setIsActive(intramcRoleMenuMap.getIsActive() != null ? intramcRoleMenuMap.getIsActive()
+: existingIntramcRoleMenuMap.getIsActive());
+
+existingIntramcRoleMenuMap.setModifiedIpAddr(request.getRemoteAddr());
+existingIntramcRoleMenuMap.setModifiedDate(new Date());
+existingIntramcRoleMenuMap.setModifiedBy("admin");
+
+//dropdown
+
+existingIntramcRoleMenuMap.setMenuMaster(intramcRoleMenuMap.getMenuMasterGuid());
+
+if(existingIntramcRoleMenuMap.getMenuMaster()!=null && !existingIntramcRoleMenuMap.getMenuMaster().isEmpty()){
+	existingIntramcRoleMenuMap.setIntramcMenuMasterMaster(new IntramcMenuMaster(existingIntramcRoleMenuMap.getMenuMaster()));
+}
+
+if (existingIntramcRoleMenuMap.getIsActive() == null)
+	existingIntramcRoleMenuMap.setIsActive(false);
+
+//existingIntramcRoleMenuMap.setModifiedBy(UUID.randomUUID().toString());
+//existingIntramcRoleMenuMap.setModifiedMacAddr(UUID.randomUUID().toString());
+
+//existingIntramcRoleMenuMap.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
+//existingIntramcRoleMenuMap.setModifierMacId(HttpSessionHelper.getMacAddress());
+intramcRoleMenuMap = existingIntramcRoleMenuMap; // Use the updated existing assessmentYear object
+} else {
+log.error("Intramc Role Menu Map not found");
+resultData.setStatus(false);
+resultData.setMessage("Intramc Role Menu Map not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateIntramcRoleMenuMap(intramcRoleMenuMap);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (intramcRoleMenuMap.getIsActive() == null)
+	intramcRoleMenuMap.setIsActive(false);
+
+intramcRoleMenuMap.setRoleCode(!Util.isNullOrEmpty(intramcRoleMenuMap.getRoleCode())
+? intramcRoleMenuMap.getRoleCode().toUpperCase().trim()
+: null);
+
+try {
+intramcRoleMenuMapRepo.save(intramcRoleMenuMap);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getIntramcRoleMenuMapByGuid/{refRoleMenuMapGuid}")
+public ResponseEntity<IntramcRoleMenuMap> getIntramcRoleMenuMapByGuid(
+@PathVariable("refRoleMenuMapGuid") String refRoleMenuMapGuid) {
+	IntramcRoleMenuMap intramcRoleMenuMap = intramcRoleMenuMapRepo.findById(refRoleMenuMapGuid)
+.orElseThrow(() -> new ResourceNotFoundException(
+"Resource not found with refRoleMenuMapGuid : " +  refRoleMenuMapGuid));
+return new ResponseEntity<>(intramcRoleMenuMap, HttpStatus.OK);
+}
+
+////////////////////////////////IntramcRoleMenuMap End////////////////////////////
 
 
 
