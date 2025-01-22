@@ -1,6 +1,6 @@
 package com.master.app.pims.repositories.mst;
 
-<<<<<<< HEAD
+
 import java.math.BigDecimal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,12 +27,4 @@ public interface CommonMasterAppAlertRepo extends JpaRepository<CommonMasterAppA
 //	    @Query("SELECT c.pdfFileName FROM CommonMasterAppAlert c WHERE c.appAlertGuid = :appAlertGuid")
 //	    String getPdfCommonMasterAppAlert(@Param("appAlertGuid") String appAlertGuid);
 //	    boolean existsByAppAlertSubjectEnAndAppAlertGuidNot(String appAlertSubjectEn, String appAlertGuid);
-
-=======
-import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
-import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface CommonMasterAppAlertRepo extends JpaRepository<CommonMasterAppAlert,String> {
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 }

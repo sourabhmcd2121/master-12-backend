@@ -4,26 +4,21 @@ import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
-<<<<<<< HEAD
+
 import com.master.app.pims.entities.schemas.mst.GeoColonyCategory;
 import com.master.app.pims.entities.schemas.mst.GeoColonyMCD;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
-=======
 import com.master.app.pims.entities.schemas.mst.*;
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoColonyMCDRepo;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
-<<<<<<< HEAD
 import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
-=======
 import com.master.app.pims.repositories.mst.GeoWardViewRepository;
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
@@ -72,17 +67,11 @@ public class MasterControllerMCDGeo {
     private CommonMasterService commonMasterService;
 
     @Autowired
-<<<<<<< HEAD
     private GeoWardMCDRepo geoWardMCDRepo;
     
    @Autowired
     private GeoColonyMCDRepo geoColonyMCDRepo;
     
-=======
-    private GeoWardViewRepository geoWardViewRepository;
-
-
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
     /////////////////////////////////////GeoCountry Mst Start///////////////////////////////////
     //get all data  according to page and size
     @GetMapping("/getMstCountryByPage")
@@ -603,9 +592,10 @@ public class MasterControllerMCDGeo {
         GeoZoneMCD geoZoneMCD = geoZoneMCDRepository.findById(zoneGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with zoneGuid : " + zoneGuid));
         return new ResponseEntity<>(geoZoneMCD, HttpStatus.OK);
     }
+    
+/////////////////////////////////////GeoZoneMCD Start///////////////////////////////////
 
-<<<<<<< HEAD
-
+    
 /////////////////////////////////////GeoWardMCD Start///////////////////////////////////
     
 //get all data from table
@@ -877,221 +867,5 @@ return new ResponseEntity<>(geoColonyMCD, HttpStatus.OK);
 }
 
 /////////////////////////////////////GeoColonyMCD End///////////////////////////////////
-=======
-    /////////////////////////////////////GeoZoneMcd End///////////////////////////////////
-    @GetMapping("/getGeoWardMCDList")
-    public ResponseEntity<BaseResponse> getGeoWardList() {
-        BaseResponse response = new BaseResponse();
-        log.info("Received request to fetch Geo Ward data.");
-        List<GeoWardView> geoWardData = geoWardViewRepository.findAll();
-        response.setMessage("success");
-        response.setStatus(true);
-        response.setTotalDataCount(geoWardData.size());
-        log.info("total record fetched : " + geoWardData.size());
-        response.setGeoWardViews(geoWardData);
-        return ResponseEntity.ok(response);
-    }
 
-    @SuppressWarnings("unchecked")
-    @PostMapping("/submitCommonMasterAppAlert")
-    public BaseResponse submitCommonMasterAppAlert(@RequestBody CommonMasterAppAlert obj,
-                                                   MultipartFile request) {
-        BaseResponse resultData = new BaseResponse();
-        try {
-            if (obj.getAppAlertGuid() == null || obj.getAppAlertGuid().isEmpty()) {
-                obj.setAppAlertGuid(UUID.randomUUID().toString());
-                obj.setAppAlertSubjectEn(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
-                obj.setAppAlertSubjectHi(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
-
-                if (obj.getAppAlertContentEn() == null || obj.getAppAlertContentEn().isEmpty()) {
-                    obj.setAppAlertContentEn(null);
-                } else {
-                    obj.setAppAlertContentEn(obj.getAppAlertContentEn().replaceAll("\"", "'"));
-                }
-                obj.setCreatedDate(new Date());
-                obj.setModifiedDate(null);
-                obj.setModifiedBy(null);
-                obj.setModifiedIpAddr(null);
-                obj.setModifiedMacAddr(null);
-                obj.setModifiedRemarks(null);
-                if (obj.getIsActive() == null)
-                    obj.setIsActive(false);
-            } else {
-                /* Log Print Method starts for before change */
-                List<CommonMasterAppAlert> list = referenceDAO.getMasterEntityListByGuid1(
-                        CommonMasterAppAlert.class.getName(), "appAlertGuid", obj.getAppAlertGuid());
-                if (list != null && list.size() > 0) {
-                    for (CommonMasterAppAlert obj1 : list) {
-                        Map obj2 = new LinkedHashMap();
-                        obj2.put("appAlertGuid", obj1.getAppAlertGuid().trim());
-                        obj2.put("appMaster",
-                                obj1.getApplicationMaster() != null
-                                        ? obj1.getApplicationMaster().getApplicationMasterName().trim()
-                                        : "");
-                        obj2.put("appAlertSubjectEn", obj1.getAppAlertSubjectEn().trim());
-                        obj2.put("appAlertContentEn", obj1.getAppAlertContentEn().trim());
-                        obj2.put("priority", obj1.getPriority() != null ? obj1.getPriority() : "");
-                        obj2.put("redirectUrl", obj1.getRedirectUrl() != null ? obj1.getRedirectUrl().trim() : "");
-                        obj2.put("pdfFileName", obj1.getPdfFileName1() != null ? obj1.getPdfFileName1() : "");
-                        obj2.put("activeFromDate",
-                                obj1.getActiveFromDate() != null ? outputFormatter.format(obj1.getActiveFromDate())
-                                        : "");
-                        obj2.put("activeTill",
-                                obj1.getActiveTill() != null ? outputFormatter.format(obj1.getActiveTill()) : "");
-                        obj2.put("isActive", obj1.getIsActive());
-                        obj2.put("createdBy", obj1.getCreatedBy());
-                        obj2.put("createdDate",
-                                obj1.getCreatedDate() != null ? outputFormatter.format(obj1.getCreatedDate()) : "");
-                        obj2.put("createdIpAddr", obj1.getCreatedIpAddr());
-                        obj2.put("createdMacAddr", obj1.getCreatedMacAddr());
-                        obj2.put("createdRemarks", obj1.getCreatedRemarks());
-                        obj2.put("modifiedBy", obj1.getModifiedBy());
-                        obj2.put("modifiedDate",
-                                obj1.getModifiedDate() != null ? outputFormatter.format(obj1.getModifiedDate())
-                                        : "");
-                        obj2.put("modifiedIpAddr", obj1.getModifiedIpAddr());
-                        obj2.put("modifiedMacAddr", obj1.getModifiedMacAddr());
-                        obj2.put("modifiedRemarks", obj1.getModifiedRemarks());
-
-                        String jsonString = mapper.writeValueAsString(obj2);
-                        logger.info("\n Login-id || " + httpSession.getAttribute("loginID") + " || IP-Address "
-                                + HttpSessionHelper.getClientIPAddress(request) + " || Mac-Address : "
-                                + HttpSessionHelper.getMacAddress());
-                        logger.info("\n Parameters of CommonMasterAppAlert before : " + jsonString);
-                    }
-                }
-                /* Log Print Method ends for before change */
-                obj.setAppAlertSubjectEn(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
-                obj.setAppAlertSubjectHi(obj.getAppAlertSubjectEn().replaceAll("\"", "'"));
-
-                if (obj.getAppAlertContentEn() == null || obj.getAppAlertContentEn().isEmpty()) {
-                    obj.setAppAlertContentEn(null);
-                } else {
-                    obj.setAppAlertContentEn(obj.getAppAlertContentEn().replaceAll("\"", "'"));
-                }
-
-                obj.setModifiedIpAddr(HttpSessionHelper.getClientIPAddress(request));
-                obj.setModifiedBy(userSessionParam.getEmpBasicGUID());
-                obj.setModifiedMacAddr(HttpSessionHelper.getMacAddress());
-                obj.setModifiedDate(new Date());
-                if (obj.getIsActive() == null)
-                    obj.setIsActive(false);
-
-            }
-            if (obj.getAppMaster() != null) {
-                obj.setApplicationMaster(new ApplicationMaster(obj.getAppMaster()));
-            }
-            if ((obj.getPdfFileName() != null && obj.getPdfFileName().getSize() == 0
-                    && obj.getAppAlertGuid() != null && !obj.getAppAlertGuid().isEmpty())
-                    || (obj.getImageFileName() != null && obj.getImageFileName().getSize() == 0
-                    && obj.getAppAlertGuid() != null && !obj.getAppAlertGuid().isEmpty())) {
-                obj.setPdfFileName1(obj.getAppAlertGuid());
-                obj.setImageUri(obj.getAppAlertGuid());
-            } else {
-//                        String pdfFileName = obj.getPdfFileName().getOriginalFilename();
-//                        String imageFileName = obj.getImageFileName().getOriginalFilename();
-                Date dNow = new Date();
-                SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
-                String datetime = ft.format(dNow);
-                String ext = null;
-                // for pdf
-                String originalPdfFileName1 = obj.getPdfFileName().getOriginalFilename();
-                String originalPdfFileName = originalPdfFileName1.replaceAll(" ", "_").toLowerCase();
-                if (originalPdfFileName != null && originalPdfFileName.lastIndexOf('.') != -1) {
-                    ext = originalPdfFileName.substring(originalPdfFileName.lastIndexOf('.'));
-                }
-                String pdfFileName1 = originalPdfFileName.substring(0, originalPdfFileName.lastIndexOf('.'));
-                String uniquePdfFileName = pdfFileName1 + "_" + datetime + ext;
-                obj.setPdfFileName1(uniquePdfFileName);
-                // for image
-                String originalImageFileName1 = obj.getImageFileName().getOriginalFilename();
-                String originalImageFileName = originalImageFileName1.replaceAll(" ", "_").toLowerCase();
-                if (originalImageFileName != null && originalImageFileName.lastIndexOf('.') != -1) {
-                    ext = originalImageFileName.substring(originalImageFileName.lastIndexOf('.'));
-                }
-                String imageFileName1 = originalImageFileName.substring(0,
-                        originalImageFileName.lastIndexOf('.'));
-                String uniqueImageFileName = imageFileName1 + "_" + datetime + ext;
-                obj.setImageUri(uniqueImageFileName);
-
-                //String contextPath = request.getServletContext().getRealPath("/");
-                MultipartFile file1 = obj.getPdfFileName();
-                String fileUploadStatus = pdfRead(uniquePdfFileName, pdfFile, file1);
-
-                MultipartFile file2 = obj.getImageFileName();
-                String fileUploadStatu2 = pdfRead(uniqueImageFileName, pdfFile, file2);
-            }
-
-            resultData = validateCommonMasterAppAlert(obj);
-            if (resultData != null && resultData.getStatus()) {
-                referenceDAO.saveorUpdateMasterObj(obj);
-                /* Log Print Method starts for after change */
-                List<CommonMasterAppAlert> list = referenceDAO.getMasterEntityListByGuid1(
-                        CommonMasterAppAlert.class.getName(), "appAlertGuid", obj.getAppAlertGuid());
-                for (CommonMasterAppAlert obj1 : list) {
-                    Map obj2 = new LinkedHashMap();
-                    obj2.put("appAlertGuid", obj1.getAppAlertGuid().trim());
-                    obj2.put("appMaster",
-                            obj1.getApplicationMaster() != null
-                                    ? obj1.getApplicationMaster().getApplicationMasterName().trim()
-                                    : "");
-                    obj2.put("appAlertSubjectEn", obj1.getAppAlertSubjectEn().trim());
-                    obj2.put("appAlertContentEn", obj1.getAppAlertContentEn().trim());
-                    obj2.put("priority", obj1.getPriority() != null ? obj1.getPriority() : "");
-                    obj2.put("redirectUrl", obj1.getRedirectUrl() != null ? obj1.getRedirectUrl().trim() : "");
-                    obj2.put("pdfFileName", obj1.getPdfFileName1() != null ? obj1.getPdfFileName1() : "");
-                    obj2.put("activeFromDate",
-                            obj1.getActiveFromDate() != null ? outputFormatter.format(obj1.getActiveFromDate())
-                                    : "");
-                    obj2.put("activeTill",
-                            obj1.getActiveTill() != null ? outputFormatter.format(obj1.getActiveTill()) : "");
-                    obj2.put("isActive", obj1.getIsActive());
-                    obj2.put("createdBy", obj1.getCreatedBy());
-                    obj2.put("createdDate",
-                            obj1.getCreatedDate() != null ? outputFormatter.format(obj1.getCreatedDate()) : "");
-                    obj2.put("createdIpAddr", obj1.getCreatedIpAddr());
-                    obj2.put("createdMacAddr", obj1.getCreatedMacAddr());
-                    obj2.put("createdRemarks", obj1.getCreatedRemarks());
-                    obj2.put("modifiedBy", obj1.getModifiedBy());
-                    obj2.put("modifiedDate",
-                            obj1.getModifiedDate() != null ? outputFormatter.format(obj1.getModifiedDate())
-                                    : "");
-                    obj2.put("modifiedIpAddr", obj1.getModifiedIpAddr());
-                    obj2.put("modifiedMacAddr", obj1.getModifiedMacAddr());
-                    obj2.put("modifiedRemarks", obj1.getModifiedRemarks());
-
-                    String jsonString = mapper.writeValueAsString(obj2);
-                    log.info("\n Login-id || " + httpSession.getAttribute("loginID") + " || IP-Address "
-                            + HttpSessionHelper.getClientIPAddress(request) + " || Mac-Address : "
-                            + HttpSessionHelper.getMacAddress());
-                    log.info("\n Parameters of CommonMasterAppAlert after : " + jsonString);
-                }
-                /* Log Print Method ends for after change */
-            }
-            log.info(resultData.getMessage() + "\n");
-
-            return resultData;
-        } catch (Exception e1) {
-            log.info("Exception Occured === " + e1);
-            e1.printStackTrace();
-        }
-        return null;
-    }
-
-    public String pdfRead(String fileName, String directory, MultipartFile file2) {
-        File dir = new File(directory);
-        if (!dir.mkdir()) {
-            dir.mkdirs();
-        }
-        String filePath = directory + File.separator + fileName;
-        File file = new File(filePath);
-        try {
-            file.createNewFile();
-            file2.transferTo(file);
-        } catch (Exception e) {
-            return "failure";
-        }
-        return "success";
-    }
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 }

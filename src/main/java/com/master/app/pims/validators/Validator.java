@@ -1,11 +1,6 @@
 package com.master.app.pims.validators;
-
-<<<<<<< HEAD
-import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
-=======
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
@@ -106,10 +101,6 @@ public interface Validator {
     //RefDocsCategoryMap validation
     BaseResponse validateRefUserDocsMap(RefUserDocsMap refUserDocsMap);
     
-<<<<<<< HEAD
-    //RefDocsCategoryMap validation
-    BaseResponse validateHeaderRibbon(HeaderRibbon headerRibbon);
-    
     //GeoWardMCD validation
     BaseResponse validateGeoWardMCD(GeoWardMCD geoWardMCD);
     
@@ -124,9 +115,4 @@ public interface Validator {
     
     //IntramcRoleMenuMap validation
     BaseResponse validateIntramcRoleMenuMap(IntramcRoleMenuMap intramcRoleMenuMap);
-    
-    
-=======
-   
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 }

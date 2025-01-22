@@ -1,12 +1,8 @@
 package com.master.app.pims.models.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-<<<<<<< HEAD
-import com.master.app.pims.entities.schemas.citizen.HeaderRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
-=======
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
 import com.master.app.pims.entities.schemas.master.GeoCountryMaster;
 import com.master.app.pims.entities.schemas.master.GeoDistrict;
@@ -15,7 +11,6 @@ import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgUnit;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
-<<<<<<< HEAD
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -37,11 +32,7 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
-=======
-import com.master.app.pims.entities.schemas.mst.*;
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -86,26 +77,11 @@ public class BaseResponse {
     private List<RefDocsCategoryMap> refDocsCategoryMap;
     private List<CommonMasterAppAlert> commonMasterAppAlert;
     private List<RefUserDocsMap> refUserDocsMap;
-<<<<<<< HEAD
-    private List<HeaderRibbon> headerRibbon;
-=======
-    private List<GeoWardView> geoWardViews;
-    
-    
->>>>>>> 9a0cc0e10dfd931c953030e185e960ef58e9b2eb
     private List<DesignationAppointmentType> designation;
     private List<IntramcMenuMaster> intramcMenuMaster;
-    private List<IntramcRoleMenuMap> intramcRoleMenuMap;
-    
+    private List<IntramcRoleMenuMap> intramcRoleMenuMap; 
     List<GeoDistrict> districtList;
 
-    public List<GeoWardView> getGeoWardViews() {
-        return geoWardViews;
-    }
-
-    public void setGeoWardViews(List<GeoWardView> geoWardViews) {
-        this.geoWardViews = geoWardViews;
-    }
 
     public List<GeoDistrict> getDistrictList() {
         return districtList;
