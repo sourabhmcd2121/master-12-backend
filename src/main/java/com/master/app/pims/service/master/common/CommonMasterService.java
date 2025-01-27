@@ -10,6 +10,7 @@ import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -141,5 +142,9 @@ public interface CommonMasterService {
     ///for IntramcRoleMenuMap join with intramc schema
     IntramcRoleMenuMap saveIntramcRoleMenuMap(IntramcRoleMenuMap intramcRoleMenuMap);
     IntramcRoleMenuMap getIntramcRoleMenuMapById(String id);
-
+    
+    ///for CommonMasterTradeClassification join with mst schema
+    CommonMasterTradeClassification saveCommonMasterTradeClassification(CommonMasterTradeClassification tradeClassification);
+    CommonMasterTradeClassification getCommonMasterTradeClassificationById(String id);
+    
 }

@@ -16,6 +16,7 @@ import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -80,6 +81,8 @@ public class BaseResponse {
     private List<DesignationAppointmentType> designation;
     private List<IntramcMenuMaster> intramcMenuMaster;
     private List<IntramcRoleMenuMap> intramcRoleMenuMap; 
+    private List<CommonMasterTradeClassification> tradeClassification; 
+    
     List<GeoDistrict> districtList;
 
 

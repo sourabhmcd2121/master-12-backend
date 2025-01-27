@@ -31,6 +31,7 @@ import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -55,6 +56,7 @@ import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
+import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
@@ -145,6 +147,9 @@ public class MasterControllerMCDCommon {
 	
 	@Autowired
 	private IntramcRoleMenuMapRepo intramcRoleMenuMapRepo;
+	
+	@Autowired
+	private CommonMasterTradeClassificationRepo tradeClassificationRepo;
 
 	////////////////////////////////////////////// Application Master
 	////////////////////////////////////////////// Start////////////////////////////
@@ -2985,6 +2990,124 @@ return new ResponseEntity<>(intramcRoleMenuMap, HttpStatus.OK);
 }
 
 ////////////////////////////////IntramcRoleMenuMap End////////////////////////////
+
+/////////////////////////////////////CommonMasterTradeClassification Start///////////////////////////////////
+
+//get all data from table
+@GetMapping("/getCommonMasterTradeClassificationList")
+public ResponseEntity<BaseResponse> getCommonMasterTradeClassificationList() {
+BaseResponse response = new BaseResponse();
+// Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<CommonMasterTradeClassification> list = tradeClassificationRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setTradeClassification(list);
+return ResponseEntity.ok(response);
+}
+
+// Create New Data And Update
+@PostMapping("/submitCommonMasterTradeClassification")
+public BaseResponse submitCommonMasterTradeClassification(@RequestBody CommonMasterTradeClassification tradeClassification, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+// Check if guid is provided (indicating an update)
+if (tradeClassification.getTradeClassficationGuid() == null || tradeClassification.getTradeClassficationGuid().isEmpty()) {
+
+// Add new data
+	tradeClassification.setCreatedIpAddr(request.getRemoteAddr());
+	tradeClassification.setTradeClassficationGuid(UUID.randomUUID().toString());
+	tradeClassification.setCreatedDate(new Date());
+	tradeClassification.setModifiedIpAddr(null);
+	tradeClassification.setModifiedBy(null);
+	tradeClassification.setModifiedDate(null);
+	tradeClassification.setCreatedBy(request.getRemoteAddr());
+
+//for dropdown
+	tradeClassification.setOrgPrimary(tradeClassification.getOrgPrimaryGuid());
+	
+if (tradeClassification.getOrgPrimary() != null && !tradeClassification.getOrgPrimary().isEmpty()) {
+	tradeClassification.setOrgPrimaryMaster(new OrgPrimary(tradeClassification.getOrgPrimary()));
+}
+
+if (tradeClassification.getIsActive() == null)
+	tradeClassification.setIsActive(false);
+//tradeClassification.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//tradeClassification.setCreaterRemarks(userSessionParam.getUserFullName());
+//tradeClassification.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//tradeClassification.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+// Update existing data
+	CommonMasterTradeClassification existingTradeClassification = commonMasterService.getCommonMasterTradeClassificationById(tradeClassification.getTradeClassficationGuid());
+
+if (existingTradeClassification != null) {
+	existingTradeClassification.setTradeClassficationCode(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationCode()) ? tradeClassification.getTradeClassficationCode().toUpperCase().trim() : null);
+	existingTradeClassification.setTradeClassficationNameEn(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameEn()) ? tradeClassification.getTradeClassficationNameEn().toUpperCase().trim() : null);
+
+	existingTradeClassification.setTradeClassficationNameHi(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameHi()) ? tradeClassification.getTradeClassficationNameHi().toUpperCase().trim() : null);
+	existingTradeClassification.setTradeClassficationNameRl(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameRl()) ? tradeClassification.getTradeClassficationNameRl().trim() : null);
+	existingTradeClassification.setTradeClassficationDesc(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationDesc()) ? tradeClassification.getTradeClassficationDesc().trim() : null);
+	existingTradeClassification.setIsActive(tradeClassification.getIsActive() != null ? tradeClassification.getIsActive() : existingTradeClassification.getIsActive());
+
+	existingTradeClassification.setModifiedIpAddr(request.getRemoteAddr());
+	existingTradeClassification.setModifiedDate(new Date());
+	existingTradeClassification.setModifiedBy("admin");
+
+//dropdown
+	existingTradeClassification.setOrgPrimary(tradeClassification.getOrgPrimaryGuid());
+if (existingTradeClassification.getOrgPrimary() != null && !existingTradeClassification.getOrgPrimary().isEmpty()) {
+	existingTradeClassification.setOrgPrimaryMaster(new OrgPrimary(existingTradeClassification.getOrgPrimary()));
+}
+
+if (existingTradeClassification.getIsActive() == null)
+	existingTradeClassification.setIsActive(false);
+
+tradeClassification = existingTradeClassification; // Use the updated existing country object
+} else {
+log.error("Trade Classification not found");
+resultData.setStatus(false);
+resultData.setMessage("Trade Classification not found");
+return resultData;
+}
+}
+
+// Validation
+resultData = validator.validateCommonMasterTradeClassification(tradeClassification);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+// If validation passes, proceed to save or update
+if (tradeClassification.getIsActive() == null) tradeClassification.setIsActive(false);
+tradeClassification.setTradeClassficationCode(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationCode()) ? tradeClassification.getTradeClassficationCode().toUpperCase().trim() : null);
+tradeClassification.setTradeClassficationNameEn(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameEn()) ? tradeClassification.getTradeClassficationNameEn().toUpperCase().trim() : null);
+tradeClassification.setTradeClassficationNameHi(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameHi()) ? tradeClassification.getTradeClassficationNameHi().trim() : null);
+tradeClassification.setTradeClassficationNameRl(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameRl()) ? tradeClassification.getTradeClassficationNameRl().trim() : null);
+tradeClassification.setTradeClassficationDesc(!Util.isNullOrEmpty(tradeClassification.getTradeClassficationDesc()) ? tradeClassification.getTradeClassficationDesc().trim() : null);
+
+try {
+	tradeClassificationRepo.save(tradeClassification);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getCommonMasterTradeClassificationByGuid/{tradeClassficationGuid}")
+public ResponseEntity<CommonMasterTradeClassification> getCommonMasterTradeClassificationByGuid(@PathVariable("tradeClassficationGuid") String tradeClassficationGuid) {
+	CommonMasterTradeClassification tradeClassification = tradeClassificationRepo.findById(tradeClassficationGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with tradeClassficationGuid : " + tradeClassficationGuid));
+return new ResponseEntity<>(tradeClassification, HttpStatus.OK);
+}
+
+/////////////////////////////////////CommonMasterTradeClassification End///////////////////////////////////
 
 
 

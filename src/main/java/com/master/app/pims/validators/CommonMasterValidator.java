@@ -10,6 +10,7 @@ import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -39,6 +40,7 @@ import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
+import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
@@ -152,6 +154,9 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private IntramcRoleMenuMapRepo intramcRoleMenuMapRepo;
+    
+    @Autowired
+   	private CommonMasterTradeClassificationRepo tradeClassificationRepo;
     
     //mst country validation
     @Override
@@ -1496,5 +1501,66 @@ public BaseResponse validateIntramcRoleMenuMap(IntramcRoleMenuMap intramcRoleMen
      }
      return resultData;
 }
+
+@Override
+public BaseResponse validateCommonMasterTradeClassification(CommonMasterTradeClassification tradeClassification) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	
+    	 if (Util.isNullOrEmpty(tradeClassification.getOrgPrimary())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tradeClassification.primaryOrg.name.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(tradeClassification.getTradeClassficationCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tradeClassification.code.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(tradeClassification.getTradeClassficationCode())
+					&& tradeClassificationRepo.isExistCommonTradeClassificationCode(tradeClassification.getTradeClassficationCode(),
+							tradeClassification.getTradeClassficationGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tradeClassification.code.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameEn())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.tradeClassification.nameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameEn())
+					&& tradeClassificationRepo.isExistCommonTradeClassificationNameEn(tradeClassification.getTradeClassficationNameEn(),
+							tradeClassification.getTradeClassficationGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tradeClassification.nameEn.unique"));
+				return resultData;
+			}
+//			if (!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameHi())
+//					&& tradeClassificationRepo.isExistCommonTradeClassificationNameHi(tradeClassification.getTradeClassficationNameHi(),
+//							tradeClassification.getTradeClassficationGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.tradeClassification.nameHi.unique"));
+//				return resultData;
+//			}
+//			if (!Util.isNullOrEmpty(tradeClassification.getTradeClassficationNameRl())
+//					&& tradeClassificationRepo.isExistCommonTradeClassificationNameRl(tradeClassification.getTradeClassficationNameRl(),
+//							tradeClassification.getTradeClassficationGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.tradeClassification.nameRl.unique"));
+//				return resultData;
+//			}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+        // intramcRoleMenuMapRepo
+         resultData.setMessage("Error validating tradeClassification Master: " + e.getMessage());
+     }
+     return resultData;
+}
+
+
 
 }
