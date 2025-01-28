@@ -32,6 +32,7 @@ import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -57,6 +58,7 @@ import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
+import com.master.app.pims.repositories.mst.CommonMasterTradeTypeRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
@@ -150,6 +152,9 @@ public class MasterControllerMCDCommon {
 	
 	@Autowired
 	private CommonMasterTradeClassificationRepo tradeClassificationRepo;
+	
+	@Autowired
+	 private CommonMasterTradeTypeRepo commonMasterTradeTypeRepo;
 
 	////////////////////////////////////////////// Application Master
 	////////////////////////////////////////////// Start////////////////////////////
@@ -3108,6 +3113,124 @@ return new ResponseEntity<>(tradeClassification, HttpStatus.OK);
 }
 
 /////////////////////////////////////CommonMasterTradeClassification End///////////////////////////////////
+
+/////////////////////////////////////CommonMasterTradeType Start///////////////////////////////////
+
+//get all data from table
+@GetMapping("/getCommonMasterTradeTypeList")
+public ResponseEntity<BaseResponse> getCommonMasterTradeTypeList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<CommonMasterTradeType> list = commonMasterTradeTypeRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setCommonMasterTradeType(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitCommonMasterTradeType")
+public BaseResponse submitCommonMasterTradeType(@RequestBody CommonMasterTradeType commonMasterTradeType, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (commonMasterTradeType.getTradeTypeGuid() == null || commonMasterTradeType.getTradeTypeGuid().isEmpty()) {
+
+//Add new data
+	commonMasterTradeType.setCreatedIpAddr(request.getRemoteAddr());
+	commonMasterTradeType.setTradeTypeGuid(UUID.randomUUID().toString());
+	commonMasterTradeType.setCreatedDate(new Date());
+	commonMasterTradeType.setModifiedIpAddr(null);
+	commonMasterTradeType.setModifiedBy(null);
+	commonMasterTradeType.setModifiedDate(null);
+	commonMasterTradeType.setCreatedBy(request.getRemoteAddr());
+
+//for dropdown
+	commonMasterTradeType.setTradeClassification(commonMasterTradeType.getTradeClassficationGuid());
+
+if (commonMasterTradeType.getTradeClassification() != null && !commonMasterTradeType.getTradeClassification().isEmpty()) {
+	commonMasterTradeType.setTradeClassficationMaster(new CommonMasterTradeClassification(commonMasterTradeType.getTradeClassification()));
+}
+
+if (commonMasterTradeType.getIsActive() == null)
+	commonMasterTradeType.setIsActive(false);
+//commonMasterTradeType.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//commonMasterTradeType.setCreaterRemarks(userSessionParam.getUserFullName());
+//commonMasterTradeType.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//commonMasterTradeType.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+//Update existing data
+	CommonMasterTradeType existingCommonMasterTradeType = commonMasterService.getCommonMasterTradeTypeById(commonMasterTradeType.getTradeTypeGuid());
+
+if (existingCommonMasterTradeType != null) {
+	existingCommonMasterTradeType.setTradeTypeNameEn(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameEn()) ? commonMasterTradeType.getTradeTypeNameEn().toUpperCase().trim() : null);
+	existingCommonMasterTradeType.setTradeTypeNameHi(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameHi()) ? commonMasterTradeType.getTradeTypeNameHi().toUpperCase().trim() : null);
+
+	existingCommonMasterTradeType.setTradeTypeNameRl(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameRl()) ? commonMasterTradeType.getTradeTypeNameRl().toUpperCase().trim() : null);
+existingCommonMasterTradeType.setLicencePeriod(!Util.isNullOrZero(commonMasterTradeType.getLicencePeriod()) ? commonMasterTradeType.getLicencePeriod() : null);
+existingCommonMasterTradeType.setTradeTypeDesc(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeDesc()) ? commonMasterTradeType.getTradeTypeDesc().trim() : null);
+existingCommonMasterTradeType.setIsActive(commonMasterTradeType.getIsActive() != null ? commonMasterTradeType.getIsActive() : existingCommonMasterTradeType.getIsActive());
+
+existingCommonMasterTradeType.setModifiedIpAddr(request.getRemoteAddr());
+existingCommonMasterTradeType.setModifiedDate(new Date());
+existingCommonMasterTradeType.setModifiedBy("admin");
+
+//dropdown
+existingCommonMasterTradeType.setTradeClassification(commonMasterTradeType.getTradeClassficationGuid());
+if (existingCommonMasterTradeType.getTradeClassification() != null && !existingCommonMasterTradeType.getTradeClassification().isEmpty()) {
+	existingCommonMasterTradeType.setTradeClassficationMaster(new CommonMasterTradeClassification(existingCommonMasterTradeType.getTradeClassification()));
+}
+
+if (existingCommonMasterTradeType.getIsActive() == null)
+	existingCommonMasterTradeType.setIsActive(false);
+
+commonMasterTradeType = existingCommonMasterTradeType; // Use the updated existing country object
+} else {
+log.error("Trade Type not found");
+resultData.setStatus(false);
+resultData.setMessage("Trade Type not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateCommonMasterTradeType(commonMasterTradeType);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (commonMasterTradeType.getIsActive() == null) commonMasterTradeType.setIsActive(false);
+commonMasterTradeType.setTradeTypeNameEn(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameEn()) ? commonMasterTradeType.getTradeTypeNameEn().toUpperCase().trim() : null);
+commonMasterTradeType.setTradeTypeNameHi(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameHi()) ? commonMasterTradeType.getTradeTypeNameHi().toUpperCase().trim() : null);
+commonMasterTradeType.setTradeTypeNameRl(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameRl()) ? commonMasterTradeType.getTradeTypeNameRl().trim() : null);
+commonMasterTradeType.setLicencePeriod(!Util.isNullOrZero(commonMasterTradeType.getLicencePeriod()) ? commonMasterTradeType.getLicencePeriod() : null);
+commonMasterTradeType.setTradeTypeDesc(!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeDesc()) ? commonMasterTradeType.getTradeTypeDesc().trim() : null);
+
+try {
+	commonMasterTradeTypeRepo.save(commonMasterTradeType);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getCommonMasterTradeTypeByGuid/{tradeTypeGuid}")
+public ResponseEntity<CommonMasterTradeType> getCommonMasterTradeTypeByGuid(@PathVariable("tradeTypeGuid") String tradeTypeGuid) {
+	CommonMasterTradeType commonMasterTradeType = commonMasterTradeTypeRepo.findById(tradeTypeGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with tradeTypeGuid : " + tradeTypeGuid));
+return new ResponseEntity<>(commonMasterTradeType, HttpStatus.OK);
+}
+
+/////////////////////////////////////CommonMasterTradeType End///////////////////////////////////
 
 
 

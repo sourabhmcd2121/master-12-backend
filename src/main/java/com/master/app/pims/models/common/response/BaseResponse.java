@@ -17,6 +17,7 @@ import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -82,6 +83,7 @@ public class BaseResponse {
     private List<IntramcMenuMaster> intramcMenuMaster;
     private List<IntramcRoleMenuMap> intramcRoleMenuMap; 
     private List<CommonMasterTradeClassification> tradeClassification; 
+    private List<CommonMasterTradeType> commonMasterTradeType; 
     
     List<GeoDistrict> districtList;
 

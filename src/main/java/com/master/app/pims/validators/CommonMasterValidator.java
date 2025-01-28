@@ -11,6 +11,7 @@ import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -41,6 +42,7 @@ import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
+import com.master.app.pims.repositories.mst.CommonMasterTradeTypeRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
@@ -157,6 +159,9 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private CommonMasterTradeClassificationRepo tradeClassificationRepo;
+    
+    @Autowired
+	private CommonMasterTradeTypeRepo commonMasterTradeTypeRepo;
     
     //mst country validation
     @Override
@@ -1557,6 +1562,55 @@ public BaseResponse validateCommonMasterTradeClassification(CommonMasterTradeCla
          resultData.setStatus(false);
         // intramcRoleMenuMapRepo
          resultData.setMessage("Error validating tradeClassification Master: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateCommonMasterTradeType(CommonMasterTradeType commonMasterTradeType) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(commonMasterTradeType.getTradeClassification())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.commonMasterTradeType.commonTradeClassification.required"));
+				return resultData;
+			}
+			if (Util.isNullOrZero(commonMasterTradeType.getLicencePeriod())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMasterTradeType.licencePeriod.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMasterTradeType.nameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameEn()) && commonMasterTradeTypeRepo
+					.isExistCommonTradeTypeNameEn(commonMasterTradeType.getTradeTypeNameEn(), commonMasterTradeType.getTradeTypeGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMasterTradeType.nameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameHi()) && commonMasterTradeTypeRepo
+					.isExistCommonTradeTypeNameHi(commonMasterTradeType.getTradeTypeNameHi(), commonMasterTradeType.getTradeTypeGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMasterTradeType.nameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(commonMasterTradeType.getTradeTypeNameRl()) && commonMasterTradeTypeRepo
+					.isExistCommonTradeTypeNameRl(commonMasterTradeType.getTradeTypeNameRl(), commonMasterTradeType.getTradeTypeGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMasterTradeType.nameRl.unique"));
+				return resultData;
+			}
+    	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+
+         resultData.setMessage("Error validating CommonMasterTradeType Master: " + e.getMessage());
      }
      return resultData;
 }

@@ -12,6 +12,7 @@ import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
+import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
 import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
@@ -41,6 +42,7 @@ import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
+import com.master.app.pims.repositories.mst.CommonMasterTradeTypeRepo;
 import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
@@ -154,6 +156,9 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
    	private CommonMasterTradeClassificationRepo tradeClassificationRepo;
+    
+    @Autowired
+   	private CommonMasterTradeTypeRepo commonMasterTradeTypeRepo;
     
     @Override
     public GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst) {
@@ -480,6 +485,17 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public CommonMasterTradeClassification getCommonMasterTradeClassificationById(String id) {
         return tradeClassificationRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public CommonMasterTradeType saveCommonMasterTradeType(CommonMasterTradeType commonMasterTradeType) {
+		 return commonMasterTradeTypeRepo.save(commonMasterTradeType);
+	}
+
+	@Override
+	public CommonMasterTradeType getCommonMasterTradeTypeById(String id) {
+        return commonMasterTradeTypeRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 	
