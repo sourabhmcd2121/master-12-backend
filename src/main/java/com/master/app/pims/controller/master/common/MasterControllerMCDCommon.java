@@ -30,6 +30,7 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
+import com.master.app.pims.entities.schemas.mst.CommonMasterIndustryArea;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
@@ -37,8 +38,10 @@ import com.master.app.pims.entities.schemas.mst.DocsCategoryInfo;
 import com.master.app.pims.entities.schemas.mst.DocsSubmissionInfo;
 import com.master.app.pims.entities.schemas.mst.EducationLevel;
 import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
+import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.MstRefSla;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -56,6 +59,7 @@ import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
+import com.master.app.pims.repositories.mst.CommonMasterIndustryAreaRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeTypeRepo;
@@ -63,6 +67,7 @@ import com.master.app.pims.repositories.mst.DocsCategoryInfoRepository;
 import com.master.app.pims.repositories.mst.DocsSubmissionInfoRepository;
 import com.master.app.pims.repositories.mst.EducationLevelRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
+import com.master.app.pims.repositories.mst.MstRefSlaRepo;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.RefDocsCategoryMapRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
@@ -155,7 +160,12 @@ public class MasterControllerMCDCommon {
 	
 	@Autowired
 	 private CommonMasterTradeTypeRepo commonMasterTradeTypeRepo;
+	
+	@Autowired
+	private CommonMasterIndustryAreaRepo industryAreaRepo;
 
+	 @Autowired
+	   	private MstRefSlaRepo refSlaRepo;
 	////////////////////////////////////////////// Application Master
 	////////////////////////////////////////////// Start////////////////////////////
 
@@ -3232,6 +3242,280 @@ return new ResponseEntity<>(commonMasterTradeType, HttpStatus.OK);
 
 /////////////////////////////////////CommonMasterTradeType End///////////////////////////////////
 
+/////////////////////////////////////CommonMasterIndustryArea Start///////////////////////////////////
 
+//get all data from table
+@GetMapping("/getCommonMasterIndustryAreaList")
+public ResponseEntity<BaseResponse> getCommonMasterIndustryAreaList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<CommonMasterIndustryArea> list = industryAreaRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setIndustryArea(list);
+return ResponseEntity.ok(response);
+}
+
+// Create New Data And Update
+@PostMapping("/submitCommonMasterIndustryArea")
+public BaseResponse submitCommonMasterIndustryArea(@RequestBody CommonMasterIndustryArea industryArea, HttpServletRequest request) {
+    BaseResponse resultData = new BaseResponse();
+
+    // Check if guid is provided (indicating an update)
+    if (industryArea.getIndustryGuid() == null || industryArea.getIndustryGuid().isEmpty()) {
+
+        // Add new data
+    	industryArea.setCreatedIpAddr(request.getRemoteAddr());
+    	industryArea.setIndustryGuid(UUID.randomUUID().toString());
+    	industryArea.setCreatedDate(new Date());
+    	industryArea.setModifiedIpAddr(null);
+    	industryArea.setModifiedBy(null);
+    	industryArea.setModifiedDate(null);
+    	industryArea.setCreatedBy("admin");
+        //for dropdown
+    	industryArea.setOrgUnitName(industryArea.getOrgUnitBasicInfoGuid());
+    	industryArea.setZone(industryArea.getZoneGuid());
+		if (industryArea.getOrgUnitName() != null && !industryArea.getOrgUnitName().isEmpty()) {
+			industryArea.setOrgUnitBasicInfoMaster(new OrgUnit(industryArea.getOrgUnitName()));
+		}
+		
+		if(industryArea.getZone()!=null && !industryArea.getZone().isEmpty()){
+			industryArea.setZoneMaster(new GeoZoneMCD(industryArea.getZone()));
+		}
+		
+        if (industryArea.getIsActive() == null)
+        	industryArea.setIsActive(false);
+//		industryArea.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//		industryArea.setCreaterRemarks(userSessionParam.getUserFullName());
+        //industryArea.setCreaterMacId(HttpSessionHelper.getMacAddress());
+        //industryArea.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+    }
+    
+    else {
+        // Update existing data
+    	CommonMasterIndustryArea existingIndustryArea = commonMasterService.getCommonMasterIndustryAreaById(industryArea.getIndustryGuid());
+
+        if (existingIndustryArea != null) {
+        	existingIndustryArea.setIndustryCode(!Util.isNullOrEmpty(industryArea.getIndustryCode()) ? industryArea.getIndustryCode().toUpperCase().trim() : null);
+        	existingIndustryArea.setIndustryNameEn(!Util.isNullOrEmpty(industryArea.getIndustryNameEn()) ? industryArea.getIndustryNameEn().toUpperCase().trim() : null);
+
+        	existingIndustryArea.setIndustryNameHi(!Util.isNullOrEmpty(industryArea.getIndustryNameHi()) ? industryArea.getIndustryNameHi().toUpperCase().trim() : null);
+        	existingIndustryArea.setIndustryNameRl(!Util.isNullOrEmpty(industryArea.getIndustryNameRl()) ? industryArea.getIndustryNameRl().trim() : null);
+        	existingIndustryArea.setIndustryDesc(!Util.isNullOrEmpty(industryArea.getIndustryDesc()) ? industryArea.getIndustryDesc().trim() : null);
+        	
+        	existingIndustryArea.setIsActive(industryArea.getIsActive() != null ? industryArea.getIsActive() : existingIndustryArea.getIsActive());
+        	existingIndustryArea.setModifiedIpAddr(request.getRemoteAddr());
+        	existingIndustryArea.setModifiedDate(new Date());
+        	existingIndustryArea.setModifiedBy("admin");
+
+            //dropdown
+        	existingIndustryArea.setZone(existingIndustryArea.getZoneGuid());
+        	existingIndustryArea.setOrgUnitName(existingIndustryArea.getOrgUnitBasicInfoGuid());
+			if (existingIndustryArea.getOrgUnitName() != null && !existingIndustryArea.getOrgUnitName().isEmpty()) {
+				existingIndustryArea.setOrgUnitBasicInfoMaster(new OrgUnit(existingIndustryArea.getOrgUnitName()));
+			}
+			
+			if(existingIndustryArea.getZone()!=null && !existingIndustryArea.getZone().isEmpty()){
+				existingIndustryArea.setZoneMaster(new GeoZoneMCD(existingIndustryArea.getZone()));
+			}
+
+
+            if (existingIndustryArea.getIsActive() == null)
+            	existingIndustryArea.setIsActive(false);
+
+            industryArea = existingIndustryArea; // Use the updated existing country object
+        } else {
+            log.error("IndustryArea not found");
+            resultData.setStatus(false);
+            resultData.setMessage("IndustryArea not found");
+            return resultData;
+        }
+    }
+
+    // Validation
+    resultData = validator.validateCommonMasterIndustryArea(industryArea);
+    if (resultData != null && !resultData.getStatus()) {
+        log.error("Validation failed: {}", resultData.getMessage());
+        return resultData;
+    }
+
+    // If validation passes, proceed to save or update
+    if (industryArea.getIsActive() == null) industryArea.setIsActive(false);
+    industryArea.setIndustryCode(!Util.isNullOrEmpty(industryArea.getIndustryCode()) ? industryArea.getIndustryCode().toUpperCase().trim() : null);
+    industryArea.setIndustryNameEn(!Util.isNullOrEmpty(industryArea.getIndustryNameEn()) ? industryArea.getIndustryNameEn().toUpperCase().trim() : null);
+    industryArea.setIndustryNameHi(!Util.isNullOrEmpty(industryArea.getIndustryNameHi()) ? industryArea.getIndustryNameHi().trim() : null);
+    industryArea.setIndustryNameRl(!Util.isNullOrEmpty(industryArea.getIndustryNameRl()) ? industryArea.getIndustryNameRl().trim() : null);
+    industryArea.setIndustryDesc(!Util.isNullOrEmpty(industryArea.getIndustryDesc()) ? industryArea.getIndustryDesc().trim() : null);
+
+    
+    
+    try {
+    	industryAreaRepo.save(industryArea);
+        log.info("Record SaveOrUpdate Successfully");
+        resultData.setStatus(true);
+        resultData.setMessage("Record saved or updated successfully");
+    } catch (Exception e) {
+        log.error("Error saving or updating record: {}", e.getMessage());
+        resultData.setStatus(false);
+        resultData.setMessage("Error saving or updating record: " + e.getMessage());
+    }
+
+    return resultData;
+}
+
+//get data by id
+@GetMapping("/getCommonMasterIndustryAreaByGuid/{industryGuid}")
+public ResponseEntity<CommonMasterIndustryArea> getGeoZoneMCDByGuid(@PathVariable("industryGuid") String industryGuid) {
+	CommonMasterIndustryArea industryArea = industryAreaRepo.findById(industryGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with industryGuid : " + industryGuid));
+    return new ResponseEntity<>(industryArea, HttpStatus.OK);
+}
+
+/////////////////////////////////////CommonMasterIndustryArea End///////////////////////////////////
+
+/////////////////////////////////////MstRefSla Start///////////////////////////////////
+
+//get all data from table
+@GetMapping("/getMstRefSlaList")
+public ResponseEntity<BaseResponse> getMstRefSlaList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<MstRefSla> list = refSlaRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setRefSla(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitMstRefSla")
+public BaseResponse submitRefDocsCategoryMap(@RequestBody MstRefSla refSla, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (refSla.getSlaGuid() == null || refSla.getSlaGuid().isEmpty()) {
+
+//Add new data
+	refSla.setCreatedIpAddr(request.getRemoteAddr());
+	refSla.setSlaGuid(UUID.randomUUID().toString());
+	refSla.setCreatedDate(new Date());
+	refSla.setModifiedIpAddr(null);
+	refSla.setCreatedBy("admin");
+//refSla.setModifiedByGuid(null);
+	refSla.setModifiedDate(null);
+//refSla.setCreatedByGuid(request.getRemoteAddr());
+
+//for dropdown
+	refSla.setAppMaster(refSla.getApplicationMasterGuid());
+	refSla.setProcessStatus(refSla.getProcessStatusGuid());
+	refSla.setRequestSubmissionType(refSla.getRequestSubmissionTypeGuid());
+
+	//Application Master
+if(refSla.getAppMaster()!=null && !refSla.getAppMaster().isEmpty()){
+	refSla.setApplicationMaster(new ApplicationMaster(refSla.getAppMaster()));
+}
+
+//ProcessStatus
+if(refSla.getProcessStatus()!=null && !refSla.getProcessStatus().isEmpty()){
+	refSla.setProcessStatusMaster(new CommonMasterProcessStatus(refSla.getProcessStatus()));
+}
+
+//RequestSubmissionType
+if(refSla.getRequestSubmissionType()!=null && !refSla.getRequestSubmissionType().isEmpty()){
+	refSla.setRequestSubmissionTypeMaster(new RequestSubmissionType(refSla.getRequestSubmissionType()));
+}
+
+if (refSla.getIsActive() == null)
+	refSla.setIsActive(false);
+
+//refSla.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//refSla.setCreaterRemarks(userSessionParam.getUserFullName());
+//refSla.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//refSla.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+//Update existing data
+	MstRefSla existingRefSla = commonMasterService.getMstRefSlaById(refSla.getSlaGuid());
+
+if (existingRefSla != null) {
+	existingRefSla.setIsActive(refSla.getIsActive() != null ? refSla.getIsActive() : existingRefSla.getIsActive());
+	existingRefSla.setFeStageLavel(!Util.isNullOrEmpty(refSla.getFeStageLavel()) ? refSla.getFeStageLavel().toUpperCase().trim(): null);
+	existingRefSla.setFeStatusCode(!Util.isNullOrEmpty(refSla.getFeStatusCode()) ? refSla.getFeStatusCode().toUpperCase().trim(): null);
+	existingRefSla.setNextActionDueInDays(!Util.isNullOrZero(refSla.getNextActionDueInDays()) ? refSla.getNextActionDueInDays(): null);
+	existingRefSla.setNextActionDue(!Util.isNullOrEmpty(refSla.getNextActionDue()) ? refSla.getNextActionDue().toUpperCase().trim(): null);
+	
+	existingRefSla.setModifiedIpAddr(request.getRemoteAddr());
+	existingRefSla.setModifiedDate(new Date());
+	existingRefSla.setModifiedBy("admin");	
+	//existingRefSla.setModifiedByGuid("admin");
+
+//dropdown
+	existingRefSla.setAppMaster(refSla.getApplicationMasterGuid());
+	existingRefSla.setProcessStatus(refSla.getProcessStatusGuid());
+	existingRefSla.setRequestSubmissionType(refSla.getRequestSubmissionTypeGuid());
+
+	//Application Master
+if(existingRefSla.getAppMaster()!=null && !existingRefSla.getAppMaster().isEmpty()){
+	existingRefSla.setApplicationMaster(new ApplicationMaster(existingRefSla.getAppMaster()));
+}
+
+//ProcessStatus
+if(existingRefSla.getProcessStatus()!=null && !existingRefSla.getProcessStatus().isEmpty()){
+	existingRefSla.setProcessStatusMaster(new CommonMasterProcessStatus(existingRefSla.getProcessStatus()));
+}
+
+//RequestSubmissionType
+if(existingRefSla.getRequestSubmissionType()!=null && !existingRefSla.getRequestSubmissionType().isEmpty()){
+	existingRefSla.setRequestSubmissionTypeMaster(new RequestSubmissionType(existingRefSla.getRequestSubmissionType()));
+}
+
+if (existingRefSla.getIsActive() == null)
+	existingRefSla.setIsActive(false);
+
+refSla = existingRefSla; // Use the updated existing refSla object
+} else {
+log.error("MstRefSla not found");
+resultData.setStatus(false);
+resultData.setMessage("MstRefSla not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateMstRefSla(refSla);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (refSla.getIsActive() == null) refSla.setIsActive(false);
+refSla.setFeStageLavel(!Util.isNullOrEmpty(refSla.getFeStageLavel()) ? refSla.getFeStageLavel().toUpperCase().trim(): null);
+refSla.setFeStatusCode(!Util.isNullOrEmpty(refSla.getFeStatusCode()) ? refSla.getFeStatusCode().toUpperCase().trim(): null);
+refSla.setNextActionDueInDays(!Util.isNullOrZero(refSla.getNextActionDueInDays()) ? refSla.getNextActionDueInDays(): null);
+refSla.setNextActionDue(!Util.isNullOrEmpty(refSla.getNextActionDue()) ? refSla.getNextActionDue().toUpperCase().trim(): null);
+
+try {
+refSlaRepo.save(refSla);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getMstRefSlaByGuid/{slaGuid}")
+public ResponseEntity<MstRefSla> getMstRefSlaByGuid(@PathVariable("slaGuid") String slaGuid) {
+	MstRefSla refSla = refSlaRepo.findById(slaGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with slaGuid : " + slaGuid));
+return new ResponseEntity<>(refSla, HttpStatus.OK);
+}
+
+/////////////////////////////////////MstRefSla End///////////////////////////////////
 
 }

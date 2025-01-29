@@ -10,6 +10,7 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
+import com.master.app.pims.entities.schemas.mst.CommonMasterIndustryArea;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
@@ -22,6 +23,7 @@ import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.MstRefSla;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -40,6 +42,7 @@ import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
+import com.master.app.pims.repositories.mst.CommonMasterIndustryAreaRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeTypeRepo;
@@ -52,6 +55,7 @@ import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
+import com.master.app.pims.repositories.mst.MstRefSlaRepo;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.RefDocsCategoryMapRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
@@ -159,6 +163,15 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
    	private CommonMasterTradeTypeRepo commonMasterTradeTypeRepo;
+    
+    @Autowired
+   	private CommonMasterIndustryAreaRepo industryAreaRepo;
+    
+    @Autowired
+   	private MstRefSlaRepo refSlaRepo;
+    
+    
+    
     
     @Override
     public GeoCountryMst saveGeoCountryMst(GeoCountryMst geoCountryMst) {
@@ -496,6 +509,29 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public CommonMasterTradeType getCommonMasterTradeTypeById(String id) {
         return commonMasterTradeTypeRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public CommonMasterIndustryArea saveCommonMasterIndustryArea(CommonMasterIndustryArea industryArea) {
+		 return industryAreaRepo.save(industryArea);
+
+	}
+
+	@Override
+	public CommonMasterIndustryArea getCommonMasterIndustryAreaById(String id) {
+        return industryAreaRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+	
+	@Override
+	public MstRefSla saveMstRefSla(MstRefSla refSla) {
+		 return refSlaRepo.save(refSla);
+	}
+
+	@Override
+	public MstRefSla getMstRefSlaById(String id) {
+        return refSlaRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 	

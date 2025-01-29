@@ -15,6 +15,7 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
+import com.master.app.pims.entities.schemas.mst.CommonMasterIndustryArea;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
@@ -27,6 +28,7 @@ import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.MstRefSla;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -84,6 +86,8 @@ public class BaseResponse {
     private List<IntramcRoleMenuMap> intramcRoleMenuMap; 
     private List<CommonMasterTradeClassification> tradeClassification; 
     private List<CommonMasterTradeType> commonMasterTradeType; 
+    private List<CommonMasterIndustryArea> industryArea; 
+    private List<MstRefSla> refSla; 
     
     List<GeoDistrict> districtList;
 

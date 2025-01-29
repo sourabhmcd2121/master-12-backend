@@ -9,6 +9,7 @@ import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
 import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
+import com.master.app.pims.entities.schemas.mst.CommonMasterIndustryArea;
 import com.master.app.pims.entities.schemas.mst.CommonMasterProcessStatus;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeClassification;
 import com.master.app.pims.entities.schemas.mst.CommonMasterTradeType;
@@ -21,6 +22,7 @@ import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
 import com.master.app.pims.entities.schemas.mst.GeoWardMCD;
 import com.master.app.pims.entities.schemas.mst.GeoZoneMCD;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
+import com.master.app.pims.entities.schemas.mst.MstRefSla;
 import com.master.app.pims.entities.schemas.mst.OccupationType;
 import com.master.app.pims.entities.schemas.mst.RefDocsCategoryMap;
 import com.master.app.pims.entities.schemas.mst.ReligiousPlaces;
@@ -40,6 +42,7 @@ import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
+import com.master.app.pims.repositories.mst.CommonMasterIndustryAreaRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeClassificationRepo;
 import com.master.app.pims.repositories.mst.CommonMasterTradeTypeRepo;
@@ -52,6 +55,7 @@ import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.repositories.mst.MstChargeDetailsRepository;
+import com.master.app.pims.repositories.mst.MstRefSlaRepo;
 import com.master.app.pims.repositories.mst.OccupationTypeRepository;
 import com.master.app.pims.repositories.mst.RefDocsCategoryMapRepository;
 import com.master.app.pims.repositories.mst.ReligiousPlacesRepository;
@@ -162,6 +166,12 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
 	private CommonMasterTradeTypeRepo commonMasterTradeTypeRepo;
+    
+    @Autowired
+   	private CommonMasterIndustryAreaRepo industryAreaRepo;
+    
+    @Autowired
+   	private MstRefSlaRepo refSlaRepo;
     
     //mst country validation
     @Override
@@ -1611,6 +1621,81 @@ public BaseResponse validateCommonMasterTradeType(CommonMasterTradeType commonMa
          resultData.setStatus(false);
 
          resultData.setMessage("Error validating CommonMasterTradeType Master: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateCommonMasterIndustryArea(CommonMasterIndustryArea industryArea) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(industryArea.getIndustryCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.industryCode.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(industryArea.getIndustryCode()) && industryAreaRepo
+					.isExistCommonMasterIndustryCode(industryArea.getIndustryCode(), industryArea.getIndustryGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.industryCode.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(industryArea.getIndustryNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.industryNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(industryArea.getIndustryNameEn()) && industryAreaRepo
+					.isExistCommonMasterIndustryNameEn(industryArea.getIndustryNameEn(), industryArea.getIndustryGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.commonMaster.industryNameEn.unique"));
+				return resultData;
+			}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+
+         resultData.setMessage("Error validating CommonMasterIndustryArea Master: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateMstRefSla(MstRefSla refSla) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(refSla.getAppMaster())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.MstRefSla.AppMaster.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refSla.getProcessStatus())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.MstRefSla.ProcessStatus.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refSla.getFeStageLavel())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.MstRefSla.FeStageLavel.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(refSla.getFeStatusCode())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.MstRefSla.FeStatusCode.required"));
+				return resultData;
+			}
+			if (!Util.isNotNull(refSla.getNextActionDueInDays())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.MstRefSla.NextActionDueInDay.required"));
+				return resultData;
+			}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+
+         resultData.setMessage("Error validating MstRefSla Master: " + e.getMessage());
      }
      return resultData;
 }

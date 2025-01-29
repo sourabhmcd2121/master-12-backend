@@ -68,5 +68,10 @@ public class CommonMasterProcessStatus implements Serializable{
 	@Column(name = "modified_uri")
 	private String modifiedUri;
 
+	public CommonMasterProcessStatus(String processStatusGuid) {
+		super();
+		this.processStatusGuid = processStatusGuid;
+	}
+
 
 }
