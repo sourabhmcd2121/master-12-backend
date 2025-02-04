@@ -1,4 +1,5 @@
 package com.master.app.pims.validators;
+import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -35,6 +36,7 @@ import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+import com.master.app.pims.repositories.citizen.AdminDetailRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -172,6 +174,9 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private MstRefSlaRepo refSlaRepo;
+    
+    @Autowired
+   	private AdminDetailRepo adminDetailRepo;
     
     //mst country validation
     @Override
@@ -1696,6 +1701,21 @@ public BaseResponse validateMstRefSla(MstRefSla refSla) {
          resultData.setStatus(false);
 
          resultData.setMessage("Error validating MstRefSla Master: " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateAdminDetail(AdminDetail adminDetail) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+
+         resultData.setMessage("Error validating AdminDetail : " + e.getMessage());
      }
      return resultData;
 }

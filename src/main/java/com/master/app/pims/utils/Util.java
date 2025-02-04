@@ -13,7 +13,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public final class Util {
+	
+	  private static final long serialVersionUID = 1L;
+			private static final ObjectMapper mapper = new ObjectMapper();
 
 	private Util() {
 	}
@@ -319,5 +324,26 @@ public final class Util {
 	  public static boolean isNullOrEmpty(Date date) {
 	        return date == null;
 	    }
+	  
+	  
+	
+		
+		public static String convertObjectToJson(Object object) {
+			try {
+				String json = mapper.writeValueAsString(object);
+				return json;
+			} catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		}
+		
+		public static Object convertJsonToObject(String json, Class<?> objectClass) {
+			try {
+				Object object = mapper.readValue(json, objectClass);
+				return object;
+			} catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		}
 
 }

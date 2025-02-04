@@ -1,5 +1,6 @@
 package com.master.app.pims.service.master.impl.common;
 
+import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -35,6 +36,7 @@ import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
+import com.master.app.pims.repositories.citizen.AdminDetailRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -66,6 +68,10 @@ import com.master.app.pims.repositories.mst.UnitAreaRepository;
 import com.master.app.pims.repositories.usr.RefUserDocsMapRepo;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import jakarta.transaction.Transactional;
+
+import java.sql.SQLException;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -169,6 +175,9 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
    	private MstRefSlaRepo refSlaRepo;
+    
+    @Autowired
+   	private AdminDetailRepo adminDetailRepo;
     
     
     
@@ -534,5 +543,30 @@ public class CommonMasterServiceImpl implements CommonMasterService {
         return refSlaRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
+
+	@Override
+	public AdminDetail saveAdminDetail(AdminDetail adminDetail) {
+		 return adminDetailRepo.save(adminDetail);
+	}
+
+	@Override
+	public AdminDetail getAdminDetailById(String id) {
+        return adminDetailRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+	
+	
+//	 public byte[] getImageByteArrayAdminDetail(String adminDetailGuid) throws SQLException {
+//	     
+//	        Optional<AdminDetail> adminDetail = adminDetailRepo.findByAdminDetailGuid(adminDetailGuid);
+//	      
+//	        if (adminDetail.isPresent()) {
+//	        	
+//	            return adminDetail.get().getUserImage1();
+//	        }
+//			return null;
+//	    }
+
+
 	
 }

@@ -1,4 +1,5 @@
 package com.master.app.pims.validators;
+import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -123,14 +124,17 @@ public interface Validator {
     //CommonMasterTradeClassification validation
     BaseResponse validateCommonMasterTradeClassification(CommonMasterTradeClassification tradeClassification);
     
-    //CommonMasterTradeClassification validation
+    //CommonMasterTradeType validation
     BaseResponse validateCommonMasterTradeType(CommonMasterTradeType commonMasterTradeType);
     
-    //CommonMasterTradeClassification validation
+    //CommonMasterIndustryArea validation
     BaseResponse validateCommonMasterIndustryArea(CommonMasterIndustryArea industryArea);
     
-    //CommonMasterTradeClassification validation
+    //MstRefSla validation
     BaseResponse validateMstRefSla(MstRefSla refSla);
+    
+    //AdminDetail validation
+    BaseResponse validateAdminDetail(AdminDetail adminDetail);
     
     
     

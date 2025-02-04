@@ -2,9 +2,6 @@ package com.master.app.pims.entities.schemas.mst;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import com.master.app.pims.entities.schemas.master.OrgPrimary;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -164,8 +164,8 @@ public class MasterControllerMCDCommon {
 	@Autowired
 	private CommonMasterIndustryAreaRepo industryAreaRepo;
 
-	 @Autowired
-	   	private MstRefSlaRepo refSlaRepo;
+	@Autowired
+	private MstRefSlaRepo refSlaRepo;
 	////////////////////////////////////////////// Application Master
 	////////////////////////////////////////////// Start////////////////////////////
 
@@ -3390,7 +3390,7 @@ return ResponseEntity.ok(response);
 
 //Create New Data And Update
 @PostMapping("/submitMstRefSla")
-public BaseResponse submitRefDocsCategoryMap(@RequestBody MstRefSla refSla, HttpServletRequest request) {
+public BaseResponse submitMstRefSla(@RequestBody MstRefSla refSla, HttpServletRequest request) {
 BaseResponse resultData = new BaseResponse();
 
 //Check if guid is provided (indicating an update)
