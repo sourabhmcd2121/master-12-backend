@@ -8,6 +8,6 @@ import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
 public interface AdminDetailRepo extends JpaRepository<AdminDetail, String> {
 	
 	
-	Optional<AdminDetail> findByAdminDetailGuid(String adminDetailGuid);
+	//Optional<AdminDetail> findByAdminDetailGuid(String adminDetailGuid);
 
 }

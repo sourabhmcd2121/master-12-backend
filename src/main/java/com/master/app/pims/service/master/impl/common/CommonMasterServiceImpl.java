@@ -1,6 +1,7 @@
 package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -37,6 +38,7 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.AdminDetailRepo;
+import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -179,6 +181,8 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     @Autowired
    	private AdminDetailRepo adminDetailRepo;
     
+    @Autowired
+   	private FooterRibbonRepo footerRibbonRepo;
     
     
     
@@ -554,19 +558,18 @@ public class CommonMasterServiceImpl implements CommonMasterService {
         return adminDetailRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
+
+	@Override
+	public FooterRibbon saveFooterRibbon(FooterRibbon footerRibbon) {
+		 return footerRibbonRepo.save(footerRibbon);
+	}
+
+	@Override
+	public FooterRibbon getFooterRibbonById(String id) {
+        return footerRibbonRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
 	
 	
-//	 public byte[] getImageByteArrayAdminDetail(String adminDetailGuid) throws SQLException {
-//	     
-//	        Optional<AdminDetail> adminDetail = adminDetailRepo.findByAdminDetailGuid(adminDetailGuid);
-//	      
-//	        if (adminDetail.isPresent()) {
-//	        	
-//	            return adminDetail.get().getUserImage1();
-//	        }
-//			return null;
-//	    }
-
-
 	
 }

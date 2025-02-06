@@ -2,6 +2,7 @@ package com.master.app.pims.models.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
@@ -90,6 +91,7 @@ public class BaseResponse {
     private List<CommonMasterIndustryArea> industryArea; 
     private List<MstRefSla> refSla; 
     private List<AdminDetail> adminDetail; 
+    private List<FooterRibbon> footerRibbon; 
     
     List<GeoDistrict> districtList;
 

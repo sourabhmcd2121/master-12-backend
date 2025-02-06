@@ -1,5 +1,6 @@
 package com.master.app.pims.validators;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -136,6 +137,9 @@ public interface Validator {
     //AdminDetail validation
     BaseResponse validateAdminDetail(AdminDetail adminDetail);
     
+    //AdminDetail validation
+    BaseResponse validateFooterRibbon(FooterRibbon footerRibbon);
     
     
+   
 }

@@ -1,5 +1,6 @@
 package com.master.app.pims.validators;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -37,6 +38,7 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.AdminDetailRepo;
+import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -177,6 +179,9 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private AdminDetailRepo adminDetailRepo;
+    
+    @Autowired
+   	private FooterRibbonRepo footerRibbonRepo;
     
     //mst country validation
     @Override
@@ -1711,11 +1716,95 @@ public BaseResponse validateAdminDetail(AdminDetail adminDetail) {
      resultData.setStatus(true);
      resultData.setMessage("Record SaveOrUpdate Successfully");
      try {
-    	
+    		if (Util.isNullOrEmpty(adminDetail.getUserName())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.adminDetail.userName.required"));
+				return resultData;
+			}
+//			if (!Util.isNullOrEmpty(adminDetail.getUserName())
+//					&& masterMCDValidationDAO.isExistUserName(adminDetail.getUserName(), adminDetail.getAdminDetailGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.adminDetail.userName.unique"));
+//				return resultData;
+//			}
+			if (Util.isNullOrEmpty(adminDetail.getEncryptedPwd())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.adminDetail.encryptedPwd.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(adminDetail.getIpAddress())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.adminDetail.ipAddress.required"));
+				return resultData;
+			}
+			if (adminDetail.getActiveFromDate() == null) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.adminDetail.activeFromDate.required"));
+				return resultData;
+			}
+			if (adminDetail.getActiveTill() == null) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.adminDetail.activeTill.required"));
+				return resultData;
+			}
+			if (adminDetail.getActiveTill().compareTo(adminDetail.getActiveFromDate()) < 0) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.adminDetail.activeTill.greater"));
+				return resultData;
+			}
      } catch (Exception e) {
          resultData.setStatus(false);
 
          resultData.setMessage("Error validating AdminDetail : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateFooterRibbon(FooterRibbon footerRibbon) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    		if (Util.isNullOrEmpty(footerRibbon.getImageHeadingEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerRibbon.imageHeadingEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(footerRibbon.getImageHeadingEn()) && footerRibbonRepo
+					.isExistFooterRibbonImageHeadingNameEn(footerRibbon.getImageHeadingEn(), footerRibbon.getFooterRibbonGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerRibbon.imageHeadingEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(footerRibbon.getImageHeadingHi()) && footerRibbonRepo
+					.isExistFooterRibbonImageHeadingNameHi(footerRibbon.getImageHeadingHi(), footerRibbon.getFooterRibbonGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerRibbon.imageHeadingHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(footerRibbon.getImageHeadingRl()) && footerRibbonRepo
+					.isExistFooterRibbonImageHeadingNameRl(footerRibbon.getImageHeadingRl(), footerRibbon.getFooterRibbonGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerRibbon.imageHeadingRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrZeroOrNegative(footerRibbon.getOrderNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerRibbon.orderNumber.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrZeroOrNegative(footerRibbon.getOrderNumber()) && footerRibbonRepo
+					.isExistFooterRibbonOrderNumber(footerRibbon.getOrderNumber(), footerRibbon.getFooterRibbonGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerRibbon.orderNumber.unique"));
+				return resultData;
+			}
+    		
+     } catch (Exception e) {
+         resultData.setStatus(false);
+
+         resultData.setMessage("Error validating FooterRibbon : " + e.getMessage());
      }
      return resultData;
 }

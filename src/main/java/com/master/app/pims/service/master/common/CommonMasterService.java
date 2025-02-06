@@ -2,6 +2,7 @@ package com.master.app.pims.service.master.common;
 import java.sql.SQLException;
 
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -168,7 +169,11 @@ public interface CommonMasterService {
     ///for AdminDetail join with mst schema
     AdminDetail saveAdminDetail(AdminDetail adminDetail);
     AdminDetail getAdminDetailById(String id);
-    // byte[] getImageByteArrayAdminDetail(String adminDetailGuid) throws SQLException;
+    
+    ///for FooterRibbon join with mst schema
+    FooterRibbon saveFooterRibbon(FooterRibbon footerRibbon);
+    FooterRibbon getFooterRibbonById(String id);
+  
 	
     
 }
