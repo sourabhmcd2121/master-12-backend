@@ -29,15 +29,13 @@ public class AdminDetail implements Serializable {
 	@Basic(optional = false)
 	@Column(name = "admin_detail_guid", unique = true, nullable = false, length = 36)
 	private String adminDetailGuid;
-	
+
 	@Transient
 	private String userImage1Base64;
 
-	//@JsonIgnore
+	// @JsonIgnore
 	@Column(name = "user_image")
 	private byte[] userImage1;
-	
-	
 
 	@Column(name = "user_name", nullable = false)
 	private String userName;

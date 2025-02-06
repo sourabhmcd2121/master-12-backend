@@ -89,12 +89,18 @@ public BaseResponse submitAdminDetail(@RequestBody AdminDetail adminDetail, Http
             if (adminDetail.getIsActive() == null)
                 adminDetail.setIsActive(false);
 
-            // Image upload code start
+            // Image upload code for creating new record
             if (adminDetail.getUserImage1Base64() != null && !adminDetail.getUserImage1Base64().isEmpty()) {
                 try {
+                    // Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+                    String base64String = adminDetail.getUserImage1Base64();
+                    if (base64String.contains("base64,")) {
+                        base64String = base64String.split("base64,")[1];  // Remove the prefix
+                    }
+
                     // Decode the base64 image string
-                    byte[] imageBytes = Base64.getDecoder().decode(adminDetail.getUserImage1Base64());
-                    adminDetail.setUserImage1(imageBytes);
+                    byte[] imageBytes = Base64.getDecoder().decode(base64String);
+                    adminDetail.setUserImage1(imageBytes); // Set image bytes to entity
                 } catch (IllegalArgumentException e) {
                     log.error("Invalid Base64 image data.", e);
                     resultData.setStatus(false);
@@ -102,7 +108,7 @@ public BaseResponse submitAdminDetail(@RequestBody AdminDetail adminDetail, Http
                     return resultData;
                 }
             }
-            // Image upload code end
+
 
         } else {
             // Update existing data
@@ -120,19 +126,27 @@ public BaseResponse submitAdminDetail(@RequestBody AdminDetail adminDetail, Http
                 if (existingAdminDetail.getIsActive() == null)
                     existingAdminDetail.setIsActive(false);
 
-                // If a new image is provided, decode and update the existing image start
+                // Handle image update for existing record
                 if (adminDetail.getUserImage1Base64() != null && !adminDetail.getUserImage1Base64().isEmpty()) {
                     try {
-                        byte[] imageBytes = Base64.getDecoder().decode(adminDetail.getUserImage1Base64());
-                        existingAdminDetail.setUserImage1(imageBytes);
+                        // Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+                        String base64String = adminDetail.getUserImage1Base64();
+                        if (base64String.contains("base64,")) {
+                            base64String = base64String.split("base64,")[1];  // Remove the prefix
+                        }
+
+                        // Decode the base64 image string
+                        byte[] imageBytes = Base64.getDecoder().decode(base64String);
+                        existingAdminDetail.setUserImage1(imageBytes); // Update the image bytes in existing object
                     } catch (IllegalArgumentException e) {
                         log.error("Invalid Base64 image data.", e);
                         resultData.setStatus(false);
                         resultData.setMessage("Invalid Base64 image data.");
                         return resultData;
                     }
+                }else  if(adminDetail.getUserImage1() != null && adminDetail.getUserImage1().length>0){
+                	existingAdminDetail.setUserImage1(adminDetail.getUserImage1());
                 }
-                // If a new image is provided, decode and update the existing image end
 
                 // Update modification details
                 existingAdminDetail.setModifiedIpAddr(request.getRemoteAddr());
