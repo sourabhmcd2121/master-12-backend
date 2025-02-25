@@ -1,6 +1,12 @@
 package com.master.app.pims.validators;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
+import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -38,7 +44,13 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.AdminDetailRepo;
+import com.master.app.pims.repositories.citizen.FooterMenuRepo;
 import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
+import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
+import com.master.app.pims.repositories.citizen.LogoDeptNameRepo;
+import com.master.app.pims.repositories.citizen.NoteMenuRepo;
+import com.master.app.pims.repositories.citizen.PhotoGalleryRepo;
+import com.master.app.pims.repositories.citizen.SocialLinksRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -183,6 +195,24 @@ public class CommonMasterValidator implements Validator {
     @Autowired
    	private FooterRibbonRepo footerRibbonRepo;
     
+    @Autowired
+   	private FooterMenuRepo footerMenuRepo;
+    
+    @Autowired
+   	private HelplineNumbersRepo helplineNumbersRepo;
+    
+    @Autowired
+   	private LogoDeptNameRepo logoDeptNameRepo;
+    
+    @Autowired
+   	private NoteMenuRepo noteMenuRepo;
+    
+    @Autowired
+   	private PhotoGalleryRepo photoGalleryRepo;
+    
+    @Autowired
+   	private SocialLinksRepo socialLinksRepo;
+   	
     //mst country validation
     @Override
     public BaseResponse validateMstCountry(GeoCountryMst country) {
@@ -1805,6 +1835,316 @@ public BaseResponse validateFooterRibbon(FooterRibbon footerRibbon) {
          resultData.setStatus(false);
 
          resultData.setMessage("Error validating FooterRibbon : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateFooterMenu(FooterMenu footerMenu) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(footerMenu.getFooterMenuNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerMenu.footerMenuNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(footerMenu.getFooterMenuNameEn()) && footerMenuRepo
+					.isExistFooterMenuNameEn(footerMenu.getFooterMenuNameEn(), footerMenu.getFooterMenuGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerMenu.footerMenuNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(footerMenu.getFooterMenuNameHi()) && footerMenuRepo
+					.isExistFooterMenuNameHi(footerMenu.getFooterMenuNameHi(), footerMenu.getFooterMenuGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerMenu.footerMenuNameHi.unique"));
+				return resultData;
+			}
+//			if (!Util.isNullOrEmpty(obj.getFooterMenuNameRl()) && masterMCDValidationDAO
+//					.isExistFooterMenuNameRl(obj.getFooterMenuNameRl(), obj.getFooterMenuGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.footerMenu.footerMenuNameRl.unique"));
+//				return resultData;
+//			}
+
+
+//			if (Util.isNullOrEmpty(obj.getFooterMenuContentHtmlEn())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(
+//						PropertyReader.getFormMessage("master.footerMenu.footerMenuContentHtmlEn.required"));
+//				return resultData;
+//			}
+			if (!Util.isNullOrEmpty(footerMenu.getFooterMenuContentHtmlEn()) && footerMenuRepo
+					.isExistFooterMenuContentHtmlEn(footerMenu.getFooterMenuContentHtmlEn(), footerMenu.getFooterMenuGuid())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.footerMenu.footerMenuContentHtmlEn.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrZeroOrNegative(footerMenu.getOrderNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.footerMenu.orderNumber.required"));
+				return resultData;
+			}
+//			if (!Util.isNullOrZeroOrNegative(obj.getOrderNumber()) && masterMCDValidationDAO
+//					.isExistFooterMenuOrderNumber(obj.getOrderNumber(), obj.getFooterMenuGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.footerMenu.orderNumber.unique"));
+//				return resultData;
+//			}
+    		
+    		
+     } catch (Exception e) {
+         resultData.setStatus(false);
+
+         resultData.setMessage("Error validating footer Menu : " + e.getMessage());
+     }
+     return resultData;
+}
+
+
+@Override
+public BaseResponse validateHelplineNumbers(HelplineNumbers helplineNumbers) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.helplineNumbers.nameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameEn()) && helplineNumbersRepo
+					.isExistHelplineNumbersNameEn(helplineNumbers.getHelplineNumbersNameEn(), helplineNumbers.getHelplineNumbersGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.helplineNumbers.nameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameHi()) && helplineNumbersRepo
+					.isExistHelplineNumbersNameHi(helplineNumbers.getHelplineNumbersNameHi(), helplineNumbers.getHelplineNumbersGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.helplineNumbers.nameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameRl()) && helplineNumbersRepo
+					.isExistHelplineNumbersNameRl(helplineNumbers.getHelplineNumbersNameRl(), helplineNumbers.getHelplineNumbersGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.helplineNumbers.nameRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.helplineNumbers.helplineNumber.required"));
+				return resultData;
+			}
+    		
+    		
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating HelplineNumbers : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateLogoDeptName(LogoDeptName logoDeptName) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	
+			if (Util.isNullOrEmpty(logoDeptName.getDeptNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.logoDeptName.deptNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(logoDeptName.getDeptNameEn())
+					&& logoDeptNameRepo.isExistLogoDeptNameEn(logoDeptName.getDeptNameEn(), logoDeptName.getLogoDeptNameGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.logoDeptName.deptNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(logoDeptName.getDeptNameHi())
+					&& logoDeptNameRepo.isExistLogoDeptNameHi(logoDeptName.getDeptNameHi(), logoDeptName.getLogoDeptNameGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.logoDeptName.deptNameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(logoDeptName.getDeptNameRl())
+					&& logoDeptNameRepo.isExistLogoDeptNameRl(logoDeptName.getDeptNameRl(), logoDeptName.getLogoDeptNameGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.logoDeptName.deptNameRl.unique"));
+				return resultData;
+			}
+    		
+    		
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating Logo DeptName : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateNoteMenu(NoteMenu noteMenu) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(noteMenu.getNoteMenuNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.noteMenu.nameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(noteMenu.getNoteMenuNameEn())
+					&& noteMenuRepo.isExistNoteMenuNameEn(noteMenu.getNoteMenuNameEn(), noteMenu.getNoteMenuGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.noteMenu.nameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(noteMenu.getNoteMenuNameHi())
+					&& noteMenuRepo.isExistNoteMenuNameHi(noteMenu.getNoteMenuNameHi(), noteMenu.getNoteMenuGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.noteMenu.nameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(noteMenu.getNoteMenuNameRl())
+					&& noteMenuRepo.isExistNoteMenuNameRl(noteMenu.getNoteMenuNameRl(), noteMenu.getNoteMenuGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.noteMenu.nameRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrZeroOrNegative(noteMenu.getOrderNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.noteMenu.orderNumber.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrZeroOrNegative(noteMenu.getOrderNumber())
+					&& noteMenuRepo.isExistNoteMenuOrderNumber(noteMenu.getOrderNumber(), noteMenu.getNoteMenuGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.noteMenu.orderNumber.unique"));
+				return resultData;
+			}
+    		
+    		
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  NoteMenu : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePhotoGallery(PhotoGallery photoGallery) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(photoGallery.getPhotoGalleryNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.nameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(photoGallery.getPhotoGalleryNameEn()) && photoGalleryRepo
+					.isExistPhotoGalleryNameEn(photoGallery.getPhotoGalleryNameEn(), photoGallery.getPhotoGalleryGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.nameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(photoGallery.getPhotoGalleryNameHi()) && photoGalleryRepo
+					.isExistPhotoGalleryNameHi(photoGallery.getPhotoGalleryNameHi(), photoGallery.getPhotoGalleryGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.nameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(photoGallery.getPhotoGalleryNameRl()) && photoGalleryRepo
+					.isExistPhotoGalleryNameRl(photoGallery.getPhotoGalleryNameRl(), photoGallery.getPhotoGalleryGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.nameRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(photoGallery.getImageHeadingEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.imageHeadingEn.required"));
+				return resultData;
+			}
+			if ((!Util.isNullOrEmpty(photoGallery.getImageHeadingEn()) && photoGalleryRepo
+					.isExistPhotoGalleryImageHeadingEn(photoGallery.getImageHeadingEn(), photoGallery.getPhotoGalleryGuid())) || (!Util.isNullOrEmpty(photoGallery.getImageHeadingHi()) && photoGalleryRepo
+					.isExistPhotoGalleryImageHeadingHi(photoGallery.getImageHeadingHi(), photoGallery.getPhotoGalleryGuid()))) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.imageHeadingEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(photoGallery.getImageHeadingRl()) && photoGalleryRepo
+					.isExistPhotoGalleryImageHeadingRl(photoGallery.getImageHeadingRl(), photoGallery.getPhotoGalleryGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.imageHeadingEn.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrZeroOrNegative(photoGallery.getOrderNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.orderNumber.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrZeroOrNegative(photoGallery.getOrderNumber()) && photoGalleryRepo
+					.isExistPhotoGalleryOrderNumber(photoGallery.getOrderNumber(), photoGallery.getPhotoGalleryGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.photoGallery.orderNumber.unique"));
+				return resultData;
+			}
+    		
+    		
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PhotoGallery : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateSocialLinks(SocialLinks socialLinks) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(socialLinks.getSocialLinksSubjectEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.socialLinks.subjectEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(socialLinks.getSocialLinksSubjectEn()) && socialLinksRepo
+					.isExistSocialLinksSubjectEn(socialLinks.getSocialLinksSubjectEn(), socialLinks.getSocialLinksGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.socialLinks.subjectEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(socialLinks.getSocialLinksSubjectHi()) && socialLinksRepo
+					.isExistSocialLinksSubjectHi(socialLinks.getSocialLinksSubjectHi(), socialLinks.getSocialLinksGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.socialLinks.subjectHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(socialLinks.getSocialLinksSubjectRl()) && socialLinksRepo
+					.isExistSocialLinksSubjectRl(socialLinks.getSocialLinksSubjectRl(), socialLinks.getSocialLinksGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.socialLinks.subjectRl.unique"));
+				return resultData;
+			}
+			if (socialLinks.getLinkLogoImg1() == null) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.socialLinks.linkLogoImg.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(socialLinks.getSocialLinksUrl())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.socialLinks.url.required"));
+				return resultData;
+			}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  SocialLinks : " + e.getMessage());
      }
      return resultData;
 }

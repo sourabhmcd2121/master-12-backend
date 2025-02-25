@@ -58,6 +58,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-devtools/3.2.3/spring-boot-devtools-3.2.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot/3.2.3/spring-boot-3.2.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-autoconfigure/3.2.3/spring-boot-autoconfigure-3.2.3.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springdoc/springdoc-openapi-starter-webmvc-ui/2.0.2/springdoc-openapi-starter-webmvc-ui-2.0.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springdoc/springdoc-openapi-starter-webmvc-api/2.0.2/springdoc-openapi-starter-webmvc-api-2.0.2.jar" enabled="true" runInBatchMode="false"/>
@@ -77,5 +78,6 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/spring-jcl/6.1.4/spring-jcl-6.1.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/postgresql/postgresql/42.6.1/postgresql-42.6.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/checkerframework/checker-qual/3.31.0/checker-qual-3.31.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/jakarta/servlet/jakarta.servlet-api/5.0.0/jakarta.servlet-api-5.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/jakarta/servlet/jakarta.servlet-api/6.0.0/jakarta.servlet-api-6.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/json/json/20190722/json-20190722.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

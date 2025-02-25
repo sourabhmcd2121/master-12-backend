@@ -2,7 +2,13 @@ package com.master.app.pims.models.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
+import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
@@ -90,8 +96,16 @@ public class BaseResponse {
     private List<CommonMasterTradeType> commonMasterTradeType; 
     private List<CommonMasterIndustryArea> industryArea; 
     private List<MstRefSla> refSla; 
+    
+    ///////////////////////////Citizen Portal/////////////
     private List<AdminDetail> adminDetail; 
     private List<FooterRibbon> footerRibbon; 
+    private List<FooterMenu> footerMenu; 
+    private List<HelplineNumbers> helplineNumbers; 
+    private List<LogoDeptName> logoDeptName; 
+    private List<NoteMenu> noteMenu; 
+    private List<PhotoGallery> photoGallery; 
+    private List<SocialLinks> socialLinks; 
     
     List<GeoDistrict> districtList;
 

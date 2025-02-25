@@ -1,7 +1,13 @@
 package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
+import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -38,7 +44,13 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.AdminDetailRepo;
+import com.master.app.pims.repositories.citizen.FooterMenuRepo;
 import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
+import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
+import com.master.app.pims.repositories.citizen.LogoDeptNameRepo;
+import com.master.app.pims.repositories.citizen.NoteMenuRepo;
+import com.master.app.pims.repositories.citizen.PhotoGalleryRepo;
+import com.master.app.pims.repositories.citizen.SocialLinksRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -183,6 +195,24 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
    	private FooterRibbonRepo footerRibbonRepo;
+    
+    @Autowired
+   	private FooterMenuRepo footerMenuRepo;
+    
+    @Autowired
+   	private HelplineNumbersRepo helplineNumbersRepo;
+    
+    @Autowired
+   	private LogoDeptNameRepo logoDeptNameRepo;
+    
+    @Autowired
+   	private NoteMenuRepo noteMenuRepo;
+    
+    @Autowired
+   	private PhotoGalleryRepo photoGalleryRepo;
+    
+    @Autowired
+   	private SocialLinksRepo socialLinksRepo;
     
     
     
@@ -547,6 +577,9 @@ public class CommonMasterServiceImpl implements CommonMasterService {
         return refSlaRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
+	
+	
+	/////////////////////////////////Portal Master/////////////////////////////
 
 	@Override
 	public AdminDetail saveAdminDetail(AdminDetail adminDetail) {
@@ -567,6 +600,72 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public FooterRibbon getFooterRibbonById(String id) {
         return footerRibbonRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public FooterMenu saveFooterMenu(FooterMenu footerMenu) {
+		 return footerMenuRepo.save(footerMenu);
+	}
+
+	@Override
+	public FooterMenu getFooterMenuById(String id) {
+        return footerMenuRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public HelplineNumbers saveHelplineNumbers(HelplineNumbers helplineNumbers) {
+		 return helplineNumbersRepo.save(helplineNumbers);
+	}
+
+	@Override
+	public HelplineNumbers getHelplineNumbersById(String id) {
+        return helplineNumbersRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public LogoDeptName saveLogoDeptName(LogoDeptName logoDeptName) {
+		 return logoDeptNameRepo.save(logoDeptName);
+	}
+
+	@Override
+	public LogoDeptName getLogoDeptNameById(String id) {
+        return logoDeptNameRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public NoteMenu saveNoteMenu(NoteMenu noteMenu) {
+		 return noteMenuRepo.save(noteMenu);
+	}
+
+	@Override
+	public NoteMenu getNoteMenuById(String id) {
+        return noteMenuRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PhotoGallery savePhotoGallery(PhotoGallery photoGallery) {
+		 return photoGalleryRepo.save(photoGallery);
+	}
+
+	@Override
+	public PhotoGallery getPhotoGalleryById(String id) {
+        return photoGalleryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public SocialLinks saveSocialLinks(SocialLinks socialLinks) {
+		 return socialLinksRepo.save(socialLinks);
+	}
+
+	@Override
+	public SocialLinks getSocialLinksById(String id) {
+        return socialLinksRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 	

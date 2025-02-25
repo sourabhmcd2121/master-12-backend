@@ -2,7 +2,13 @@ package com.master.app.pims.service.master.common;
 import java.sql.SQLException;
 
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
+import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -166,14 +172,43 @@ public interface CommonMasterService {
     MstRefSla saveMstRefSla(MstRefSla refSla);
     MstRefSla getMstRefSlaById(String id);
     
-    ///for AdminDetail join with mst schema
+    
+    /////////////////////////////////////////////////Portal Master////////////////
+    
+    ///for AdminDetail join with citizen_app schema
     AdminDetail saveAdminDetail(AdminDetail adminDetail);
     AdminDetail getAdminDetailById(String id);
     
-    ///for FooterRibbon join with mst schema
+    ///for FooterRibbon join with citizen_app schema
     FooterRibbon saveFooterRibbon(FooterRibbon footerRibbon);
     FooterRibbon getFooterRibbonById(String id);
-  
+    
+    ///for FooterMenu join with citizen_app schema
+    FooterMenu saveFooterMenu(FooterMenu footerMenu);
+    FooterMenu getFooterMenuById(String id);
+    
+    ///for FooterRibbon join with citizen_app schema
+    HelplineNumbers saveHelplineNumbers(HelplineNumbers helplineNumbers);
+    HelplineNumbers getHelplineNumbersById(String id);
+    
+    ///for LogoDeptName join with citizen_app schema
+    LogoDeptName saveLogoDeptName(LogoDeptName logoDeptName);
+    LogoDeptName getLogoDeptNameById(String id);
+    
+    ///for NoteMenu join with citizen_app schema
+    NoteMenu saveNoteMenu(NoteMenu noteMenu);
+    NoteMenu getNoteMenuById(String id);
+    
+    ///for PhotoGallery join with citizen_app schema
+    PhotoGallery savePhotoGallery(PhotoGallery photoGallery);
+    PhotoGallery getPhotoGalleryById(String id);
+    
+    ///for SocialLinks join with citizen_app schema
+    SocialLinks saveSocialLinks(SocialLinks socialLinks);
+    SocialLinks getSocialLinksById(String id);
+    
+    
+    
 	
     
 }

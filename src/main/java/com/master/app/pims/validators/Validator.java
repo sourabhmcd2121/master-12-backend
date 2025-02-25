@@ -1,6 +1,14 @@
 package com.master.app.pims.validators;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
+import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -34,6 +42,7 @@ import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.models.common.response.BaseResponse;
+import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
 
 public interface Validator {
     
@@ -137,9 +146,26 @@ public interface Validator {
     //AdminDetail validation
     BaseResponse validateAdminDetail(AdminDetail adminDetail);
     
-    //AdminDetail validation
+    //FooterRibbon validation
     BaseResponse validateFooterRibbon(FooterRibbon footerRibbon);
     
+    //FooterMenu validation
+    BaseResponse validateFooterMenu(FooterMenu footerMenu);
     
-   
+    //HelplineNumbers validation
+    BaseResponse validateHelplineNumbers(HelplineNumbers helplineNumbers);
+    
+    //LogoDeptName validation
+    BaseResponse validateLogoDeptName(LogoDeptName logoDeptName);
+    
+    //NoteMenu validation
+    BaseResponse validateNoteMenu(NoteMenu noteMenu);
+    
+    //PhotoGallery validation
+    BaseResponse validatePhotoGallery(PhotoGallery photoGallery);
+    
+    //SocialLinks validation
+    BaseResponse validateSocialLinks(SocialLinks socialLinks);
+    
+    
 }
