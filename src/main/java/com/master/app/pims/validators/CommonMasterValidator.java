@@ -1,12 +1,19 @@
 package com.master.app.pims.validators;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
+import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
+import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
+import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
+import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -44,13 +51,20 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.AdminDetailRepo;
+import com.master.app.pims.repositories.citizen.BgImageRepo;
+import com.master.app.pims.repositories.citizen.FlashImageRepo;
 import com.master.app.pims.repositories.citizen.FooterMenuRepo;
 import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
 import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
 import com.master.app.pims.repositories.citizen.LogoDeptNameRepo;
 import com.master.app.pims.repositories.citizen.NoteMenuRepo;
+import com.master.app.pims.repositories.citizen.OfficerImageCommentRepo;
 import com.master.app.pims.repositories.citizen.PhotoGalleryRepo;
 import com.master.app.pims.repositories.citizen.SocialLinksRepo;
+import com.master.app.pims.repositories.citizen.TenderDetailsRepo;
+import com.master.app.pims.repositories.citizen.TextFlashRepo;
+import com.master.app.pims.repositories.citizen.VideoGalleryRepo;
+import com.master.app.pims.repositories.citizen.WebInfoManagerRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -212,6 +226,27 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private SocialLinksRepo socialLinksRepo;
+    
+    @Autowired
+   	private OfficerImageCommentRepo officerImageCommentRepo;
+    
+    @Autowired
+   	private TextFlashRepo textFlashRepo;
+    
+    @Autowired
+   	private FlashImageRepo flashImageRepo;
+    
+    @Autowired
+   	private BgImageRepo bgImageRepo;
+    
+    @Autowired
+   	private TenderDetailsRepo tenderDetailsRepo;
+    
+    @Autowired
+   	private WebInfoManagerRepo webInfoManagerRepo;
+    
+    @Autowired
+   	private VideoGalleryRepo videoGalleryRepo;
    	
     //mst country validation
     @Override
@@ -2145,6 +2180,459 @@ public BaseResponse validateSocialLinks(SocialLinks socialLinks) {
      } catch (Exception e) {
          resultData.setStatus(false);
          resultData.setMessage("Error validating  SocialLinks : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateOfficerImageComment(OfficerImageComment officerImageComment) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(officerImageComment.getImageHeadingEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.officerImageComment.imageHeadingEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getImageHeadingEn())
+					&& officerImageCommentRepo.isExistOfficerImageCommentImageHeadingEn(officerImageComment.getImageHeadingEn(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.officerImageComment.imageHeadingEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getImageHeadingHi())
+					&& officerImageCommentRepo.isExistOfficerImageCommentImageHeadingHi(officerImageComment.getImageHeadingHi(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.officerImageComment.imageHeadingHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getImageHeadingRl())
+					&& officerImageCommentRepo.isExistOfficerImageCommentImageHeadingRl(officerImageComment.getImageHeadingRl(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.officerImageComment.imageHeadingRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(officerImageComment.getOfficerCommentEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.officerImageComment.officerCommentEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerCommentEn())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerCommentEn(officerImageComment.getOfficerCommentEn(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.officerImageComment.officerCommentEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerCommentHi())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerCommentHi(officerImageComment.getOfficerCommentHi(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.officerImageComment.officerCommentHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerCommentRl())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerCommentRl(officerImageComment.getOfficerCommentRl(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.officerImageComment.officerCommentRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(officerImageComment.getOfficerDesigEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(
+						PropertyReader.getFormMessage("master.officerImageComment.officerDesigEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerDesigEn())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerDesignEn(officerImageComment.getOfficerDesigEn(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.officerImageComment.officerDesigEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerDesigHi())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerDesignHi(officerImageComment.getOfficerDesigHi(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.officerImageComment.officerDesigHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerDesigRl())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerDesignRl(officerImageComment.getOfficerDesigRl(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.officerImageComment.officerDesigRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(officerImageComment.getOfficerNameEn())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.officerImageComment.officerNameEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerNameEn())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerNameEn(officerImageComment.getOfficerNameEn(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.officerImageComment.officerNameEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerNameHi())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerNameHi(officerImageComment.getOfficerNameHi(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.officerImageComment.officerNameHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(officerImageComment.getOfficerNameRl())
+					&& officerImageCommentRepo.isExistOfficerImageCommentOfficerNameRl(officerImageComment.getOfficerNameRl(),
+							officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.officerImageComment.officerNameRl.unique"));
+				return resultData;
+			}
+//			if (obj.getImageBinary() == null) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.officerImageComment.imageBinary.required"));
+//				return resultData;
+//			}
+			if (Util.isNullOrZeroOrNegative(officerImageComment.getPriority())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.officerImageComment.priority.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrZeroOrNegative(officerImageComment.getPriority()) && officerImageCommentRepo
+					.isExistOfficerImageCommentPriority(officerImageComment.getPriority(), officerImageComment.getOfficerImageCommentGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.officerImageComment.priority.unique"));
+				return resultData;
+			}
+    	 
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  OfficerImageComment : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateTextFlash(TextFlash textFlash) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    		if (Util.isNullOrEmpty(textFlash.getTextFlashSubjectEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.textFlash.textFlashSubjectEn.required"));
+				return resultData;
+			}
+    		if (Util.isNullOrEmpty(textFlash.getTextFlashSubjectHi())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.textFlash.textFlashSubjectHi.required"));
+				return resultData;
+			}
+//			if (!Util.isNullOrEmpty(textFlash.getMenuNameEn()) && masterMCDValidationDAO
+//					.isExistMenuNameEn(textFlash.getMenuNameEn(), textFlash.getMenuGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.menu.menuNameEn.unique"));
+//				return resultData;
+//			}
+			
+			
+			
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  TextFlash : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateFlashImage(FlashImage flashImage) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (flashImage.getImageBinary1() == null) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.flashImage.imageBinary.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(flashImage.getImageHeadingEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.flashImage.imageHeadingEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(flashImage.getImageHeadingEn()) && flashImageRepo
+					.isExistFlashImageImageHeadingEn(flashImage.getImageHeadingEn(), flashImage.getFlashImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.flashImage.imageHeadingEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(flashImage.getImageHeadingHi()) && flashImageRepo
+					.isExistFlashImageImageHeadingHi(flashImage.getImageHeadingHi(), flashImage.getFlashImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.flashImage.imageHeadingHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(flashImage.getImageHeadingRl()) && flashImageRepo
+					.isExistFlashImageImageHeadingRl(flashImage.getImageHeadingRl(), flashImage.getFlashImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.flashImage.imageHeadingRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrZeroOrNegative(flashImage.getOrderNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.flashImage.orderNumber.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrZeroOrNegative(flashImage.getOrderNumber()) && flashImageRepo
+					.isExistFlashImageOrderNumber(flashImage.getOrderNumber(), flashImage.getFlashImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.flashImage.orderNumber.unique"));
+				return resultData;
+			}
+			
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  FlashImage : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateBgImage(BgImage bgImage) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (bgImage.getImageBinary1() == null) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.bgImage.binaryImage.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(bgImage.getImageHeadingEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.bgImage.imageHeadingEn.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(bgImage.getImageHeadingEn()) && bgImageRepo
+					.isExistBgImageImageHeadingEn(bgImage.getImageHeadingEn(), bgImage.getBgImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.bgImage.imageHeadingEn.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(bgImage.getImageHeadingHi()) && bgImageRepo
+					.isExistBgImageImageHeadingHi(bgImage.getImageHeadingHi(), bgImage.getBgImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.bgImage.imageHeadingHi.unique"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(bgImage.getImageHeadingRl()) && bgImageRepo
+					.isExistBgImageImageHeadingRl(bgImage.getImageHeadingRl(), bgImage.getBgImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.bgImage.imageHeadingRl.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrZeroOrNegative(bgImage.getOrderNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.bgImage.orderNumber.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrZeroOrNegative(bgImage.getOrderNumber())
+					&& bgImageRepo.isExistBgImageOrderNumber(bgImage.getOrderNumber(), bgImage.getBgImageGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.bgImage.orderNumber.unique"));
+				return resultData;
+			}
+			
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  BgImage : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateTenderDetails(TenderDetails tenderDetails) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	
+    	 if (Util.isNullOrEmpty(tenderDetails.getOrgPrimary())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.primaryOrg.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(tenderDetails.getTenders())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tenders.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(tenderDetails.getTenders())
+					&& tenderDetailsRepo.isExistTenderDetailsTenders(tenderDetails.getTenders(), tenderDetails.getTenderGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tenders.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(tenderDetails.getTRefNo())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tRefNo.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(tenderDetails.getTRefNo())
+					&& tenderDetailsRepo.isExistTenderDetailsTRefNo(tenderDetails.getTRefNo(), tenderDetails.getTenderGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tRefNo.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(tenderDetails.getTTitle())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tTitle.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(tenderDetails.getTTitle())
+					&& tenderDetailsRepo.isExistTenderDetailsTTitle(tenderDetails.getTTitle(), tenderDetails.getTenderGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tTitle.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(tenderDetails.getTLocation())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tLocation.required"));
+				return resultData;
+			}
+//			if (!Util.isNullOrEmpty(obj.gettLocation()) && masterMCDValidationDAO
+//					.isExistTenderDetailsTLocation(obj.gettLocation(), obj.getTenderGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tLocation.unique"));
+//				return resultData;
+//			}
+			if (Util.isNullOrEmpty(tenderDetails.getTInvitingOffAddress())) {
+				resultData.setStatus(false);
+				resultData
+						.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tInvitingOffAddress.required"));
+				return resultData;
+			}
+//			if (!Util.isNullOrEmpty(obj.gettInvitingOffAddress()) && masterMCDValidationDAO
+//					.isExistTenderDetailsTInvitingOffAddress(obj.gettInvitingOffAddress(), obj.getTenderGuid())) {
+//				resultData.setStatus(false);
+//				resultData.setMessage(PropertyReader.getFormMessage("master.tenderDetails.tInvitingOffAddress.unique"));
+//				return resultData;
+//			}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  TenderDetails : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateWebInfoManager(WebInfoManager webInfoManager) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(webInfoManager.getOfficerName())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.webInfoManager.officerName.required"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(webInfoManager.getOfficerName()) && webInfoManagerRepo
+					.isExistWebInfoManagerOfficerName(webInfoManager.getOfficerName(), webInfoManager.getInfoManagerGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.webInfoManager.officerName.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(webInfoManager.getTelNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.webInfoManager.telNumber.required"));
+				return resultData;
+			}
+
+			if (!Util.isNullOrEmpty(webInfoManager.getTelNumber()) && webInfoManagerRepo
+					.isExistWebInfoManagerTelNumber(webInfoManager.getTelNumber(), webInfoManager.getInfoManagerGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.webInfoManager.telNumber.unique"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(webInfoManager.getEmailId())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.webInfoManager.emailId.required"));
+				return resultData;
+			}
+			if (!Util.isValidEmail(webInfoManager.getEmailId())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.webInfoManager.emailId.valid"));
+				return resultData;
+			}
+			if (!Util.isNullOrEmpty(webInfoManager.getEmailId()) && webInfoManagerRepo
+					.isExistWebInfoManagerEmailId(webInfoManager.getEmailId(), webInfoManager.getInfoManagerGuid())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.webInfoManager.emailId.unique"));
+				return resultData;
+			}
+    	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  WebInfoManager : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateVideoGallery(VideoGallery videoGallery) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+     try {
+    	 if (Util.isNullOrEmpty(videoGallery.getVideoGalleryNameEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.VideoGallery.VideoGalleryNameEn.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(videoGallery.getVideoGalleryNameHi())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.VideoGallery.VideoGalleryNameHi.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(videoGallery.getVideoHeadingEn())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.VideoGallery.VideoHeadingEn.required"));
+				return resultData;
+			}
+			if (Util.isNullOrEmpty(videoGallery.getVideoHeadingHi())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.VideoGallery.getVideoHeadingHi.required"));
+				return resultData;
+			}
+			if (Util.isNullOrZeroOrNegative(videoGallery.getOrderNumber())) {
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.SliderMenu.orderNumber.required"));
+				return resultData;
+			}
+
+    	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  VideoGallery : " + e.getMessage());
      }
      return resultData;
 }

@@ -2,13 +2,20 @@ package com.master.app.pims.validators;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
+import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
+import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
+import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
+import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -166,6 +173,27 @@ public interface Validator {
     
     //SocialLinks validation
     BaseResponse validateSocialLinks(SocialLinks socialLinks);
+    
+    //OfficerImageComment validation
+    BaseResponse validateOfficerImageComment(OfficerImageComment officerImageComment);
+    
+    //TextFlash validation
+    BaseResponse validateTextFlash(TextFlash textFlash);
+    
+    //FlashImage validation
+    BaseResponse validateFlashImage(FlashImage flashImage);
+    
+    //BgImage validation
+    BaseResponse validateBgImage(BgImage bgImage);
+    
+    //TenderDetails validation
+    BaseResponse validateTenderDetails(TenderDetails tenderDetails);
+    
+    //TenderDetails validation
+    BaseResponse validateWebInfoManager(WebInfoManager webInfoManager);
+    
+    //TenderDetails validation
+    BaseResponse validateVideoGallery(VideoGallery videoGallery);
     
     
 }

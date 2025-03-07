@@ -1,13 +1,20 @@
 package com.master.app.pims.service.master.impl.common;
 
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
+import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
+import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
+import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
+import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -44,13 +51,20 @@ import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
 import com.master.app.pims.repositories.AssociatedChargesInfoRepository;
 import com.master.app.pims.repositories.citizen.AdminDetailRepo;
+import com.master.app.pims.repositories.citizen.BgImageRepo;
+import com.master.app.pims.repositories.citizen.FlashImageRepo;
 import com.master.app.pims.repositories.citizen.FooterMenuRepo;
 import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
 import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
 import com.master.app.pims.repositories.citizen.LogoDeptNameRepo;
 import com.master.app.pims.repositories.citizen.NoteMenuRepo;
+import com.master.app.pims.repositories.citizen.OfficerImageCommentRepo;
 import com.master.app.pims.repositories.citizen.PhotoGalleryRepo;
 import com.master.app.pims.repositories.citizen.SocialLinksRepo;
+import com.master.app.pims.repositories.citizen.TenderDetailsRepo;
+import com.master.app.pims.repositories.citizen.TextFlashRepo;
+import com.master.app.pims.repositories.citizen.VideoGalleryRepo;
+import com.master.app.pims.repositories.citizen.WebInfoManagerRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
@@ -213,6 +227,27 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
    	private SocialLinksRepo socialLinksRepo;
+    
+    @Autowired
+   	private OfficerImageCommentRepo officerImageCommentRepo;
+    
+    @Autowired
+   	private TextFlashRepo textFlashRepo;
+    
+    @Autowired
+   	private FlashImageRepo flashImageRepo;
+    
+    @Autowired
+   	private BgImageRepo bgImageRepo;
+    
+    @Autowired
+   	private TenderDetailsRepo tenderDetailsRepo;
+    
+    @Autowired
+   	private WebInfoManagerRepo webInfoManagerRepo;
+    
+    @Autowired
+   	private VideoGalleryRepo videoGalleryRepo;
     
     
     
@@ -668,6 +703,85 @@ public class CommonMasterServiceImpl implements CommonMasterService {
         return socialLinksRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
+
+	@Override
+	public OfficerImageComment saveOfficerImageComment(OfficerImageComment officerImageComment) {
+		 return officerImageCommentRepo.save(officerImageComment);
+	}
+
+	@Override
+	public OfficerImageComment getOfficerImageCommentById(String id) {
+        return officerImageCommentRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public TextFlash saveTextFlash(TextFlash textFlash) {
+		 return textFlashRepo.save(textFlash);
+	}
+
+	@Override
+	public TextFlash getTextFlashById(String id) {
+        return textFlashRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public FlashImage saveFlashImage(FlashImage flashImage) {
+		 return flashImageRepo.save(flashImage);
+	}
+
+	@Override
+	public FlashImage getFlashImageById(String id) {
+        return flashImageRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public BgImage saveBgImage(BgImage bgImage) {
+		 return bgImageRepo.save(bgImage);
+	}
+
+	@Override
+	public BgImage getBgImageById(String id) {
+        return bgImageRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public TenderDetails saveTenderDetails(TenderDetails tenderDetails) {
+		 return tenderDetailsRepo.save(tenderDetails);
+	}
+
+	@Override
+	public TenderDetails getTenderDetailsById(String id) {
+        return tenderDetailsRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public WebInfoManager saveWebInfoManager(WebInfoManager webInfoManager) {
+		 return webInfoManagerRepo.save(webInfoManager);
+	}
+
+	@Override
+	public WebInfoManager getWebInfoManagerById(String id) {
+        return webInfoManagerRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public VideoGallery saveVideoGallery(VideoGallery videoGallery) {
+		 return videoGalleryRepo.save(videoGallery);
+	}
+
+	@Override
+	public VideoGallery getVideoGalleryById(String id) {
+        return videoGalleryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	
 	
 	
 	

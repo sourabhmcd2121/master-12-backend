@@ -1,6 +1,7 @@
 package com.master.app.pims.controller.master.citizen;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Date;
@@ -29,25 +30,43 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.master.app.pims.config.FileStorageConfig;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
+import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
+import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
+import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
+import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
+import com.master.app.pims.entities.schemas.master.OrgPrimary;
+import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
+import com.master.app.pims.entities.schemas.mst.CommonMasterAppAlert;
 import com.master.app.pims.entities.schemas.mst.MstChargeDetails;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.citizen.AdminDetailRepo;
+import com.master.app.pims.repositories.citizen.BgImageRepo;
+import com.master.app.pims.repositories.citizen.FlashImageRepo;
 import com.master.app.pims.repositories.citizen.FooterMenuRepo;
 import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
 import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
 import com.master.app.pims.repositories.citizen.LogoDeptNameRepo;
 import com.master.app.pims.repositories.citizen.NoteMenuRepo;
+import com.master.app.pims.repositories.citizen.OfficerImageCommentRepo;
 import com.master.app.pims.repositories.citizen.PhotoGalleryRepo;
 import com.master.app.pims.repositories.citizen.SocialLinksRepo;
+import com.master.app.pims.repositories.citizen.TenderDetailsRepo;
+//import com.master.app.pims.repositories.citizen.TenderDetailsRepo;
+import com.master.app.pims.repositories.citizen.TextFlashRepo;
+import com.master.app.pims.repositories.citizen.VideoGalleryRepo;
+import com.master.app.pims.repositories.citizen.WebInfoManagerRepo;
 import com.master.app.pims.service.master.CommonMasterServiceHandler;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
@@ -98,6 +117,28 @@ public class MasterControllerCitizen {
 	@Autowired
 	private SocialLinksRepo socialLinksRepo;
 	
+	@Autowired
+	private OfficerImageCommentRepo officerImageCommentRepo;
+	
+	@Autowired
+	private TextFlashRepo textFlashRepo;
+	 
+	@Autowired
+	private FlashImageRepo flashImageRepo;
+	
+	@Autowired
+	private BgImageRepo bgImageRepo;
+	
+	@Autowired
+	private TenderDetailsRepo tenderDetailsRepo;
+	
+	@Autowired
+	private WebInfoManagerRepo webInfoManagerRepo;
+	
+	@Autowired
+	private VideoGalleryRepo videoGalleryRepo;
+	
+	 
 /////////////////////////////////////AdminDetail Start///////////////////////////////////
 //get all data from table
 	@GetMapping("/getAdminDetailList")
@@ -613,7 +654,7 @@ return ResponseEntity.ok(response);
 
 ////////new code working fine
 @PostMapping("/submitFooterMenu")
-public BaseResponse submitFooterMenu(@ModelAttribute FooterMenu footerMenu, @RequestParam("pdfFile") MultipartFile pdfFile, HttpServletRequest request) {
+public BaseResponse submitFooterMenu(@ModelAttribute FooterMenu footerMenu, @RequestParam(value = "pdfFile", required = false) MultipartFile pdfFile, HttpServletRequest request) {
     BaseResponse resultData = new BaseResponse();
 
     try {
@@ -632,49 +673,50 @@ public BaseResponse submitFooterMenu(@ModelAttribute FooterMenu footerMenu, @Req
                 footerMenu.setIsActive(false);
             }
 
-            // Handling PDF file upload for new record
+         // Handling PDF file upload for new record
             if (pdfFile != null && !pdfFile.isEmpty()) {
-                try {
-                    // Set the storage path for the PDF file
-                    String storagePath = "D:\\backendmaster\\pdfData"; // Use a dynamic path or config
+            try {
+            // Set the storage path for the PDF file
+            String storagePath = "D:\\backendmaster\\pdfData"; // Use a dynamic path or config
 
-                    // Get original file name (without extension)
-                    String originalFileName = pdfFile.getOriginalFilename();
-                    if (originalFileName == null) {
-                        resultData.setStatus(false);
-                        resultData.setMessage("File name is missing.");
-                        return resultData;
-                    }
+            // Get original file name (without extension)
+            String originalFileName = pdfFile.getOriginalFilename();
+            if (originalFileName == null) {
+            resultData.setStatus(false);
+            resultData.setMessage("File name is missing.");
+            return resultData;
+            }
 
-                    // Extract file name without extension
-                    String fileNameWithoutExtension = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+            // Extract file name without extension
+            String fileNameWithoutExtension = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
 
-                    // Generate a 10-digit unique number
-                    String uniqueKey = generateUniqueKey();
+            // Generate a 10-digit unique number
+            String uniqueKey = generateUniqueKey();
 
-                    // Combine file name with unique key to create the new file name
-                    String newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
+            // Combine file name with unique key to create the new file name
+            String newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
 
-                    // Define the file path where PDF will be saved locally
-                    Path filePath = Paths.get(storagePath, newFileName);
+            // Define the file path where PDF will be saved locally
+            Path filePath = Paths.get(storagePath, newFileName);
 
-                    // Create directory if it doesn't exist
-                    if (!Files.exists(filePath.getParent())) {
-                        Files.createDirectories(filePath.getParent());
-                    }
+            // Create directory if it doesn't exist
+            if (!Files.exists(filePath.getParent())) {
+            Files.createDirectories(filePath.getParent());
+            }
 
-                    // Save the PDF file to the local storage
-                    Files.write(filePath, pdfFile.getBytes());
+            // Save the PDF file to the local storage
+            Files.write(filePath, pdfFile.getBytes());
 
-                    // Update the file name in the DB model
-                    footerMenu.setPdfFileName1(newFileName);
+            // Update the file name in the DB model
+            footerMenu.setPdfFileName1(newFileName);
 
-                } catch (IOException e) {
-                    log.error("Error saving the PDF file: {}", e.getMessage());
-                    resultData.setStatus(false);
-                    resultData.setMessage("Error saving the PDF file.");
-                    return resultData;
-                }
+
+            } catch (IOException e) {
+            log.error("Error saving the PDF file: {}", e.getMessage());
+            resultData.setStatus(false);
+            resultData.setMessage("Error saving the PDF file.");
+            return resultData;
+            }
             }
 
         } else {
@@ -696,49 +738,68 @@ public BaseResponse submitFooterMenu(@ModelAttribute FooterMenu footerMenu, @Req
                     existingFooterMenu.setIsActive(false);
                 }
 
-                // Handle PDF file update for the existing record
+             // Handle PDF file update for the existing record
                 if (pdfFile != null && !pdfFile.isEmpty()) {
-                    try {
-                        // Set the storage path for the PDF file
-                        String storagePath = "D:\\backendmaster\\pdfData"; // Use a dynamic path or config
+                try {
+                // Set the storage path for the PDF file
+                String storagePath = "D:\\backendmaster\\pdfData"; // Use a dynamic path or config
 
-                        // Get original file name (without extension)
-                        String originalFileName = pdfFile.getOriginalFilename();
-                        if (originalFileName == null) {
-                            resultData.setStatus(false);
-                            resultData.setMessage("File name is missing.");
-                            return resultData;
-                        }
+                // Get original file name (without extension)
+                String originalFileName = pdfFile.getOriginalFilename();
+                if (originalFileName == null || originalFileName.isEmpty()) {
+                resultData.setStatus(false);
+                resultData.setMessage("File name is missing.");
+                return resultData;
+                }
 
-                        // Extract file name without extension
-                        String fileNameWithoutExtension = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+                // Ensure that the file name does not contain invalid characters
+                originalFileName = originalFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
 
-                        // Generate a 10-digit unique number
-                        String uniqueKey = generateUniqueKey();
+                // Extract file name without extension
+                String fileNameWithoutExtension = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
 
-                        // Combine file name with unique key to create the new file name
-                        String newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
+                // Generate a 10-digit unique number
+                String uniqueKey = generateUniqueKey();
 
-                        // Define the file path where PDF will be saved locally
-                        Path filePath = Paths.get(storagePath, newFileName);
+                // Combine file name with unique key to create the new file name
+                String newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
 
-                        // Create directory if it doesn't exist
-                        if (!Files.exists(filePath.getParent())) {
-                            Files.createDirectories(filePath.getParent());
-                        }
+                // Define the file path where PDF will be saved locally
+                Path filePath = Paths.get(storagePath, newFileName);
 
-                        // Save the PDF file to the local storage
-                        Files.write(filePath, pdfFile.getBytes());
+                // Create directory if it doesn't exist
+                if (!Files.exists(filePath.getParent())) {
+                Files.createDirectories(filePath.getParent());
+                }
 
-                        // Update the file name in the DB model
-                        existingFooterMenu.setPdfFileName1(newFileName);
+                // Check if file already exists, regenerate if necessary
+                while (Files.exists(filePath)) {
+                    uniqueKey = generateUniqueKey(); // Regenerate the unique key if the file already exists
+                    newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
+                    filePath = Paths.get(storagePath, newFileName);
+                }
 
-                    } catch (IOException e) {
-                        log.error("Error saving the PDF file: {}", e.getMessage());
-                        resultData.setStatus(false);
-                        resultData.setMessage("Error saving the PDF file.");
-                        return resultData;
-                    }
+                // Log the file saving path
+                log.info("Saving PDF file to: {}", filePath.toString());
+
+                // Save the PDF file to the local storage
+                Files.write(filePath, pdfFile.getBytes());
+
+                // Update the file name in the DB model
+                existingFooterMenu.setPdfFileName1(newFileName);
+
+                }
+                catch (FileAlreadyExistsException e) {
+                    log.error("File already exists: {}", e.getMessage());
+                    resultData.setStatus(false);
+                    resultData.setMessage("File already exists.");
+                    return resultData;}
+                catch (IOException e) {
+                log.error("Error saving the PDF file: {}", e.getMessage());
+                resultData.setStatus(false);
+                resultData.setMessage("Error saving the PDF file.");
+                return resultData;
+                }
                 }
 
                 // Update modification details
@@ -854,26 +915,17 @@ if (helplineNumbers.getIsActive() == null)
 .getHelplineNumbersById(helplineNumbers.getHelplineNumbersGuid());
 
 if (existingHelplineNumbers != null) {
-	existingHelplineNumbers.setHelplineNumbersNameEn(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameEn())
-? helplineNumbers.getHelplineNumbersNameEn().toUpperCase().trim()
-: null);
-	existingHelplineNumbers
-.setHelplineNumbersNameHi(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameHi())
-? helplineNumbers.getHelplineNumbersNameHi().toUpperCase().trim()
-: null);
+	
+	existingHelplineNumbers.setHelplineNumbersNameEn(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameEn())? helplineNumbers.getHelplineNumbersNameEn().toUpperCase().trim(): null);
+	
+	existingHelplineNumbers.setHelplineNumbersNameHi(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameHi())? helplineNumbers.getHelplineNumbersNameHi().toUpperCase().trim(): null);
 
-	existingHelplineNumbers
-.setHelplineNumbersNameRl(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameRl())
-? helplineNumbers.getHelplineNumbersNameRl().toUpperCase().trim()
-: null);
-	existingHelplineNumbers
-.setHelplineNumbersNumber(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNumber())
-? helplineNumbers.getHelplineNumbersNumber().trim()
-: null);
+	existingHelplineNumbers.setHelplineNumbersNameRl(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameRl())? helplineNumbers.getHelplineNumbersNameRl().toUpperCase().trim(): null);
+	
+	existingHelplineNumbers.setHelplineNumbersNumber(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNumber())? helplineNumbers.getHelplineNumbersNumber().trim(): null);
 
 
-	existingHelplineNumbers.setIsActive(helplineNumbers.getIsActive() != null ? helplineNumbers.getIsActive()
-: existingHelplineNumbers.getIsActive());
+	existingHelplineNumbers.setIsActive(helplineNumbers.getIsActive() != null ? helplineNumbers.getIsActive(): existingHelplineNumbers.getIsActive());
 
 	existingHelplineNumbers.setModifiedIpAddr(request.getRemoteAddr());
 	existingHelplineNumbers.setModifiedDate(new Date());
@@ -902,18 +954,13 @@ return resultData;
 if (helplineNumbers.getIsActive() == null)
 	helplineNumbers.setIsActive(false);
 
-helplineNumbers.setHelplineNumbersNameEn(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameEn())
-? helplineNumbers.getHelplineNumbersNameEn().toUpperCase().trim()
-: null);
-helplineNumbers.setHelplineNumbersNameHi(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameHi())
-? helplineNumbers.getHelplineNumbersNameHi().toUpperCase().trim()
-: null);
-helplineNumbers.setHelplineNumbersNameRl(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameRl())
-? helplineNumbers.getHelplineNumbersNameRl().trim()
-: null);
-helplineNumbers.setHelplineNumbersNumber(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNumber())
-? helplineNumbers.getHelplineNumbersNumber().trim()
-: null);
+helplineNumbers.setHelplineNumbersNameEn(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameEn())? helplineNumbers.getHelplineNumbersNameEn().toUpperCase().trim(): null);
+
+helplineNumbers.setHelplineNumbersNameHi(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameHi())? helplineNumbers.getHelplineNumbersNameHi().toUpperCase().trim(): null);
+
+helplineNumbers.setHelplineNumbersNameRl(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNameRl())? helplineNumbers.getHelplineNumbersNameRl().trim(): null);
+
+helplineNumbers.setHelplineNumbersNumber(!Util.isNullOrEmpty(helplineNumbers.getHelplineNumbersNumber())? helplineNumbers.getHelplineNumbersNumber().trim(): null);
 
 
 try {
@@ -1596,6 +1643,1160 @@ return new ResponseEntity<>(socialLinks, HttpStatus.OK);
 }
 
 /////////////////////////////////////SocialLinks  End///////////////////////////////////
+
+
+/////////////////////////////////////OfficerImageComment Start///////////////////////////////////
+//get all data from table
+@GetMapping("/getOfficerImageCommentList")
+public ResponseEntity<BaseResponse> getOfficerImageCommentList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<OfficerImageComment> list = officerImageCommentRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setOfficerImageComment(list);
+return ResponseEntity.ok(response);
+}
+
+@PostMapping("/submitOfficerImageComment")
+public BaseResponse submitOfficerImageComment(@RequestBody OfficerImageComment officerImageComment, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+try {
+//Check if GUID is provided (indicating an update)
+if (officerImageComment.getOfficerImageCommentGuid() == null || officerImageComment.getOfficerImageCommentGuid().isEmpty()) {
+//Add new data
+	officerImageComment.setCreatedIpAddr(request.getRemoteAddr());
+	officerImageComment.setOfficerImageCommentGuid(UUID.randomUUID().toString());
+	officerImageComment.setCreatedDate(new Date());
+	officerImageComment.setModifiedIpAddr(null);
+	officerImageComment.setModifiedBy(null);
+	officerImageComment.setModifiedDate(null);
+	officerImageComment.setCreatedBy(request.getRemoteAddr());
+
+if (officerImageComment.getIsActive() == null)
+	officerImageComment.setIsActive(false);
+
+//Image upload code for creating new record
+if (officerImageComment.getUserImage1Base64() != null && !officerImageComment.getUserImage1Base64().isEmpty()) {
+try {
+//Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+String base64String = officerImageComment.getUserImage1Base64();
+if (base64String.contains("base64,")) {
+base64String = base64String.split("base64,")[1]; // Remove the prefix
+}
+
+//Decode the base64 image string
+byte[] imageBytes = Base64.getDecoder().decode(base64String);
+officerImageComment.setImageBinary1(imageBytes); // Set image bytes to entity
+} catch (IllegalArgumentException e) {
+log.error("Invalid Base64 image data.", e);
+resultData.setStatus(false);
+resultData.setMessage("Invalid Base64 image data.");
+return resultData;
+}
+}
+
+} else {
+//Update existing data
+	OfficerImageComment existingOfficerImageComment = commonMasterService
+.getOfficerImageCommentById(officerImageComment.getOfficerImageCommentGuid());
+
+if (existingOfficerImageComment != null) {
+	existingOfficerImageComment.setImageHeadingEn(!Util.isNullOrEmpty(officerImageComment.getImageHeadingEn())? officerImageComment.getImageHeadingEn().toUpperCase().trim(): null);
+	existingOfficerImageComment.setImageHeadingHi(!Util.isNullOrEmpty(officerImageComment.getImageHeadingHi())? officerImageComment.getImageHeadingHi().toUpperCase().trim(): null);
+	existingOfficerImageComment.setImageHeadingRl(!Util.isNullOrEmpty(officerImageComment.getImageHeadingRl())? officerImageComment.getImageHeadingRl().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerNameEn(!Util.isNullOrEmpty(officerImageComment.getOfficerNameEn()) ? officerImageComment.getOfficerNameEn().trim() : null);
+	
+	existingOfficerImageComment.setOfficerNameHi(!Util.isNullOrEmpty(officerImageComment.getOfficerNameHi())? officerImageComment.getOfficerNameHi().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerNameRl(!Util.isNullOrEmpty(officerImageComment.getOfficerNameRl())? officerImageComment.getOfficerNameRl().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerDesigEn(!Util.isNullOrEmpty(officerImageComment.getOfficerDesigEn())? officerImageComment.getOfficerDesigEn().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerDesigHi(!Util.isNullOrEmpty(officerImageComment.getOfficerDesigHi())? officerImageComment.getOfficerDesigHi().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerDesigRl(!Util.isNullOrEmpty(officerImageComment.getOfficerDesigRl())? officerImageComment.getOfficerDesigRl().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerCommentEn(!Util.isNullOrEmpty(officerImageComment.getOfficerCommentEn())? officerImageComment.getOfficerCommentEn().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerCommentHi(!Util.isNullOrEmpty(officerImageComment.getOfficerCommentHi())? officerImageComment.getOfficerCommentHi().toUpperCase().trim(): null);
+	existingOfficerImageComment.setOfficerCommentRl(!Util.isNullOrEmpty(officerImageComment.getOfficerCommentRl())? officerImageComment.getOfficerCommentRl().toUpperCase().trim(): null);
+
+	existingOfficerImageComment.setOtherHtmlContent(!Util.isNullOrEmpty(officerImageComment.getOtherHtmlContent())? officerImageComment.getOtherHtmlContent().toUpperCase().trim(): null);
+	existingOfficerImageComment.setPortalUri(!Util.isNullOrEmpty(officerImageComment.getPortalUri())? officerImageComment.getPortalUri().toUpperCase().trim(): null);
+	existingOfficerImageComment.setFacebookUri(!Util.isNullOrEmpty(officerImageComment.getFacebookUri())? officerImageComment.getFacebookUri().toUpperCase().trim(): null);
+	existingOfficerImageComment.setTwitterUri(!Util.isNullOrEmpty(officerImageComment.getTwitterUri())? officerImageComment.getTwitterUri().toUpperCase().trim(): null);
+	existingOfficerImageComment.setPriority(!Util.isNullOrZero(officerImageComment.getPriority())? officerImageComment.getPriority(): null);
+	
+	existingOfficerImageComment.setIsActive(officerImageComment.getIsActive() != null ? officerImageComment.getIsActive(): existingOfficerImageComment.getIsActive());
+	
+if (existingOfficerImageComment.getIsActive() == null)
+	existingOfficerImageComment.setIsActive(false);
+
+//Handle image update for existing record
+if (officerImageComment.getUserImage1Base64() != null && !officerImageComment.getUserImage1Base64().isEmpty()) {
+try {
+//Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+String base64String = officerImageComment.getUserImage1Base64();
+if (base64String.contains("base64,")) {
+base64String = base64String.split("base64,")[1]; // Remove the prefix
+}
+
+//Decode the base64 image string
+byte[] imageBytes = Base64.getDecoder().decode(base64String);
+existingOfficerImageComment.setImageBinary1(imageBytes); // Update the image bytes in existing object
+} catch (IllegalArgumentException e) {
+log.error("Invalid Base64 image data.", e);
+resultData.setStatus(false);
+resultData.setMessage("Invalid Base64 image data.");
+return resultData;
+}
+} else if (officerImageComment.getImageBinary1() != null && officerImageComment.getImageBinary1().length > 0) {
+	existingOfficerImageComment.setImageBinary1(officerImageComment.getImageBinary1());
+}
+
+//Update modification details
+existingOfficerImageComment.setModifiedIpAddr(request.getRemoteAddr());
+existingOfficerImageComment.setModifiedDate(new Date());
+existingOfficerImageComment.setModifiedBy(request.getRemoteAddr());
+existingOfficerImageComment.setModifiedMacAddr(UUID.randomUUID().toString());
+officerImageComment = existingOfficerImageComment; // Use the updated existing menu master object
+} else {
+log.error("OfficerImageComment  not found");
+resultData.setStatus(false);
+resultData.setMessage("OfficerImageComment  not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateOfficerImageComment(officerImageComment);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+
+
+
+
+
+
+//Set some default values for empty fields
+if (officerImageComment.getIsActive() == null)
+	officerImageComment.setIsActive(false);
+officerImageComment.setImageHeadingEn(!Util.isNullOrEmpty(officerImageComment.getImageHeadingEn())? officerImageComment.getImageHeadingEn().toUpperCase().trim(): null);
+officerImageComment.setImageHeadingHi(!Util.isNullOrEmpty(officerImageComment.getImageHeadingHi())? officerImageComment.getImageHeadingHi().toUpperCase().trim(): null);
+officerImageComment.setImageHeadingRl(!Util.isNullOrEmpty(officerImageComment.getImageHeadingRl())? officerImageComment.getImageHeadingRl().toUpperCase().trim(): null);
+officerImageComment.setOfficerNameEn(!Util.isNullOrEmpty(officerImageComment.getOfficerNameEn()) ? officerImageComment.getOfficerNameEn().trim() : null);
+
+officerImageComment.setOfficerNameHi(!Util.isNullOrEmpty(officerImageComment.getOfficerNameHi())? officerImageComment.getOfficerNameHi().toUpperCase().trim(): null);
+officerImageComment.setOfficerNameRl(!Util.isNullOrEmpty(officerImageComment.getOfficerNameRl())? officerImageComment.getOfficerNameRl().toUpperCase().trim(): null);
+officerImageComment.setOfficerDesigEn(!Util.isNullOrEmpty(officerImageComment.getOfficerDesigEn())? officerImageComment.getOfficerDesigEn().toUpperCase().trim(): null);
+officerImageComment.setOfficerDesigHi(!Util.isNullOrEmpty(officerImageComment.getOfficerDesigHi())? officerImageComment.getOfficerDesigHi().toUpperCase().trim(): null);
+officerImageComment.setOfficerDesigRl(!Util.isNullOrEmpty(officerImageComment.getOfficerDesigRl())? officerImageComment.getOfficerDesigRl().toUpperCase().trim(): null);
+officerImageComment.setOfficerCommentEn(!Util.isNullOrEmpty(officerImageComment.getOfficerCommentEn())? officerImageComment.getOfficerCommentEn().toUpperCase().trim(): null);
+officerImageComment.setOfficerCommentHi(!Util.isNullOrEmpty(officerImageComment.getOfficerCommentHi())? officerImageComment.getOfficerCommentHi().toUpperCase().trim(): null);
+officerImageComment.setOfficerCommentRl(!Util.isNullOrEmpty(officerImageComment.getOfficerCommentRl())? officerImageComment.getOfficerCommentRl().toUpperCase().trim(): null);
+
+officerImageComment.setOtherHtmlContent(!Util.isNullOrEmpty(officerImageComment.getOtherHtmlContent())? officerImageComment.getOtherHtmlContent().toUpperCase().trim(): null);
+officerImageComment.setPortalUri(!Util.isNullOrEmpty(officerImageComment.getPortalUri())? officerImageComment.getPortalUri().toUpperCase().trim(): null);
+officerImageComment.setFacebookUri(!Util.isNullOrEmpty(officerImageComment.getFacebookUri())? officerImageComment.getFacebookUri().toUpperCase().trim(): null);
+officerImageComment.setTwitterUri(!Util.isNullOrEmpty(officerImageComment.getTwitterUri())? officerImageComment.getTwitterUri().toUpperCase().trim(): null);
+officerImageComment.setPriority(!Util.isNullOrZero(officerImageComment.getPriority())? officerImageComment.getPriority(): null);
+
+
+//Save or update the data
+try {
+	officerImageCommentRepo.save(officerImageComment);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+} catch (Exception e) {
+log.error("Unexpected error occurred: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Unexpected error occurred: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getOfficerImageCommentByGuid/{officerImageCommentGuid}")
+public ResponseEntity<OfficerImageComment> getOfficerImageCommentByGuid(@PathVariable("officerImageCommentGuid") String officerImageCommentGuid) {
+	OfficerImageComment officerImageComment = officerImageCommentRepo.findById(officerImageCommentGuid).orElseThrow(
+() -> new ResourceNotFoundException("Resource not found with officerImageCommentGuid : " + officerImageCommentGuid));
+return new ResponseEntity<>(officerImageComment, HttpStatus.OK);
+}
+
+/////////////////////////////////////OfficerImageComment  End///////////////////////////////////
+
+/////////////////////////////////////TextFlash Start///////////////////////////////////
+//get all data from table
+@GetMapping("/getTextFlashList")
+public ResponseEntity<BaseResponse> getTextFlashList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<TextFlash> list = textFlashRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setTextFlash(list);
+return ResponseEntity.ok(response);
+}
+
+
+@PostMapping("/submitTextFlash")
+public BaseResponse submitTextFlash(@ModelAttribute TextFlash textFlash, 
+                                     @RequestParam(value = "pdfFile", required = false) MultipartFile pdfFile, 
+                                     HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+try {
+	System.out.println("aa gya");
+// Check if GUID is provided (indicating an update)
+if (textFlash.getTextFlashGuid() == null || textFlash.getTextFlashGuid().isEmpty()) {
+// Add new data
+	textFlash.setCreatedIpAddr(request.getRemoteAddr());
+	textFlash.setTextFlashGuid(UUID.randomUUID().toString());
+	textFlash.setCreatedDate(new Date());
+	textFlash.setModifiedIpAddr(null);
+	textFlash.setModifiedBy(null);
+	textFlash.setModifiedDate(null);
+	textFlash.setCreatedBy(request.getRemoteAddr());
+
+if (textFlash.getIsActive() == null) {
+	textFlash.setIsActive(false);
+}
+
+// Handling PDF file upload for new record
+if (pdfFile != null && !pdfFile.isEmpty()) {
+try {
+// Set the storage path for the PDF file
+String storagePath = "D:\\backendmaster\\pdfData"; // Use a dynamic path or config
+
+// Get original file name (without extension)
+String originalFileName = pdfFile.getOriginalFilename();
+if (originalFileName == null) {
+resultData.setStatus(false);
+resultData.setMessage("File name is missing.");
+return resultData;
+}
+
+// Extract file name without extension
+String fileNameWithoutExtension = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+
+// Generate a 10-digit unique number
+String uniqueKey = generateUniqueKey();
+
+// Combine file name with unique key to create the new file name
+String newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
+
+// Define the file path where PDF will be saved locally
+Path filePath = Paths.get(storagePath, newFileName);
+
+// Create directory if it doesn't exist
+if (!Files.exists(filePath.getParent())) {
+Files.createDirectories(filePath.getParent());
+}
+
+// Save the PDF file to the local storage
+Files.write(filePath, pdfFile.getBytes());
+
+// Update the file name in the DB model
+textFlash.setPdfFileName1(newFileName);
+
+
+} catch (IOException e) {
+log.error("Error saving the PDF file: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving the PDF file.");
+return resultData;
+}
+}
+
+} else {
+// Update existing data
+	TextFlash existingTextFlash = commonMasterService.getTextFlashById(textFlash.getTextFlashGuid());
+
+if (existingTextFlash != null) {
+	existingTextFlash.setTextFlashSubjectEn(!Util.isNullOrEmpty(textFlash.getTextFlashSubjectEn()) ? textFlash.getTextFlashSubjectEn().toUpperCase().trim() : null);
+	existingTextFlash.setTextFlashSubjectHi(!Util.isNullOrEmpty(textFlash.getTextFlashSubjectHi()) ? textFlash.getTextFlashSubjectHi().toUpperCase().trim() : null);
+	existingTextFlash.setTextFlashSubjectRl(!Util.isNullOrEmpty(textFlash.getTextFlashSubjectRl()) ? textFlash.getTextFlashSubjectRl().toUpperCase().trim() : null);
+	existingTextFlash.setTextFlashUrl(!Util.isNullOrEmpty(textFlash.getTextFlashUrl()) ? textFlash.getTextFlashUrl().trim() : null);
+	existingTextFlash.setTextFlashContentHtmlEn(!Util.isNullOrEmpty(textFlash.getTextFlashContentHtmlEn()) ? textFlash.getTextFlashContentHtmlEn() : null);
+existingTextFlash.setTextFlashContentHtmlHi(!Util.isNullOrEmpty(textFlash.getTextFlashContentHtmlHi()) ? textFlash.getTextFlashContentHtmlHi().toUpperCase().trim() : null);
+existingTextFlash.setTextFlashContentHtmlRl(!Util.isNullOrEmpty(textFlash.getTextFlashContentHtmlRl()) ? textFlash.getTextFlashContentHtmlRl() : null);
+existingTextFlash.setActiveFromDate(textFlash.getActiveFromDate());
+existingTextFlash.setActiveTill(textFlash.getActiveTill());
+existingTextFlash.setIsActive(textFlash.getIsActive() != null ? textFlash.getIsActive() : existingTextFlash.getIsActive());
+
+if (existingTextFlash.getIsActive() == null) {
+	existingTextFlash.setIsActive(false);
+}
+
+// Handle PDF file update for the existing record
+if (pdfFile != null && !pdfFile.isEmpty()) {
+try {
+// Set the storage path for the PDF file
+String storagePath = "D:\\backendmaster\\pdfData"; // Use a dynamic path or config
+
+// Get original file name (without extension)
+String originalFileName = pdfFile.getOriginalFilename();
+if (originalFileName == null || originalFileName.isEmpty()) {
+resultData.setStatus(false);
+resultData.setMessage("File name is missing.");
+return resultData;
+}
+
+// Ensure that the file name does not contain invalid characters
+originalFileName = originalFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+
+// Extract file name without extension
+String fileNameWithoutExtension = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+
+// Generate a 10-digit unique number
+String uniqueKey = generateUniqueKey();
+
+// Combine file name with unique key to create the new file name
+String newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
+
+// Define the file path where PDF will be saved locally
+Path filePath = Paths.get(storagePath, newFileName);
+
+// Create directory if it doesn't exist
+if (!Files.exists(filePath.getParent())) {
+Files.createDirectories(filePath.getParent());
+}
+
+// Check if file already exists, regenerate if necessary
+while (Files.exists(filePath)) {
+    uniqueKey = generateUniqueKey(); // Regenerate the unique key if the file already exists
+    newFileName = fileNameWithoutExtension + "_" + uniqueKey + ".pdf";
+    filePath = Paths.get(storagePath, newFileName);
+}
+
+// Log the file saving path
+log.info("Saving PDF file to: {}", filePath.toString());
+
+// Save the PDF file to the local storage
+Files.write(filePath, pdfFile.getBytes());
+
+// Update the file name in the DB model
+existingTextFlash.setPdfFileName1(newFileName);
+
+}
+catch (FileAlreadyExistsException e) {
+    log.error("File already exists: {}", e.getMessage());
+    resultData.setStatus(false);
+    resultData.setMessage("File already exists.");
+    return resultData;}
+catch (IOException e) {
+log.error("Error saving the PDF file: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving the PDF file.");
+return resultData;
+}
+}
+
+// Update modification details
+existingTextFlash.setModifiedIpAddr(request.getRemoteAddr());
+existingTextFlash.setModifiedDate(new Date());
+existingTextFlash.setModifiedBy(request.getRemoteAddr());
+existingTextFlash.setModifiedMacAddr(UUID.randomUUID().toString());
+
+textFlash = existingTextFlash; // Use the updated existing menu master object
+
+} else {
+log.error("TextFlash Master not found");
+resultData.setStatus(false);
+resultData.setMessage("TextFlash Master not found");
+return resultData;
+}
+}
+
+// Validation
+resultData = validator.validateTextFlash(textFlash);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+// Set some default values for empty fields
+if (textFlash.getIsActive() == null)
+	textFlash.setIsActive(false);
+
+textFlash.setTextFlashSubjectEn(!Util.isNullOrEmpty(textFlash.getTextFlashSubjectEn()) ? textFlash.getTextFlashSubjectEn().toUpperCase().trim() : null);
+textFlash.setTextFlashSubjectHi(!Util.isNullOrEmpty(textFlash.getTextFlashSubjectHi()) ? textFlash.getTextFlashSubjectHi().toUpperCase().trim() : null);
+textFlash.setTextFlashSubjectRl(!Util.isNullOrEmpty(textFlash.getTextFlashSubjectRl()) ? textFlash.getTextFlashSubjectRl().toUpperCase().trim() : null);
+textFlash.setTextFlashUrl(!Util.isNullOrEmpty(textFlash.getTextFlashUrl()) ? textFlash.getTextFlashUrl().trim() : null);
+textFlash.setTextFlashContentHtmlEn(!Util.isNullOrEmpty(textFlash.getTextFlashContentHtmlEn()) ? textFlash.getTextFlashContentHtmlEn() : null);
+textFlash.setTextFlashContentHtmlHi(!Util.isNullOrEmpty(textFlash.getTextFlashContentHtmlHi()) ? textFlash.getTextFlashContentHtmlHi().toUpperCase().trim() : null);
+textFlash.setTextFlashContentHtmlRl(!Util.isNullOrEmpty(textFlash.getTextFlashContentHtmlRl()) ? textFlash.getTextFlashContentHtmlRl() : null);
+textFlash.setActiveFromDate(textFlash.getActiveFromDate());
+textFlash.setActiveTill(textFlash.getActiveTill());
+// Save or update the data
+try {
+	textFlashRepo.save(textFlash);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+} catch (Exception e) {
+log.error("Unexpected error occurred: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Unexpected error occurred: " + e.getMessage());
+}
+
+return resultData;
+}
+
+
+//get data by id
+@GetMapping("/getTextFlashByGuid/{textFlashGuid}")
+public ResponseEntity<TextFlash> getTextFlashByGuid(@PathVariable("textFlashGuid") String textFlashGuid) {
+	TextFlash textFlash = textFlashRepo.findById(textFlashGuid).orElseThrow(
+() -> new ResourceNotFoundException("Resource not found with textFlashGuid : " + textFlashGuid));
+return new ResponseEntity<>(textFlash, HttpStatus.OK);
+}
+
+/////////////////////////////////////TextFlash End///////////////////////////////////
+
+/////////////////////////////////////FlashImage Start///////////////////////////////////
+//get all data from table
+@GetMapping("/getFlashImageList")
+public ResponseEntity<BaseResponse> getFlashImageList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<FlashImage> list = flashImageRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setFlashImage(list);
+return ResponseEntity.ok(response);
+}
+
+@PostMapping("/submitFlashImage")
+public BaseResponse submitFlashImage(@RequestBody FlashImage flashImage, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+try {
+//Check if GUID is provided (indicating an update)
+if (flashImage.getFlashImageGuid() == null || flashImage.getFlashImageGuid().isEmpty()) {
+//Add new data
+	flashImage.setCreatedIpAddr(request.getRemoteAddr());
+	flashImage.setFlashImageGuid(UUID.randomUUID().toString());
+	flashImage.setCreatedDate(new Date());
+flashImage.setModifiedIpAddr(null);
+flashImage.setModifiedBy(null);
+flashImage.setModifiedDate(null);
+flashImage.setCreatedBy(request.getRemoteAddr());
+
+if (flashImage.getIsActive() == null)
+	flashImage.setIsActive(false);
+
+//Image upload code for creating new record
+if (flashImage.getUserImage1Base64() != null && !flashImage.getUserImage1Base64().isEmpty()) {
+try {
+//Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+String base64String = flashImage.getUserImage1Base64();
+if (base64String.contains("base64,")) {
+base64String = base64String.split("base64,")[1]; // Remove the prefix
+}
+
+//Decode the base64 image string
+byte[] imageBytes = Base64.getDecoder().decode(base64String);
+flashImage.setImageBinary1(imageBytes); // Set image bytes to entity
+} catch (IllegalArgumentException e) {
+log.error("Invalid Base64 image data.", e);
+resultData.setStatus(false);
+resultData.setMessage("Invalid Base64 image data.");
+return resultData;
+}
+}
+
+} else {
+//Update existing data
+	FlashImage existingFlashImage = commonMasterService.getFlashImageById(flashImage.getFlashImageGuid());
+
+if (existingFlashImage != null) {
+	existingFlashImage.setImageHeadingEn(!Util.isNullOrEmpty(flashImage.getImageHeadingEn())? flashImage.getImageHeadingEn().toUpperCase().trim(): null);
+
+	existingFlashImage.setImageHeadingHi(!Util.isNullOrEmpty(flashImage.getImageHeadingHi())? flashImage.getImageHeadingHi().toUpperCase().trim(): null);
+
+	existingFlashImage.setImageHeadingRl(!Util.isNullOrEmpty(flashImage.getImageHeadingRl())? flashImage.getImageHeadingRl().toUpperCase().trim(): null);
+
+	existingFlashImage.setImageUrl(!Util.isNullOrEmpty(flashImage.getImageUrl()) ? flashImage.getImageUrl().trim() : null);
+
+	existingFlashImage.setOrderNumber(!Util.isNullOrZero(flashImage.getOrderNumber()) ? flashImage.getOrderNumber() : null);
+
+	existingFlashImage.setIsActive(flashImage.getIsActive() != null ? flashImage.getIsActive(): existingFlashImage.getIsActive());
+
+if (existingFlashImage.getIsActive() == null)
+	existingFlashImage.setIsActive(false);
+
+//Handle image update for existing record
+if (flashImage.getUserImage1Base64() != null && !flashImage.getUserImage1Base64().isEmpty()) {
+try {
+//Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+String base64String = flashImage.getUserImage1Base64();
+if (base64String.contains("base64,")) {
+base64String = base64String.split("base64,")[1]; // Remove the prefix
+}
+
+//Decode the base64 image string
+byte[] imageBytes = Base64.getDecoder().decode(base64String);
+existingFlashImage.setImageBinary1(imageBytes); // Update the image bytes in existing object
+} catch (IllegalArgumentException e) {
+log.error("Invalid Base64 image data.", e);
+resultData.setStatus(false);
+resultData.setMessage("Invalid Base64 image data.");
+return resultData;
+}
+} else if (flashImage.getImageBinary1() != null && flashImage.getImageBinary1().length > 0)
+{
+	existingFlashImage.setImageBinary1(flashImage.getImageBinary1());
+}
+
+//Update modification details
+existingFlashImage.setModifiedIpAddr(request.getRemoteAddr());
+existingFlashImage.setModifiedDate(new Date());
+existingFlashImage.setModifiedBy(request.getRemoteAddr());
+existingFlashImage.setModifiedMacAddr(UUID.randomUUID().toString());
+flashImage = existingFlashImage; // Use the updated existing menu master object
+}
+else
+{
+log.error("FlashImage Master not found");
+resultData.setStatus(false);
+resultData.setMessage("FlashImage Master not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateFlashImage(flashImage);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//Set some default values for empty fields
+if (flashImage.getIsActive() == null)
+	flashImage.setIsActive(false);
+
+flashImage.setImageHeadingEn(!Util.isNullOrEmpty(flashImage.getImageHeadingEn())? flashImage.getImageHeadingEn().toUpperCase().trim(): null);
+
+flashImage.setImageHeadingHi(!Util.isNullOrEmpty(flashImage.getImageHeadingHi())? flashImage.getImageHeadingHi().toUpperCase().trim(): null);
+
+flashImage.setImageHeadingRl(!Util.isNullOrEmpty(flashImage.getImageHeadingRl())? flashImage.getImageHeadingRl().toUpperCase().trim(): null);
+
+flashImage.setImageUrl(!Util.isNullOrEmpty(flashImage.getImageUrl()) ? flashImage.getImageUrl().trim() : null);
+
+flashImage.setOrderNumber(!Util.isNullOrZero(flashImage.getOrderNumber()) ? flashImage.getOrderNumber() : null);
+
+
+//Save or update the data
+try {
+	flashImageRepo.save(flashImage);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+} catch (Exception e) {
+log.error("Unexpected error occurred: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Unexpected error occurred: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getFlashImageByGuid/{flashImageGuid}")
+public ResponseEntity<FlashImage> getFlashImageByGuid(@PathVariable("flashImageGuid") String flashImageGuid) {
+	FlashImage flashImage = flashImageRepo.findById(flashImageGuid).orElseThrow(
+() -> new ResourceNotFoundException("Resource not found with flashImageGuid : " + flashImageGuid));
+return new ResponseEntity<>(flashImage, HttpStatus.OK);
+}
+
+/////////////////////////////////////FlashImage  End///////////////////////////////////
+
+
+/////////////////////////////////////BgImage Start///////////////////////////////////
+//get all data from table
+@GetMapping("/getBgImageList")
+public ResponseEntity<BaseResponse> getBgImageList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<BgImage> list = bgImageRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setBgImage(list);
+return ResponseEntity.ok(response);
+}
+
+@PostMapping("/submitBgImage")
+public BaseResponse submitBgImage(@RequestBody BgImage bgImage, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+try {
+//Check if GUID is provided (indicating an update)
+if (bgImage.getBgImageGuid() == null || bgImage.getBgImageGuid().isEmpty()) {
+//Add new data
+	bgImage.setCreatedIpAddr(request.getRemoteAddr());
+	bgImage.setBgImageGuid(UUID.randomUUID().toString());
+	bgImage.setCreatedDate(new Date());
+	bgImage.setModifiedIpAddr(null);
+	bgImage.setModifiedBy(null);
+	bgImage.setModifiedDate(null);
+	bgImage.setCreatedBy(request.getRemoteAddr());
+
+if (bgImage.getIsActive() == null)
+	bgImage.setIsActive(false);
+
+//Image upload code for creating new record
+if (bgImage.getUserImage1Base64() != null && !bgImage.getUserImage1Base64().isEmpty()) {
+try {
+//Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+String base64String = bgImage.getUserImage1Base64();
+if (base64String.contains("base64,")) {
+base64String = base64String.split("base64,")[1]; // Remove the prefix
+}
+
+//Decode the base64 image string
+byte[] imageBytes = Base64.getDecoder().decode(base64String);
+bgImage.setImageBinary1(imageBytes); // Set image bytes to entity
+} catch (IllegalArgumentException e) {
+log.error("Invalid Base64 image data.", e);
+resultData.setStatus(false);
+resultData.setMessage("Invalid Base64 image data.");
+return resultData;
+}
+}
+
+} else {
+//Update existing data
+BgImage existingBgImage = commonMasterService.getBgImageById(bgImage.getBgImageGuid());
+
+if (existingBgImage != null) {
+	existingBgImage.setImageHeadingEn(!Util.isNullOrEmpty(bgImage.getImageHeadingEn())? bgImage.getImageHeadingEn().toUpperCase().trim(): null);
+
+	existingBgImage.setImageHeadingHi(!Util.isNullOrEmpty(bgImage.getImageHeadingHi())? bgImage.getImageHeadingHi().toUpperCase().trim(): null);
+
+	existingBgImage.setImageHeadingRl(!Util.isNullOrEmpty(bgImage.getImageHeadingRl())? bgImage.getImageHeadingRl().toUpperCase().trim(): null);
+
+	existingBgImage.setOrderNumber(!Util.isNullOrZero(bgImage.getOrderNumber()) ? bgImage.getOrderNumber() : null);
+
+	existingBgImage.setIsActive(bgImage.getIsActive() != null ? bgImage.getIsActive(): existingBgImage.getIsActive());
+
+if (existingBgImage.getIsActive() == null)
+	existingBgImage.setIsActive(false);
+
+//Handle image update for existing record
+if (bgImage.getUserImage1Base64() != null && !bgImage.getUserImage1Base64().isEmpty()) {
+try {
+//Clean the base64 string by removing the prefix (e.g., "image/jpeg;base64,")
+String base64String = bgImage.getUserImage1Base64();
+if (base64String.contains("base64,")) {
+base64String = base64String.split("base64,")[1]; // Remove the prefix
+}
+
+//Decode the base64 image string
+byte[] imageBytes = Base64.getDecoder().decode(base64String);
+existingBgImage.setImageBinary1(imageBytes); // Update the image bytes in existing object
+} catch (IllegalArgumentException e) {
+log.error("Invalid Base64 image data.", e);
+resultData.setStatus(false);
+resultData.setMessage("Invalid Base64 image data.");
+return resultData;
+}
+} else if (bgImage.getImageBinary1() != null && bgImage.getImageBinary1().length > 0)
+{
+	existingBgImage.setImageBinary1(bgImage.getImageBinary1());
+}
+
+//Update modification details
+existingBgImage.setModifiedIpAddr(request.getRemoteAddr());
+existingBgImage.setModifiedDate(new Date());
+existingBgImage.setModifiedBy(request.getRemoteAddr());
+existingBgImage.setModifiedMacAddr(UUID.randomUUID().toString());
+bgImage = existingBgImage; // Use the updated existing menu master object
+}
+else
+{
+log.error("BgImage Master not found");
+resultData.setStatus(false);
+resultData.setMessage("BgImage Master not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateBgImage(bgImage);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//Set some default values for empty fields
+if (bgImage.getIsActive() == null)
+	bgImage.setIsActive(false);
+
+bgImage.setImageHeadingEn(!Util.isNullOrEmpty(bgImage.getImageHeadingEn())? bgImage.getImageHeadingEn().toUpperCase().trim(): null);
+
+bgImage.setImageHeadingHi(!Util.isNullOrEmpty(bgImage.getImageHeadingHi())? bgImage.getImageHeadingHi().toUpperCase().trim(): null);
+
+bgImage.setImageHeadingRl(!Util.isNullOrEmpty(bgImage.getImageHeadingRl())? bgImage.getImageHeadingRl().toUpperCase().trim(): null);
+
+bgImage.setOrderNumber(!Util.isNullOrZero(bgImage.getOrderNumber()) ? bgImage.getOrderNumber() : null);
+
+
+//Save or update the data
+try {
+bgImageRepo.save(bgImage);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+} catch (Exception e) {
+log.error("Unexpected error occurred: {}", e.getMessage(), e);
+resultData.setStatus(false);
+resultData.setMessage("Unexpected error occurred: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getBgImageByGuid/{bgImageGuid}")
+public ResponseEntity<BgImage> getBgImageByGuid(@PathVariable("bgImageGuid") String bgImageGuid) {
+	BgImage bgImage = bgImageRepo.findById(bgImageGuid).orElseThrow(
+() -> new ResourceNotFoundException("Resource not found with bgImageGuid : " + bgImageGuid));
+return new ResponseEntity<>(bgImage, HttpStatus.OK);
+}
+
+//////////////////////////////////////////////BgImage End////////////////////////////
+
+
+
+//////////////////////////////////////////////TenderDetails Start////////////////////////////
+
+//get all data from table
+@GetMapping("/getTenderDetailsList")
+public ResponseEntity<BaseResponse> getTenderDetailsList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<TenderDetails> list = tenderDetailsRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setTenderDetails(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitTenderDetails")
+public BaseResponse submitTenderDetails(@RequestBody TenderDetails tenderDetails,
+HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+System.out.println("Received TenderDetails: " + tenderDetails); // Debugging output
+
+
+//Check if guid is provided (indicating an update)
+if (tenderDetails.getTenderGuid() == null || tenderDetails.getTenderGuid().isEmpty()) {
+//Add new data
+	tenderDetails.setCreatedIpAddr(request.getRemoteAddr());
+	tenderDetails.setTenderGuid(UUID.randomUUID().toString());
+	tenderDetails.setCreatedDate(new Date());
+	tenderDetails.setModifiedIpAddr(null);
+	tenderDetails.setModifiedBy(null);
+	tenderDetails.setModifiedDate(null);
+	tenderDetails.setCreatedBy(request.getRemoteAddr());
+//tenderDetails.setCreatedBy(userSessionParam.getEmpBasicGUID());
+//tenderDetails.setCreaterRemarks(userSessionParam.getUserFullName());
+//tenderDetails.setCreaterMacId(HttpSessionHelper.getMacAddress());
+	//for dropdown
+	tenderDetails.setOrgPrimary(tenderDetails.getOrgPrimaryGuid());
+		
+	if (tenderDetails.getOrgPrimary() != null && !tenderDetails.getOrgPrimary().isEmpty()) {
+		tenderDetails.setOrgPrimaryMaster(new OrgPrimary(tenderDetails.getOrgPrimary()));
+	}
+
+if (tenderDetails.getIsActive() == null)
+	tenderDetails.setIsActive(false);
+} 
+else
+{
+//Update existing data
+	TenderDetails existingTenderDetails = commonMasterService
+.getTenderDetailsById(tenderDetails.getTenderGuid());
+
+if (existingTenderDetails != null) {
+
+	existingTenderDetails.setTenders(!Util.isNullOrEmpty(tenderDetails.getTenders()) ? tenderDetails.getTenders().toUpperCase().trim(): null);
+	existingTenderDetails.setTRefNo(!Util.isNullOrEmpty(tenderDetails.getTRefNo()) ? tenderDetails.getTRefNo().toUpperCase().trim() : null);
+	existingTenderDetails.setTTitle(!Util.isNullOrEmpty(tenderDetails.getTTitle()) ? tenderDetails.getTTitle().toUpperCase().trim() : null);
+	existingTenderDetails.setTLocation(!Util.isNullOrEmpty(tenderDetails.getTLocation()) ? tenderDetails.getTLocation().toUpperCase().trim() : null);
+	existingTenderDetails.setTInvitingOffAddress(!Util.isNullOrEmpty(tenderDetails.getTInvitingOffAddress()) ? tenderDetails.getTInvitingOffAddress().toUpperCase().trim() : null);
+	existingTenderDetails.setTReturnUrl(!Util.isNullOrEmpty(tenderDetails.getTReturnUrl()) ? tenderDetails.getTReturnUrl().toUpperCase().trim() : null);
+
+	existingTenderDetails.setTPubDate(tenderDetails.getTPubDate());
+
+	existingTenderDetails.setIsActive(tenderDetails.getIsActive() != null ? tenderDetails.getIsActive()
+: existingTenderDetails.getIsActive());
+
+	existingTenderDetails.setModifiedIpAddr(request.getRemoteAddr());
+	existingTenderDetails.setModifiedDate(new Date());
+existingTenderDetails.setModifiedBy("admin");
+
+//dropdown
+existingTenderDetails.setOrgPrimary(tenderDetails.getOrgPrimaryGuid());
+if (existingTenderDetails.getOrgPrimary() != null && !existingTenderDetails.getOrgPrimary().isEmpty()) {
+	existingTenderDetails.setOrgPrimaryMaster(new OrgPrimary(existingTenderDetails.getOrgPrimary()));
+}
+
+
+
+if (existingTenderDetails.getIsActive() == null)
+	existingTenderDetails.setIsActive(false);
+
+//existingTenderDetails.setModifiedBy(UUID.randomUUID().toString());
+//existingTenderDetails.setModifiedMacAddr(UUID.randomUUID().toString());
+
+//existingTenderDetails.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
+//existingTenderDetails.setModifierMacId(HttpSessionHelper.getMacAddress());
+tenderDetails = existingTenderDetails; // Use the updated existing assessmentYear object
+} else {
+log.error("TenderDetails not found");
+resultData.setStatus(false);
+resultData.setMessage("TenderDetails not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateTenderDetails(tenderDetails);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (tenderDetails.getIsActive() == null)
+	tenderDetails.setIsActive(false);
+
+tenderDetails.setTenders(!Util.isNullOrEmpty(tenderDetails.getTenders()) ? tenderDetails.getTenders().toUpperCase().trim(): null);
+tenderDetails.setTRefNo(!Util.isNullOrEmpty(tenderDetails.getTRefNo()) ? tenderDetails.getTRefNo().toUpperCase().trim() : null);
+tenderDetails.setTTitle(!Util.isNullOrEmpty(tenderDetails.getTTitle()) ? tenderDetails.getTTitle().toUpperCase().trim() : null);
+tenderDetails.setTLocation(!Util.isNullOrEmpty(tenderDetails.getTLocation()) ? tenderDetails.getTLocation().toUpperCase().trim() : null);
+tenderDetails.setTInvitingOffAddress(!Util.isNullOrEmpty(tenderDetails.getTInvitingOffAddress()) ? tenderDetails.getTInvitingOffAddress().toUpperCase().trim() : null);
+tenderDetails.setTReturnUrl(!Util.isNullOrEmpty(tenderDetails.getTReturnUrl()) ? tenderDetails.getTReturnUrl().toUpperCase().trim() : null);
+
+tenderDetails.setTPubDate(tenderDetails.getTPubDate());
+try {
+	tenderDetailsRepo.save(tenderDetails);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getTenderDetailsByGuid/{tenderGuid}")
+public ResponseEntity<TenderDetails> getTenderDetailsByGuid(
+@PathVariable("tenderGuid") String tenderGuid) {
+	TenderDetails tenderDetails = tenderDetailsRepo.findById(tenderGuid)
+.orElseThrow(() -> new ResourceNotFoundException(
+"Resource not found with tenderGuid : " + tenderGuid));
+return new ResponseEntity<>(tenderDetails, HttpStatus.OK);
+}
+
+////////////////////////////////TenderDetails End////////////////////////////
+
+////////////////////////////////////////////WebInfoManager Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getWebInfoManagerList")
+public ResponseEntity<BaseResponse> getWebInfoManagerList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<WebInfoManager> list = webInfoManagerRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setWebInfoManager(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitWebInfoManager")
+public BaseResponse submitWebInfoManager(@RequestBody WebInfoManager webInfoManager,
+HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (webInfoManager.getInfoManagerGuid() == null || webInfoManager.getInfoManagerGuid().isEmpty()) {
+//Add new data
+	webInfoManager.setCreatedIpAddr(request.getRemoteAddr());
+	webInfoManager.setInfoManagerGuid(UUID.randomUUID().toString());
+	webInfoManager.setCreatedDate(new Date());
+	webInfoManager.setModifiedIpAddr(null);
+	webInfoManager.setModifiedBy(null);
+	webInfoManager.setModifiedDate(null);
+	webInfoManager.setCreatedBy(request.getRemoteAddr());
+
+if (webInfoManager.getIsActive() == null)
+	webInfoManager.setIsActive(false);
+//webInfoManager.setCreatedRemarks(userSessionParam.getUserFullName());
+//webInfoManager.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//webInfoManager.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//webInfoManager.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+} else {
+//Update existing data
+	WebInfoManager existingWebInfoManager = commonMasterService
+.getWebInfoManagerById(webInfoManager.getInfoManagerGuid());
+
+if (existingWebInfoManager != null) {
+	
+	existingWebInfoManager.setOfficerName(!Util.isNullOrEmpty(webInfoManager.getOfficerName()) ? webInfoManager.getOfficerName().toUpperCase().trim(): null);
+	
+	existingWebInfoManager.setTelNumber(!Util.isNullOrEmpty(webInfoManager.getTelNumber())? webInfoManager.getTelNumber().toUpperCase().trim(): null);
+
+	existingWebInfoManager.setEmailId(!Util.isNullOrEmpty(webInfoManager.getEmailId())? webInfoManager.getEmailId().toUpperCase().trim(): null);
+	
+	existingWebInfoManager.setDesignation(!Util.isNullOrEmpty(webInfoManager.getDesignation())? webInfoManager.getDesignation().trim(): null);
+	
+	existingWebInfoManager.setAddress(!Util.isNullOrEmpty(webInfoManager.getAddress())? webInfoManager.getAddress().trim(): null);
+	
+	existingWebInfoManager.setIsActive(webInfoManager.getIsActive() != null ? webInfoManager.getIsActive(): existingWebInfoManager.getIsActive());
+
+	existingWebInfoManager.setModifiedIpAddr(request.getRemoteAddr());
+	existingWebInfoManager.setModifiedDate(new Date());
+if (existingWebInfoManager.getIsActive() == null)
+	existingWebInfoManager.setIsActive(false);
+
+//for now setting some dummy value to test
+existingWebInfoManager.setModifiedBy(UUID.randomUUID().toString());
+existingWebInfoManager.setModifiedMacAddr(UUID.randomUUID().toString());
+webInfoManager = existingWebInfoManager; // Use the updated existing country object
+} else {
+log.error("WebInfo Manager not found");
+resultData.setStatus(false);
+resultData.setMessage("WebInfo Manager not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateWebInfoManager(webInfoManager);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (webInfoManager.getIsActive() == null)
+	webInfoManager.setIsActive(false);
+
+webInfoManager.setOfficerName(!Util.isNullOrEmpty(webInfoManager.getOfficerName()) ? webInfoManager.getOfficerName().toUpperCase().trim(): null);
+
+webInfoManager.setTelNumber(!Util.isNullOrEmpty(webInfoManager.getTelNumber())? webInfoManager.getTelNumber().toUpperCase().trim(): null);
+
+webInfoManager.setEmailId(!Util.isNullOrEmpty(webInfoManager.getEmailId())? webInfoManager.getEmailId().toUpperCase().trim(): null);
+
+webInfoManager.setDesignation(!Util.isNullOrEmpty(webInfoManager.getDesignation())? webInfoManager.getDesignation().trim(): null);
+
+webInfoManager.setAddress(!Util.isNullOrEmpty(webInfoManager.getAddress())? webInfoManager.getAddress().trim(): null);
+
+try {
+	webInfoManagerRepo.save(webInfoManager);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getWebInfoManagerByGuid/{infoManagerGuid}")
+public ResponseEntity<WebInfoManager> getWebInfoManagerByGuid(
+@PathVariable("infoManagerGuid") String infoManagerGuid) {
+	WebInfoManager webInfoManager = webInfoManagerRepo.findById(infoManagerGuid)
+.orElseThrow(() -> new ResourceNotFoundException(
+"Resource not found with infoManagerGuid : " + infoManagerGuid));
+return new ResponseEntity<>(webInfoManager, HttpStatus.OK);
+}
+
+////////////////////////////////////////////WebInfoManager End //////////////////////////
+
+
+////////////////////////////////////////////VideoGallery Start //////////////////////////
+
+//get all data from table
+@GetMapping("/getVideoGalleryList")
+public ResponseEntity<BaseResponse> getVideoGalleryList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<VideoGallery> list = videoGalleryRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setVideoGallery(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitVideoGallery")
+public BaseResponse submitVideoGallery(@RequestBody VideoGallery videoGallery,
+HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (videoGallery.getVideoGalleryGuid() == null || videoGallery.getVideoGalleryGuid().isEmpty()) {
+//Add new data
+	videoGallery.setCreatedIpAddr(request.getRemoteAddr());
+	videoGallery.setVideoGalleryGuid(UUID.randomUUID().toString());
+	videoGallery.setCreatedDate(new Date());
+	videoGallery.setModifiedIpAddr(null);
+	videoGallery.setModifiedBy(null);
+	videoGallery.setModifiedDate(null);
+	videoGallery.setCreatedBy(request.getRemoteAddr());
+
+if (videoGallery.getIsActive() == null)
+	videoGallery.setIsActive(false);
+//videoGallery.setCreatedRemarks(userSessionParam.getUserFullName());
+//videoGallery.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//videoGallery.setCreatedIpAddr(HttpSessionHelper.getClientIPAddress(request));
+//videoGallery.setCreatedMacAddr(HttpSessionHelper.getMacAddress());
+
+} else {
+//Update existing data
+	VideoGallery existingVideoGallery = commonMasterService
+.getVideoGalleryById(videoGallery.getVideoGalleryGuid());
+
+if (existingVideoGallery != null) {
+
+	existingVideoGallery.setVideoFile(!Util.isNullOrEmpty(videoGallery.getVideoFile()) ? videoGallery.getVideoFile().toUpperCase().trim(): null);
+
+	existingVideoGallery.setVideoGalleryNameEn(!Util.isNullOrEmpty(videoGallery.getVideoGalleryNameEn())? videoGallery.getVideoGalleryNameEn().toUpperCase().trim(): null);
+
+	existingVideoGallery.setVideoGalleryNameHi(!Util.isNullOrEmpty(videoGallery.getVideoGalleryNameHi())? videoGallery.getVideoGalleryNameHi().toUpperCase().trim(): null);
+
+	existingVideoGallery.setVideoGalleryNameRl(!Util.isNullOrEmpty(videoGallery.getVideoGalleryNameRl())? videoGallery.getVideoGalleryNameRl().trim(): null);
+
+	existingVideoGallery.setVideoGalleryUrl(!Util.isNullOrEmpty(videoGallery.getVideoGalleryUrl())? videoGallery.getVideoGalleryUrl().trim(): null);
+
+	existingVideoGallery.setVideoHeadingEn(!Util.isNullOrEmpty(videoGallery.getVideoHeadingEn())? videoGallery.getVideoHeadingEn().trim(): null);
+
+	existingVideoGallery.setVideoHeadingHi(!Util.isNullOrEmpty(videoGallery.getVideoHeadingHi())? videoGallery.getVideoHeadingHi().trim(): null);
+
+	existingVideoGallery.setVideoHeadingRl(!Util.isNullOrEmpty(videoGallery.getVideoHeadingRl())? videoGallery.getVideoHeadingRl().trim(): null);
+
+	existingVideoGallery.setOrderNumber(!Util.isNullOrZero(videoGallery.getOrderNumber())? videoGallery.getOrderNumber(): null);
+
+	existingVideoGallery.setIsActive(videoGallery.getIsActive() != null ? videoGallery.getIsActive(): existingVideoGallery.getIsActive());
+
+	existingVideoGallery.setModifiedIpAddr(request.getRemoteAddr());
+	existingVideoGallery.setModifiedDate(new Date());
+if (existingVideoGallery.getIsActive() == null)
+	existingVideoGallery.setIsActive(false);
+
+//for now setting some dummy value to test
+existingVideoGallery.setModifiedBy(UUID.randomUUID().toString());
+existingVideoGallery.setModifiedMacAddr(UUID.randomUUID().toString());
+videoGallery = existingVideoGallery; // Use the updated existing videoGallery object
+} else {
+log.error("Video Gallery not found");
+resultData.setStatus(false);
+resultData.setMessage("Video Gallery not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validateVideoGallery(videoGallery);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (videoGallery.getIsActive() == null)
+	videoGallery.setIsActive(false);
+
+videoGallery.setVideoFile(!Util.isNullOrEmpty(videoGallery.getVideoFile()) ? videoGallery.getVideoFile().toUpperCase().trim(): null);
+
+videoGallery.setVideoGalleryNameEn(!Util.isNullOrEmpty(videoGallery.getVideoGalleryNameEn())? videoGallery.getVideoGalleryNameEn().toUpperCase().trim(): null);
+
+videoGallery.setVideoGalleryNameHi(!Util.isNullOrEmpty(videoGallery.getVideoGalleryNameHi())? videoGallery.getVideoGalleryNameHi().toUpperCase().trim(): null);
+
+videoGallery.setVideoGalleryNameRl(!Util.isNullOrEmpty(videoGallery.getVideoGalleryNameRl())? videoGallery.getVideoGalleryNameRl().trim(): null);
+
+videoGallery.setVideoGalleryUrl(!Util.isNullOrEmpty(videoGallery.getVideoGalleryUrl())? videoGallery.getVideoGalleryUrl().trim(): null);
+
+videoGallery.setVideoHeadingEn(!Util.isNullOrEmpty(videoGallery.getVideoHeadingEn())? videoGallery.getVideoHeadingEn().trim(): null);
+
+videoGallery.setVideoHeadingHi(!Util.isNullOrEmpty(videoGallery.getVideoHeadingHi())? videoGallery.getVideoHeadingHi().trim(): null);
+
+videoGallery.setVideoHeadingRl(!Util.isNullOrEmpty(videoGallery.getVideoHeadingRl())? videoGallery.getVideoHeadingRl().trim(): null);
+
+videoGallery.setOrderNumber(!Util.isNullOrZero(videoGallery.getOrderNumber())? videoGallery.getOrderNumber(): null);
+
+
+try {
+	videoGalleryRepo.save(videoGallery);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getVideoGalleryByGuid/{videoGalleryGuid}")
+public ResponseEntity<VideoGallery> getVideoGalleryByGuid(
+@PathVariable("videoGalleryGuid") String videoGalleryGuid) {
+	VideoGallery videoGallery = videoGalleryRepo.findById(videoGalleryGuid)
+.orElseThrow(() -> new ResourceNotFoundException(
+"Resource not found with videoGalleryGuid : " + videoGalleryGuid));
+return new ResponseEntity<>(videoGallery, HttpStatus.OK);
+}
+
+////////////////////////////////////////////VideoGallery End //////////////////////////
 
 //Function to  convert image in Base64
 	public String convertImageToBase64(byte[] imageBytes) {

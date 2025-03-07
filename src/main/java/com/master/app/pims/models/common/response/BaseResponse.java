@@ -2,13 +2,20 @@ package com.master.app.pims.models.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
+import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
+import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
+import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
+import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
@@ -106,6 +113,15 @@ public class BaseResponse {
     private List<NoteMenu> noteMenu; 
     private List<PhotoGallery> photoGallery; 
     private List<SocialLinks> socialLinks; 
+    private List<OfficerImageComment> officerImageComment;   
+    private List<TextFlash> textFlash; 
+    private List<FlashImage> flashImage; 
+    private List<BgImage> bgImage; 
+    private List<TenderDetails> tenderDetails; 
+    private List<WebInfoManager> webInfoManager;
+    private List<VideoGallery> videoGallery;
+
+    
     
     List<GeoDistrict> districtList;
 

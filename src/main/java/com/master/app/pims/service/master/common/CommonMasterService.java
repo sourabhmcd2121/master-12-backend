@@ -2,13 +2,20 @@ package com.master.app.pims.service.master.common;
 import java.sql.SQLException;
 
 import com.master.app.pims.entities.schemas.citizenmaster.AdminDetail;
+import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
+import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
+import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.SocialLinks;
+import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
+import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
+import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
+import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
@@ -207,8 +214,36 @@ public interface CommonMasterService {
     SocialLinks saveSocialLinks(SocialLinks socialLinks);
     SocialLinks getSocialLinksById(String id);
     
+    ///for OfficerImageComment join with citizen_app schema
+    OfficerImageComment saveOfficerImageComment(OfficerImageComment officerImageComment);
+    OfficerImageComment getOfficerImageCommentById(String id);
+    
+    ///for TextFlash join with citizen_app schema
+    TextFlash saveTextFlash(TextFlash textFlash);
+    TextFlash getTextFlashById(String id);
+    
+    ///for TextFlash join with citizen_app schema
+    FlashImage saveFlashImage(FlashImage flashImage);
+    FlashImage getFlashImageById(String id);
+    
+    ///for BgImage join with citizen_app schema
+    BgImage saveBgImage(BgImage bgImage);
+    BgImage getBgImageById(String id);
+    
+    ///for TenderDetails join with citizen_app schema
+    TenderDetails saveTenderDetails(TenderDetails tenderDetails);
+    TenderDetails getTenderDetailsById(String id);
+    
+    ///for WebInfoManager join with citizen_app schema
+    WebInfoManager saveWebInfoManager(WebInfoManager webInfoManager);
+    WebInfoManager getWebInfoManagerById(String id);
+    
+    ///for TenderDetails join with citizen_app schema
+    VideoGallery saveVideoGallery(VideoGallery videoGallery);
+    VideoGallery getVideoGalleryById(String id);
+    
+  
     
     
-	
     
 }
