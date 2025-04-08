@@ -91,4 +91,11 @@ public class CommonMasterTradeType implements Serializable {
 	@ManyToOne(optional = false)
 	private CommonMasterTradeClassification tradeClassficationMaster;
 
+	public CommonMasterTradeType(String tradeTypeGuid) {
+		super();
+		this.tradeTypeGuid = tradeTypeGuid;
+	}
+	
+	
+
 }

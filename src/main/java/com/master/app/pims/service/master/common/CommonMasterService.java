@@ -6,8 +6,10 @@ import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HeaderRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.Menu;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
@@ -47,6 +49,13 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.OwnerCategory;
+import com.master.app.pims.entities.schemas.property.OwnerType;
+import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
+import com.master.app.pims.entities.schemas.property.PropertyCategory;
+import com.master.app.pims.entities.schemas.property.PropertyExemption;
+import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 
 
@@ -238,11 +247,47 @@ public interface CommonMasterService {
     WebInfoManager saveWebInfoManager(WebInfoManager webInfoManager);
     WebInfoManager getWebInfoManagerById(String id);
     
-    ///for TenderDetails join with citizen_app schema
+    ///for VideoGallery join with citizen_app schema
     VideoGallery saveVideoGallery(VideoGallery videoGallery);
     VideoGallery getVideoGalleryById(String id);
     
-  
+    ///for HeaderRibbon join with citizen_app schema
+    HeaderRibbon saveHeaderRibbon(HeaderRibbon headerRibbon);
+    HeaderRibbon getHeaderRibbonById(String id);
+    
+    ///for Menu join with citizen_app schema
+    Menu saveMenu(Menu menu);
+    Menu getMenuById(String id);
+    
+    /////////////////////////////Property Master//////////////////////////
+    
+    ///for PropertyAgeFactor join with property schema
+    PropertyAgeFactor savePropertyAgeFactor(PropertyAgeFactor propertyAgeFactor);
+    PropertyAgeFactor getPropertyAgeFactorById(String id);
+    
+    ///for PropertyExemption join with property schema
+    PropertyExemption savePropertyExemption(PropertyExemption propertyExemption);
+    PropertyExemption getPropertyExemptionById(String id);
+    
+    ///for PropertyFloor join with property schema
+    PropertyFloor savePropertyFloor(PropertyFloor propertyFloor);
+    PropertyFloor getPropertyFloorById(String id);
+    
+    ///for PropertyFloor join with property schema
+    PropertyOccupancyFactor savePropertyOccupancyFactor(PropertyOccupancyFactor propertyOccupancyFactor);
+    PropertyOccupancyFactor getPropertyOccupancyFactorById(String id);
+    
+    ///for OwnerCategory join with property schema
+    OwnerCategory saveOwnerCategory(OwnerCategory ownerCategory);
+    OwnerCategory getOwnerCategoryById(String id);
+    
+    ///for OwnerType join with property schema
+    OwnerType saveOwnerType(OwnerType ownerType);
+    OwnerType getOwnerTypeById(String id);
+    
+    ///for PropertyCategory join with property schema
+    PropertyCategory savePropertyCategory(PropertyCategory propertyCategory);
+    PropertyCategory getPropertyCategoryById(String id);
     
     
     

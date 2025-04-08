@@ -5,8 +5,10 @@ import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HeaderRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.Menu;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
@@ -46,6 +48,13 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.OwnerCategory;
+import com.master.app.pims.entities.schemas.property.OwnerType;
+import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
+import com.master.app.pims.entities.schemas.property.PropertyCategory;
+import com.master.app.pims.entities.schemas.property.PropertyExemption;
+import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
@@ -55,8 +64,10 @@ import com.master.app.pims.repositories.citizen.BgImageRepo;
 import com.master.app.pims.repositories.citizen.FlashImageRepo;
 import com.master.app.pims.repositories.citizen.FooterMenuRepo;
 import com.master.app.pims.repositories.citizen.FooterRibbonRepo;
+import com.master.app.pims.repositories.citizen.HeaderRibbonRepo;
 import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
 import com.master.app.pims.repositories.citizen.LogoDeptNameRepo;
+import com.master.app.pims.repositories.citizen.MenuRepo;
 import com.master.app.pims.repositories.citizen.NoteMenuRepo;
 import com.master.app.pims.repositories.citizen.OfficerImageCommentRepo;
 import com.master.app.pims.repositories.citizen.PhotoGalleryRepo;
@@ -93,6 +104,13 @@ import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
+import com.master.app.pims.repositories.property.OwnerCategoryRepo;
+import com.master.app.pims.repositories.property.OwnerTypeRepo;
+import com.master.app.pims.repositories.property.PropertyAgeFactorRepo;
+import com.master.app.pims.repositories.property.PropertyCategoryRepo;
+import com.master.app.pims.repositories.property.PropertyExemptionRepo;
+import com.master.app.pims.repositories.property.PropertyFloorRepo;
+import com.master.app.pims.repositories.property.PropertyOccupancyFactorRepo;
 import com.master.app.pims.repositories.usr.RefUserDocsMapRepo;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import jakarta.transaction.Transactional;
@@ -249,6 +267,34 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     @Autowired
    	private VideoGalleryRepo videoGalleryRepo;
     
+    @Autowired
+   	private HeaderRibbonRepo headerRibbonRepo;
+    
+    @Autowired
+   	private PropertyAgeFactorRepo propertyAgeFactorRepo;
+    
+    @Autowired
+   	private PropertyExemptionRepo propertyExemptionRepo;
+    
+    @Autowired
+   	private PropertyFloorRepo propertyFloorRepo;
+    
+    @Autowired
+   	private PropertyOccupancyFactorRepo propertyOccupancyFactorRepo;
+    
+    @Autowired
+   	private OwnerCategoryRepo ownerCategoryRepo;
+    
+    @Autowired
+   	private OwnerTypeRepo ownerTypeRepo;
+    
+    @Autowired
+   	private PropertyCategoryRepo propertyCategoryRepo;
+    
+    ///////////////////////////////////////Property Master///////////////////////////
+    
+    @Autowired
+   	private MenuRepo menuRepo;
     
     
     @Override
@@ -778,6 +824,105 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public VideoGallery getVideoGalleryById(String id) {
         return videoGalleryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public HeaderRibbon saveHeaderRibbon(HeaderRibbon headerRibbon) {
+		 return headerRibbonRepo.save(headerRibbon);
+	}
+
+	@Override
+	public HeaderRibbon getHeaderRibbonById(String id) {
+        return headerRibbonRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public Menu saveMenu(Menu menu) {
+		 return menuRepo.save(menu);
+	}
+
+	@Override
+	public Menu getMenuById(String id) {
+        return menuRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyAgeFactor savePropertyAgeFactor(PropertyAgeFactor propertyAgeFactor) {
+		 return propertyAgeFactorRepo.save(propertyAgeFactor);
+	}
+
+	@Override
+	public PropertyAgeFactor getPropertyAgeFactorById(String id) {
+        return propertyAgeFactorRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyExemption savePropertyExemption(PropertyExemption propertyExemption) {
+		 return propertyExemptionRepo.save(propertyExemption);
+	}
+
+	@Override
+	public PropertyExemption getPropertyExemptionById(String id) {
+        return propertyExemptionRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyFloor savePropertyFloor(PropertyFloor propertyFloor) {
+		 return propertyFloorRepo.save(propertyFloor);
+	}
+
+	@Override
+	public PropertyFloor getPropertyFloorById(String id) {
+        return propertyFloorRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyOccupancyFactor savePropertyOccupancyFactor(PropertyOccupancyFactor propertyOccupancyFactor) {
+		 return propertyOccupancyFactorRepo.save(propertyOccupancyFactor);
+	}
+
+	@Override
+	public PropertyOccupancyFactor getPropertyOccupancyFactorById(String id) {
+        return propertyOccupancyFactorRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public OwnerCategory saveOwnerCategory(OwnerCategory ownerCategory) {
+		 return ownerCategoryRepo.save(ownerCategory);
+	}
+
+	@Override
+	public OwnerCategory getOwnerCategoryById(String id) {
+        return ownerCategoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public OwnerType saveOwnerType(OwnerType ownerType) {
+		 return ownerTypeRepo.save(ownerType);
+	}
+
+	@Override
+	public OwnerType getOwnerTypeById(String id) {
+        return ownerTypeRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyCategory savePropertyCategory(PropertyCategory propertyCategory) {
+		 return propertyCategoryRepo.save(propertyCategory);
+	}
+
+	@Override
+	public PropertyCategory getPropertyCategoryById(String id) {
+        return propertyCategoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 

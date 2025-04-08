@@ -6,8 +6,10 @@ import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HeaderRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.Menu;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
@@ -51,6 +53,13 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.OwnerCategory;
+import com.master.app.pims.entities.schemas.property.OwnerType;
+import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
+import com.master.app.pims.entities.schemas.property.PropertyCategory;
+import com.master.app.pims.entities.schemas.property.PropertyExemption;
+import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -120,7 +129,21 @@ public class BaseResponse {
     private List<TenderDetails> tenderDetails; 
     private List<WebInfoManager> webInfoManager;
     private List<VideoGallery> videoGallery;
-
+    private List<HeaderRibbon> headerRibbon;
+    private List<Menu> menu;
+    
+    
+    
+    ///////////////////////////////////////Property Master/////////////////////
+    private List<PropertyAgeFactor> propertyAgeFactor;
+    private List<PropertyExemption> propertyExemption;
+    private List<PropertyFloor> propertyFloor;
+    private List<PropertyOccupancyFactor> propertyOccupancyFactor;
+    private List<OwnerCategory> ownerCategory;
+    private List<OwnerType> ownerType;
+    private List<PropertyCategory> propertyCategory;
+    
+    
     
     
     List<GeoDistrict> districtList;

@@ -6,8 +6,10 @@ import com.master.app.pims.entities.schemas.citizenmaster.BgImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FlashImage;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.FooterRibbon;
+import com.master.app.pims.entities.schemas.citizenmaster.HeaderRibbon;
 import com.master.app.pims.entities.schemas.citizenmaster.HelplineNumbers;
 import com.master.app.pims.entities.schemas.citizenmaster.LogoDeptName;
+import com.master.app.pims.entities.schemas.citizenmaster.Menu;
 import com.master.app.pims.entities.schemas.citizenmaster.NoteMenu;
 import com.master.app.pims.entities.schemas.citizenmaster.OfficerImageComment;
 import com.master.app.pims.entities.schemas.citizenmaster.PhotoGallery;
@@ -47,6 +49,13 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.OwnerCategory;
+import com.master.app.pims.entities.schemas.property.OwnerType;
+import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
+import com.master.app.pims.entities.schemas.property.PropertyCategory;
+import com.master.app.pims.entities.schemas.property.PropertyExemption;
+import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
@@ -189,11 +198,41 @@ public interface Validator {
     //TenderDetails validation
     BaseResponse validateTenderDetails(TenderDetails tenderDetails);
     
-    //TenderDetails validation
+    //WebInfoManager validation
     BaseResponse validateWebInfoManager(WebInfoManager webInfoManager);
     
-    //TenderDetails validation
+    //VideoGallery validation
     BaseResponse validateVideoGallery(VideoGallery videoGallery);
+    
+    //HeaderRibbon validation
+    BaseResponse validateHeaderRibbon(HeaderRibbon headerRibbon);
+    
+    //Menu validation
+    BaseResponse validateMenu(Menu menu);
+    
+    ////////////////////////////////////////////Property Master/////////////////////////////
+    
+    //PropertyAgeFactor validation
+    BaseResponse validatePropertyAgeFactor(PropertyAgeFactor propertyAgeFactor);
+    
+    //PropertyExemption validation
+    BaseResponse validatePropertyExemption(PropertyExemption propertyExemption);
+    
+  //PropertyFloor validation
+    BaseResponse validatePropertyFloor(PropertyFloor propertyFloor);
+    
+    //PropertyOccupancyFactor validation
+    BaseResponse validatePropertyOccupancyFactor(PropertyOccupancyFactor propertyOccupancyFactor);
+    
+    //OwnerCategory validation
+    BaseResponse validateOwnerCategory(OwnerCategory ownerCategory);
+    
+    //OwnerType validation
+    BaseResponse validateOwnerType(OwnerType ownerType);
+    
+    //PropertyCategory validation
+    BaseResponse validatePropertyCategory(PropertyCategory propertyCategory);
+    
     
     
 }
