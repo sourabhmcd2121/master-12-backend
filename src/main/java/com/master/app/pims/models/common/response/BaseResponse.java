@@ -18,6 +18,7 @@ import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
 import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
 import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
+import com.master.app.pims.entities.schemas.hospital.HospitalInfo;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.DesignationAppointmentType;
@@ -28,6 +29,7 @@ import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgUnit;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
+import com.master.app.pims.entities.schemas.master.PersRelation;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -60,6 +62,19 @@ import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyStructureFactor;
+import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
+import com.master.app.pims.entities.schemas.rbd.RbdRefBirthDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefChargeMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDeathDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefEducationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefOccupationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRegistrationNumber;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRelationMap;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -77,7 +92,7 @@ public class BaseResponse {
     boolean status;
     String message;
     private Integer totalDataCount;
-    private List<GeoCountryMst> data;
+    private List<GeoCountryMst> country;
     private List<GeoCountryMaster> masterCountry;
     private List<GeoStateMaster> masterState;
     private List<GeoWardMCD> geoWardMCD;
@@ -112,6 +127,8 @@ public class BaseResponse {
     private List<CommonMasterTradeType> commonMasterTradeType; 
     private List<CommonMasterIndustryArea> industryArea; 
     private List<MstRefSla> refSla; 
+    private List<PersRelation> persRelation; 
+    
     
     ///////////////////////////Citizen Portal/////////////
     private List<AdminDetail> adminDetail; 
@@ -142,9 +159,26 @@ public class BaseResponse {
     private List<OwnerCategory> ownerCategory;
     private List<OwnerType> ownerType;
     private List<PropertyCategory> propertyCategory;
+    private List<PropertyType> propertyType;
+    private List<PropertyStructureFactor> propertyStructureFactor;
     
     
+    ///////////////////////////////////////////RBD Master///////////////////////
+    private List<RbdMstCommonList> rbdMstCommonList;
+    private List<RbdMstDocsCategory> rbdMstDocsCategory;
+    private List<RbdRefBirthDocsMap> rbdRefBirthDocsMap;
+    private List<RbdRefDeathDocsMap> rbdRefDeathDocsMap;
+    private List<RbdRefChargeMap> rbdRefChargeMap;
+    private List<RbdRefRelationMap> rbdRefRelationMap;
+    private List<RbdRefOccupationMap> rbdRefOccupationMap;
+    private List<RbdRefEducationMap> rbdRefEducationMap;
+    private List<RbdRefRegistrationNumber> rbdRefRegistrationNumber;
+    private List<RbdRefDocsMap> rbdRefDocsMap;
+    private List<RbdFeeRelaxationList> rbdFeeRelaxationList;
     
+    
+    //////////////////////////////////////////Hospital Master////////////////////////////////
+    private List<HospitalInfo> hospitalInfo;
     
     List<GeoDistrict> districtList;
 
@@ -170,11 +204,11 @@ public class BaseResponse {
     }
 
     public List<GeoCountryMst> getData() {
-        return data;
+        return country;
     }
 
     public void setData(List<GeoCountryMst> data) {
-        this.data = data;
+        this.country = data;
     }
 
     public Integer getTotalDataCount() {

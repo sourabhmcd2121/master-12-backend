@@ -3,13 +3,18 @@ package com.master.app.pims.entities.schemas.mst;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.master.app.pims.entities.schemas.rbd.RbdRefEducationMap;
+
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 @Data
 @Setter
-@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "education_level", schema = "mst")
 public class EducationLevel implements Serializable{
@@ -85,6 +90,11 @@ public class EducationLevel implements Serializable{
 
 	@Column(name = "qualification_level_guid")
 	private String qualificationLevelGuid;
+
+	public EducationLevel(String educationLevelGuid) {
+		super();
+		this.educationLevelGuid = educationLevelGuid;
+	}
 
 
 }

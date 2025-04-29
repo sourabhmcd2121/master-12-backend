@@ -100,25 +100,31 @@ public class MasterControllerMCDGeo {
     }
 
     // Create New Data And Update
-    @PostMapping("/submitOrUpdateMstCountry")
-    public BaseResponse submitOrUpdateMstCountry(@RequestBody GeoCountryMst country, HttpServletRequest request) {
+    @PostMapping("/submitMstCountry")
+    public BaseResponse submitMstCountry(@RequestBody GeoCountryMst country, HttpServletRequest request) {
         BaseResponse resultData = new BaseResponse();
 
         // Check if guid is provided (indicating an update)
         if (country.getCountryMstGuid() == null || country.getCountryMstGuid().isEmpty()) {
-
-            country.setMasterCountry(country.getCountryMasterGuid());
-
-
-            // Add new data
+            //country.setMasterCountry(country.getCountryMasterGuid());
+           
+        	// Add new data
             country.setCreaterIp(request.getRemoteAddr());
             country.setCountryMstGuid(UUID.randomUUID().toString());
-            country.setCreatedDate(new Date());
-
-
-            if (country.getMasterCountry() != null && !country.getMasterCountry().isEmpty()) {
-                country.setMasterGeoCountryMaster(new GeoCountryMaster(country.getMasterCountry()));
-            }
+            country.setCreatedDate(new Date());  
+            country.setModifierIp(null);
+            country.setModifiedByGuid(null);
+            country.setModifiedDate(null);
+            country.setCreatedByGuid(request.getRemoteAddr());
+            
+          //for dropdown
+            country.setMasterCountry(country.getCountryMasterGuid());
+        	if(country.getMasterCountry()!=null && !country.getMasterCountry().isEmpty()){
+        		country.setMasterGeoCountryMaster(new GeoCountryMaster(country.getMasterCountry()));
+        	}
+        	
+        	if (country.getIsRecordActive() == null)
+        		country.setIsRecordActive(false);
 
 //			country.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
 //			country.setCreaterRemarks(userSessionParam.getUserFullName());
@@ -142,11 +148,13 @@ public class MasterControllerMCDGeo {
                 existingCountry.setModifierIp(request.getRemoteAddr());
                 existingCountry.setModifiedDate(new Date());
 
+              //dropdown
+            	
                 existingCountry.setMasterCountry(country.getCountryMasterGuid());
 
-                if (existingCountry.getMasterCountry() != null && !existingCountry.getMasterCountry().isEmpty()) {
-                    existingCountry.setMasterGeoCountryMaster(new GeoCountryMaster(existingCountry.getMasterCountry()));
-                }
+            	if(existingCountry.getMasterCountry()!=null && !existingCountry.getMasterCountry().isEmpty()){
+            		existingCountry.setMasterGeoCountryMaster(new GeoCountryMaster(existingCountry.getMasterCountry()));
+            	}
 
                 //existingCountry.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
                 //existingCountry.setModifierMacId(HttpSessionHelper.getMacAddress());
@@ -173,7 +181,8 @@ public class MasterControllerMCDGeo {
         country.setCountryNameHi(!Util.isNullOrEmpty(country.getCountryNameHi()) ? country.getCountryNameHi().trim() : null);
         country.setCountryNameRl(!Util.isNullOrEmpty(country.getCountryNameRl()) ? country.getCountryNameRl().trim() : null);
         country.setCountryMobileCode(!Util.isNullOrEmpty(country.getCountryMobileCode()) ? country.getCountryMobileCode().trim() : null);
-
+        country.setFromDate(country.getFromDate());
+        country.setToDate(country.getToDate());
         try {
             geoCountryMstRepository.save(country);
             log.info("Record SaveOrUpdate Successfully");
@@ -270,11 +279,11 @@ public class MasterControllerMCDGeo {
             state.setStateMasterGuid(UUID.randomUUID().toString());
             state.setCreatedDate(new Date());
 
-            //country dropdown
+            //for dropdown
             state.setMasterCountry(state.getCountryMasterGuid());
-            if (state.getMasterCountry() != null && !state.getMasterCountry().isEmpty()) {
-                state.setMasterGeoCountryMaster(new GeoCountryMaster(state.getMasterCountry()));
-            }
+        	if(state.getMasterCountry()!=null && !state.getMasterCountry().isEmpty()){
+        		state.setMasterGeoCountryMaster(new GeoCountryMaster(state.getMasterCountry()));
+        	}
 
             if (state.getIsRecordActive() == null)
                 state.setIsRecordActive(false);
@@ -302,11 +311,14 @@ public class MasterControllerMCDGeo {
                 existingState.setModifiedDate(new Date());
                 existingState.setIsModified(true);
 
-                //country dropdown
+  //dropdown
+            	
                 existingState.setMasterCountry(state.getCountryMasterGuid());
-                if (existingState.getMasterCountry() != null && !existingState.getMasterCountry().isEmpty()) {
-                    existingState.setMasterGeoCountryMaster(new GeoCountryMaster(existingState.getMasterCountry()));
-                }
+
+            	if(existingState.getMasterCountry()!=null && !existingState.getMasterCountry().isEmpty()){
+            		existingState.setMasterGeoCountryMaster(new GeoCountryMaster(existingState.getMasterCountry()));
+            	}
+
                 //existingState.setModifierMacId(HttpSessionHelper.getMacAddress());
                 //existingState.setModifiedByGuid(userSessionParam.getEmpBasicGUID());
                 state = existingState; // Use the updated existing country object

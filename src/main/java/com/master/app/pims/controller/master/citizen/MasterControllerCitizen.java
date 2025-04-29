@@ -3503,7 +3503,14 @@ public class MasterControllerCitizen {
 		return resultData;
 	}
 
-	
+	//get data by id
+		@GetMapping("/getMenuByGuid/{menuGuid}")
+		public ResponseEntity<Menu> geMenuByGuid(@PathVariable("menuGuid") String menuGuid) {
+			Menu menu = menuRepo.findById(menuGuid)
+					.orElseThrow(() -> new ResourceNotFoundException("Resource not found with menuGuid : " + menuGuid));
+			return new ResponseEntity<>(menu, HttpStatus.OK);
+		}
+
 
 //primary menu 
 	@GetMapping("/getPrimaryMenu")
@@ -3549,13 +3556,6 @@ public class MasterControllerCitizen {
 		return null;
 	}
 
-//get data by id
-	@GetMapping("/getMenuByGuid/{menuGuid}")
-	public ResponseEntity<Menu> geMenuByGuid(@PathVariable("menuGuid") String menuGuid) {
-		Menu menu = menuRepo.findById(menuGuid)
-				.orElseThrow(() -> new ResourceNotFoundException("Resource not found with menuGuid : " + menuGuid));
-		return new ResponseEntity<>(menu, HttpStatus.OK);
-	}
 
 /////////////////////////////////////Menu End///////////////////////////////////
 

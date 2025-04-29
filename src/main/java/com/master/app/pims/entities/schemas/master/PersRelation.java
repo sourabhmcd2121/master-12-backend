@@ -1,61 +1,43 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.master.app.pims.entities.schemas.master;
+import java.io.Serializable;
+import java.util.Date;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import com.master.app.pims.entities.schemas.mst.GeoCountryMst;
-
-/**
- * @author Sourbh
- */
 @Data
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "geo_country", schema = "master")
-public class GeoCountryMaster implements Serializable {
+@Table(name = "pers_relation", schema="master")
+//@XmlRootElement
+//@NamedQueries({
+//    @NamedQuery(name = "PersRelation.findAll", query = "SELECT p FROM PersRelation p")})
+public class PersRelation implements Serializable {
     private static final long serialVersionUID = 1L;
-    /*
-     * @Basic(optional = false)
-     *
-     * @Column(name = "country_master_id") private long countryMasterId;
-     */
+   /* @Basic(optional = false)
+    @Column(name = "relation_id")
+    private long persRelationId;*/
     @Id
     @Basic(optional = false)
-    @Column(name = "country_master_guid")
-    private String countryMasterGuid;
+    @Column(name = "relation_guid")
+    private String persRelationGuid;
     
-    @Column(name = "country_code")
-    private String countryCode;
+    @Column(name = "relation_code")
+    private String relationCode;
     
-    @Column(name = "country_name_en")
-    private String countryNameEn;
+    @Column(name = "relation_name")
+    private String relationName;
     
-    @Column(name = "country_name_hi")
-    private String countryNameHi;
-    
-    @Column(name = "country_name_rl")
-    private String countryNameRl;
-    
-    @Column(name = "is_record_active")
-    private Boolean isRecordActive;
-    
-    @Column(name = "country_description")
-    private String countryDescription;
+    @Column(name = "relation_description")
+    private String relationDescription;
     
     @Basic(optional = false)
     @Column(name = "from_date")
@@ -65,6 +47,9 @@ public class GeoCountryMaster implements Serializable {
     @Column(name = "to_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date toDate;
+    
+    @Column(name = "is_record_active")
+    private Boolean isRecordActive;
     
     @Column(name = "created_by_guid")
     private String createdByGuid;
@@ -127,12 +112,13 @@ public class GeoCountryMaster implements Serializable {
     private String attestedByGuid;
     
     @Column(name = "attested_date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date attestedDate;
     
     @Basic(optional = false)
     @Column(name = "is_attested")
     private boolean isAttested;
+    
     
     @Column(name = "attester_ip")
     private String attesterIp;
@@ -158,8 +144,10 @@ public class GeoCountryMaster implements Serializable {
     @Column(name = "supporting_uri")
     private String supportingUri;
 
-    // Constructor to initialize only with GUID
-    public GeoCountryMaster(String countryMasterGuid) {
-        this.countryMasterGuid = countryMasterGuid;
-    }
+	public PersRelation(String persRelationGuid) {
+		super();
+		this.persRelationGuid = persRelationGuid;
+	}
+
+
 }

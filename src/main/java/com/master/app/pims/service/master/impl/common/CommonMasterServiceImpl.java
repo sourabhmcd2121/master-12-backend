@@ -17,12 +17,14 @@ import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
 import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
 import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
+import com.master.app.pims.entities.schemas.hospital.HospitalInfo;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
+import com.master.app.pims.entities.schemas.master.PersRelation;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -55,6 +57,18 @@ import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
+import com.master.app.pims.entities.schemas.rbd.RbdRefBirthDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefChargeMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDeathDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefEducationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefOccupationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRegistrationNumber;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRelationMap;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
 import com.master.app.pims.repositories.AssessmentYearRepository;
@@ -76,12 +90,14 @@ import com.master.app.pims.repositories.citizen.TenderDetailsRepo;
 import com.master.app.pims.repositories.citizen.TextFlashRepo;
 import com.master.app.pims.repositories.citizen.VideoGalleryRepo;
 import com.master.app.pims.repositories.citizen.WebInfoManagerRepo;
+import com.master.app.pims.repositories.hospital.HospitalInfoRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
+import com.master.app.pims.repositories.master.PersRelationRepo;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterIndustryAreaRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
@@ -111,6 +127,18 @@ import com.master.app.pims.repositories.property.PropertyCategoryRepo;
 import com.master.app.pims.repositories.property.PropertyExemptionRepo;
 import com.master.app.pims.repositories.property.PropertyFloorRepo;
 import com.master.app.pims.repositories.property.PropertyOccupancyFactorRepo;
+import com.master.app.pims.repositories.property.PropertyTypeRepo;
+import com.master.app.pims.repositories.rbd.RbdFeeRelaxationListRepo;
+import com.master.app.pims.repositories.rbd.RbdMstCommonListRepo;
+import com.master.app.pims.repositories.rbd.RbdMstDocsCategoryRepo;
+import com.master.app.pims.repositories.rbd.RbdRefBirthDocsMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefChargeMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefDeathDocsMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefDocsMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefEducationMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefOccupationMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefRegistrationNumberRepo;
+import com.master.app.pims.repositories.rbd.RbdRefRelationMapRepo;
 import com.master.app.pims.repositories.usr.RefUserDocsMapRepo;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import jakarta.transaction.Transactional;
@@ -140,6 +168,8 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     @Autowired
     private CommonMasterAppAlertRepo commonMasterAppAlertRepo;
     
+    @Autowired
+    private PersRelationRepo persRelationRepo;
     
     @Autowired
     private ApplicationMasterRepository applicationMasterRepository;
@@ -291,6 +321,45 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     @Autowired
    	private PropertyCategoryRepo propertyCategoryRepo;
     
+    @Autowired
+   	private PropertyTypeRepo propertyTypeRepo;
+    
+    
+    @Autowired
+   	private RbdMstCommonListRepo rbdMstCommonListRepo;
+    
+    @Autowired
+   	private RbdMstDocsCategoryRepo rbdMstDocsCategoryRepo;
+    
+    @Autowired
+   	private RbdRefBirthDocsMapRepo rbdRefBirthDocsMapRepo;
+    
+    @Autowired
+   	private RbdRefDeathDocsMapRepo rbdRefDeathDocsMapRepo;
+    
+    @Autowired
+   	private RbdRefChargeMapRepo rbdRefChargeMapRepo;
+    
+    @Autowired
+   	private RbdRefRelationMapRepo rbdRefRelationMapRepo;
+    
+    @Autowired
+   	private RbdRefOccupationMapRepo rbdRefOccupationMapRepo;
+    
+    @Autowired
+   	private RbdRefEducationMapRepo rbdRefEducationMapRepo;
+    
+    @Autowired
+   	private RbdRefRegistrationNumberRepo rbdRefRegistrationNumberRepo;
+    
+    @Autowired
+   	private RbdRefDocsMapRepo rbdRefDocsMapRepo;
+    
+    @Autowired
+   	private RbdFeeRelaxationListRepo rbdFeeRelaxationListRepo;
+    
+    @Autowired
+   	private HospitalInfoRepo hospitalInfoRepo;
     ///////////////////////////////////////Property Master///////////////////////////
     
     @Autowired
@@ -923,6 +992,160 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public PropertyCategory getPropertyCategoryById(String id) {
         return propertyCategoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyType savePropertyType(PropertyType propertyType) {
+		 return propertyTypeRepo.save(propertyType);
+	}
+
+	@Override
+	public PropertyType getPropertyTypeById(String id) {
+        return propertyTypeRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdMstCommonList saveRbdMstCommonList(RbdMstCommonList rbdMstCommonList) {
+		 return rbdMstCommonListRepo.save(rbdMstCommonList);
+	}
+
+	@Override
+	public RbdMstCommonList getRbdMstCommonListById(String id) {
+        return rbdMstCommonListRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdMstDocsCategory saveRbdMstDocsCategory(RbdMstDocsCategory rbdMstDocsCategory) {
+		 return rbdMstDocsCategoryRepo.save(rbdMstDocsCategory);
+	}
+
+	@Override
+	public RbdMstDocsCategory getRbdMstDocsCategoryById(String id) {
+        return rbdMstDocsCategoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefBirthDocsMap saveRbdMstDocsCategory(RbdRefBirthDocsMap rbdRefBirthDocsMap) {
+		 return rbdRefBirthDocsMapRepo.save(rbdRefBirthDocsMap);
+	}
+
+	@Override
+	public RbdRefBirthDocsMap getRbdRefBirthDocsMapById(String id) {
+        return rbdRefBirthDocsMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefDeathDocsMap saveRbdRefDeathDocsMap(RbdRefDeathDocsMap rbdRefDeathDocsMap) {
+		 return rbdRefDeathDocsMapRepo.save(rbdRefDeathDocsMap);
+	}
+
+	@Override
+	public RbdRefDeathDocsMap getRbdRefDeathDocsMapById(String id) {
+        return rbdRefDeathDocsMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefChargeMap saveRbdRefChargeMap(RbdRefChargeMap rbdRefChargeMap) {
+		 return rbdRefChargeMapRepo.save(rbdRefChargeMap);
+	}
+
+	@Override
+	public RbdRefChargeMap getRbdRefChargeMapById(String id) {
+		  return rbdRefChargeMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+	}
+
+	@Override
+	public PersRelation savePersRelation(PersRelation persRelation) {
+		 return persRelationRepo.save(persRelation);
+	}
+
+	@Override
+	public PersRelation getPersRelationById(String id) {
+		  return persRelationRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefRelationMap saveRbdRefRelationMap(RbdRefRelationMap rbdRefRelationMap) {
+		 return rbdRefRelationMapRepo.save(rbdRefRelationMap);
+	}
+
+	@Override
+	public RbdRefRelationMap getRbdRefRelationMapById(String id) {
+		  return rbdRefRelationMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefOccupationMap saveRbdRefOccupationMap(RbdRefOccupationMap rbdRefOccupationMap) {
+		 return rbdRefOccupationMapRepo.save(rbdRefOccupationMap);
+	}
+
+	@Override
+	public RbdRefOccupationMap getRbdRefOccupationMapById(String id) {
+		  return rbdRefOccupationMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefEducationMap saveRbdRefEducationMap(RbdRefEducationMap rbdRefEducationMap) {
+		 return rbdRefEducationMapRepo.save(rbdRefEducationMap);
+
+	}
+
+	@Override
+	public RbdRefEducationMap getRbdRefEducationMapById(String id) {
+		  return rbdRefEducationMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefRegistrationNumber saveRbdRefRegistrationNumber(RbdRefRegistrationNumber rbdRefRegistrationNumber) {
+		 return rbdRefRegistrationNumberRepo.save(rbdRefRegistrationNumber);
+	}
+
+	@Override
+	public RbdRefRegistrationNumber getRbdRefRegistrationNumberById(String id) {
+		  return rbdRefRegistrationNumberRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdRefDocsMap saveRbdRefDocsMap(RbdRefDocsMap rbdRefDocsMap) {
+		 return rbdRefDocsMapRepo.save(rbdRefDocsMap);
+	}
+
+	@Override
+	public RbdRefDocsMap getRbdRefDocsMapById(String id) {
+		  return rbdRefDocsMapRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public HospitalInfo saveHospitalInfo(HospitalInfo hospitalInfo) {
+		 return hospitalInfoRepo.save(hospitalInfo);
+	}
+
+	@Override
+	public HospitalInfo getHospitalInfoById(String id) {
+		  return hospitalInfoRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public RbdFeeRelaxationList saveRbdFeeRelaxationList(RbdFeeRelaxationList rbdFeeRelaxationList) {
+		 return rbdFeeRelaxationListRepo.save(rbdFeeRelaxationList);
+	}
+
+	@Override
+	public RbdFeeRelaxationList getRbdFeeRelaxationListById(String id) {
+		  return rbdFeeRelaxationListRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 

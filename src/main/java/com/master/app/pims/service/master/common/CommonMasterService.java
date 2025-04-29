@@ -18,12 +18,14 @@ import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
 import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
 import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
+import com.master.app.pims.entities.schemas.hospital.HospitalInfo;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
+import com.master.app.pims.entities.schemas.master.PersRelation;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -56,6 +58,18 @@ import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
+import com.master.app.pims.entities.schemas.rbd.RbdRefBirthDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefChargeMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDeathDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefEducationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefOccupationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRegistrationNumber;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRelationMap;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 
 
@@ -139,6 +153,10 @@ public interface CommonMasterService {
     ///for OrgWrapper join with master schema
     GeoZoneMCD saveGeoZoneMCD(GeoZoneMCD geoZoneMCD);
     GeoZoneMCD getGeoZoneMCDById(String id);
+    
+    ///for PersRelation join with master schema
+    PersRelation savePersRelation(PersRelation persRelation);
+    PersRelation getPersRelationById(String id);
     
     ///for OrgRadius join with attendance schema
     OrgRadius saveOrgRadius(OrgRadius orgRadius);
@@ -288,6 +306,64 @@ public interface CommonMasterService {
     ///for PropertyCategory join with property schema
     PropertyCategory savePropertyCategory(PropertyCategory propertyCategory);
     PropertyCategory getPropertyCategoryById(String id);
+    
+    ///for PropertyType join with property schema
+    PropertyType savePropertyType(PropertyType propertyType);
+    PropertyType getPropertyTypeById(String id);
+    
+    ///for RbdMstCommonList join with rbd schema
+    RbdMstCommonList saveRbdMstCommonList(RbdMstCommonList rbdMstCommonList);
+    RbdMstCommonList getRbdMstCommonListById(String id);
+    
+    ///for RbdMstDocsCategory join with rbd schema
+    RbdMstDocsCategory saveRbdMstDocsCategory(RbdMstDocsCategory rbdMstDocsCategory);
+    RbdMstDocsCategory getRbdMstDocsCategoryById(String id);
+    
+    ///for RbdRefBirthDocsMap join with rbd schema
+    RbdRefBirthDocsMap saveRbdMstDocsCategory(RbdRefBirthDocsMap rbdRefBirthDocsMap);
+    RbdRefBirthDocsMap getRbdRefBirthDocsMapById(String id);
+    
+    ///for RbdRefBirthDocsMap join with rbd schema
+    RbdRefDeathDocsMap saveRbdRefDeathDocsMap(RbdRefDeathDocsMap rbdRefDeathDocsMap);
+    RbdRefDeathDocsMap getRbdRefDeathDocsMapById(String id);
+    
+    ///for RbdRefBirthDocsMap join with rbd schema
+    RbdRefChargeMap saveRbdRefChargeMap(RbdRefChargeMap rbdRefChargeMap);
+    RbdRefChargeMap getRbdRefChargeMapById(String id);
+    
+    ///for RbdRefRelationMap join with rbd schema
+    RbdRefRelationMap saveRbdRefRelationMap(RbdRefRelationMap rbdRefRelationMap);
+    RbdRefRelationMap getRbdRefRelationMapById(String id);
+    
+    ///for RbdRefOccupationMap join with rbd schema
+    RbdRefOccupationMap saveRbdRefOccupationMap(RbdRefOccupationMap rbdRefOccupationMap);
+    RbdRefOccupationMap getRbdRefOccupationMapById(String id);
+    
+    ///for RbdRefEducationMap join with rbd schema
+    RbdRefEducationMap saveRbdRefEducationMap(RbdRefEducationMap rbdRefEducationMap);
+    RbdRefEducationMap getRbdRefEducationMapById(String id);
+    
+    ///for RbdRefRegistrationNumber join with rbd schema
+    RbdRefRegistrationNumber saveRbdRefRegistrationNumber(RbdRefRegistrationNumber rbdRefRegistrationNumber);
+    RbdRefRegistrationNumber getRbdRefRegistrationNumberById(String id);
+    
+    ///for RbdRefRegistrationNumber join with rbd schema
+    RbdRefDocsMap saveRbdRefDocsMap(RbdRefDocsMap rbdRefDocsMap);
+    RbdRefDocsMap getRbdRefDocsMapById(String id);
+    
+    ///for RbdRefRegistrationNumber join with rbd schema
+    RbdFeeRelaxationList saveRbdFeeRelaxationList(RbdFeeRelaxationList rbdFeeRelaxationList);
+    RbdFeeRelaxationList getRbdFeeRelaxationListById(String id);
+    
+    
+    
+    
+    
+    
+    ////////////////////////////////////////////////Hospital Master//////////////////////////
+    ///for HospitalInfo join with hospital schema
+    HospitalInfo saveHospitalInfo(HospitalInfo hospitalInfo);
+    HospitalInfo getHospitalInfoById(String id);
     
     
     

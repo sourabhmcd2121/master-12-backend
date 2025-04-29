@@ -18,12 +18,14 @@ import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
 import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
 import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
+import com.master.app.pims.entities.schemas.hospital.HospitalInfo;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
+import com.master.app.pims.entities.schemas.master.PersRelation;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -56,6 +58,18 @@ import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
+import com.master.app.pims.entities.schemas.rbd.RbdRefBirthDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefChargeMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDeathDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefEducationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefOccupationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRegistrationNumber;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRelationMap;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.citizen.HelplineNumbersRepo;
@@ -70,6 +84,9 @@ public interface Validator {
     
     //validate Colony Category
     BaseResponse validateColonyCategory(GeoColonyCategory colonyCategory);
+    
+    //validate PersRelation
+    BaseResponse validatePersRelation(PersRelation persRelation);
     
     
     //ApplicationMaster validation
@@ -232,6 +249,51 @@ public interface Validator {
     
     //PropertyCategory validation
     BaseResponse validatePropertyCategory(PropertyCategory propertyCategory);
+    
+    //PropertyType validation
+    BaseResponse validatePropertyType(PropertyType propertyType);
+    
+    ////////////////////////////////////////////RBD Master////////////////////////////////
+   
+    //RbdMstCommonList validation
+    BaseResponse validateRbdMstCommonList(RbdMstCommonList rbdMstCommonList);
+    
+    //RbdMstDocsCategory validation
+    BaseResponse validateRbdMstDocsCategory(RbdMstDocsCategory rbdMstDocsCategory);
+    
+    //RbdRefBirthDocsMap validation
+    BaseResponse validateRbdRefBirthDocsMap(RbdRefBirthDocsMap rbdRefBirthDocsMap);
+    
+    //RbdRefDeathDocsMap validation
+    BaseResponse validateRbdRefDeathDocsMap(RbdRefDeathDocsMap rbdRefDeathDocsMap);
+    
+    //RbdRefChargeMap validation
+    BaseResponse validateRbdRefChargeMap(RbdRefChargeMap rbdRefChargeMap);
+    
+    //RbdRefRelationMap validation
+    BaseResponse validateRbdRefRelationMap(RbdRefRelationMap rbdRefRelationMap);
+    
+    //RbdRefOccupationMap validation
+    BaseResponse validateRbdRefOccupationMap(RbdRefOccupationMap rbdRefOccupationMap);
+    
+    //RbdRefEducationMap validation
+    BaseResponse validateRbdRefEducationMap(RbdRefEducationMap rbdRefEducationMap);
+    
+    //RbdRefRegistrationNumber validation
+    BaseResponse validateRbdRefRegistrationNumber(RbdRefRegistrationNumber rbdRefRegistrationNumber);
+    
+    //RbdRefDocsMap validation
+    BaseResponse validateRbdRefDocsMap(RbdRefDocsMap rbdRefDocsMap);
+    
+    //RbdRefDocsMap validation
+    BaseResponse validateRbdFeeRelaxationList(RbdFeeRelaxationList rbdFeeRelaxationList);
+    
+    
+    
+    
+    ////////////////////////////////////////////HospitalInfo Master////////////////////////////////
+    //HospitalInfo validation
+    BaseResponse validateHospitalInfo(HospitalInfo hospitalInfo);
     
     
     

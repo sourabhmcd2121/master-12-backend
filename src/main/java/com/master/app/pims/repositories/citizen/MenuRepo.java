@@ -24,8 +24,6 @@ public interface MenuRepo extends JpaRepository<Menu, String> {
     @Query("SELECT  m FROM Menu m WHERE m.isActive = true AND (m.primaryMenuGuid = :ternaryMenuGuid OR :ternaryMenuGuid IS NULL) ORDER BY m.menuNameEn")
      List<Menu> getFourthMenuList(@Param("ternaryMenuGuid") String ternaryMenuGuid);
     
-    @Query("SELECT m FROM Menu m WHERE m.menuGuid = :primaryMenuGuid")
-    Menu getMenuForPrimaryMenuGuid(@Param("primaryMenuGuid") String primaryMenuGuid);
 
 }
 

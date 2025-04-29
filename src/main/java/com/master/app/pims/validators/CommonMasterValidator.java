@@ -16,12 +16,14 @@ import com.master.app.pims.entities.schemas.citizenmaster.TenderDetails;
 import com.master.app.pims.entities.schemas.citizenmaster.TextFlash;
 import com.master.app.pims.entities.schemas.citizenmaster.VideoGallery;
 import com.master.app.pims.entities.schemas.citizenmaster.WebInfoManager;
+import com.master.app.pims.entities.schemas.hospital.HospitalInfo;
 import com.master.app.pims.entities.schemas.intramc.IntramcMenuMaster;
 import com.master.app.pims.entities.schemas.intramc.IntramcRoleMenuMap;
 import com.master.app.pims.entities.schemas.master.GeoStateMaster;
 import com.master.app.pims.entities.schemas.master.OrgPrimary;
 import com.master.app.pims.entities.schemas.master.OrgRadius;
 import com.master.app.pims.entities.schemas.master.OrgWrapper;
+import com.master.app.pims.entities.schemas.master.PersRelation;
 import com.master.app.pims.entities.schemas.mst.ApplicationMaster;
 import com.master.app.pims.entities.schemas.mst.AssessmentYear;
 import com.master.app.pims.entities.schemas.mst.AssociatedChargesInfo;
@@ -54,6 +56,18 @@ import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
+import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
+import com.master.app.pims.entities.schemas.rbd.RbdRefBirthDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefChargeMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDeathDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefDocsMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefEducationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefOccupationMap;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRegistrationNumber;
+import com.master.app.pims.entities.schemas.rbd.RbdRefRelationMap;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.ApplicationMasterRepository;
@@ -76,12 +90,14 @@ import com.master.app.pims.repositories.citizen.TenderDetailsRepo;
 import com.master.app.pims.repositories.citizen.TextFlashRepo;
 import com.master.app.pims.repositories.citizen.VideoGalleryRepo;
 import com.master.app.pims.repositories.citizen.WebInfoManagerRepo;
+import com.master.app.pims.repositories.hospital.HospitalInfoRepo;
 import com.master.app.pims.repositories.intramc.IntramcMenuMasterRepo;
 import com.master.app.pims.repositories.intramc.IntramcRoleMenuMapRepo;
 import com.master.app.pims.repositories.master.GeoStateMasterRepository;
 import com.master.app.pims.repositories.master.OrgPrimaryRepository;
 import com.master.app.pims.repositories.master.OrgRadiusRepository;
 import com.master.app.pims.repositories.master.OrgWrapperRepository;
+import com.master.app.pims.repositories.master.PersRelationRepo;
 import com.master.app.pims.repositories.mst.CommonMasterAppAlertRepo;
 import com.master.app.pims.repositories.mst.CommonMasterIndustryAreaRepo;
 import com.master.app.pims.repositories.mst.CommonMasterProcessStatusRepo;
@@ -111,6 +127,18 @@ import com.master.app.pims.repositories.property.PropertyCategoryRepo;
 import com.master.app.pims.repositories.property.PropertyExemptionRepo;
 import com.master.app.pims.repositories.property.PropertyFloorRepo;
 import com.master.app.pims.repositories.property.PropertyOccupancyFactorRepo;
+import com.master.app.pims.repositories.property.PropertyTypeRepo;
+import com.master.app.pims.repositories.rbd.RbdFeeRelaxationListRepo;
+import com.master.app.pims.repositories.rbd.RbdMstCommonListRepo;
+import com.master.app.pims.repositories.rbd.RbdMstDocsCategoryRepo;
+import com.master.app.pims.repositories.rbd.RbdRefBirthDocsMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefChargeMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefDeathDocsMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefDocsMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefEducationMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefOccupationMapRepo;
+import com.master.app.pims.repositories.rbd.RbdRefRegistrationNumberRepo;
+import com.master.app.pims.repositories.rbd.RbdRefRelationMapRepo;
 import com.master.app.pims.repositories.usr.RefUserDocsMapRepo;
 import com.master.app.pims.utils.PropertyReader;
 import com.master.app.pims.utils.Util;
@@ -163,6 +191,9 @@ public class CommonMasterValidator implements Validator {
 
     @Autowired
     private OccupationTypeRepository occupationTypeRepository;
+    
+    @Autowired
+    private PersRelationRepo persRelationRepo;
     
     @Autowired
     private EducationLevelRepository educationLevelRepository; 
@@ -292,6 +323,46 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private PropertyCategoryRepo propertyCategoryRepo;
+    
+    @Autowired
+   	private PropertyTypeRepo propertyTypeRepo;
+    
+    @Autowired
+   	private RbdMstCommonListRepo rbdMstCommonListRepo;
+    
+    @Autowired
+   	private RbdMstDocsCategoryRepo rbdMstDocsCategoryRepo;
+    
+    @Autowired
+   	private RbdRefBirthDocsMapRepo rbdRefBirthDocsMapRepo;
+    
+    @Autowired
+   	private RbdRefDeathDocsMapRepo rbdRefDeathDocsMapRepo;
+    
+    @Autowired
+   	private RbdRefChargeMapRepo rbdRefChargeMapRepo;
+    
+    @Autowired
+   	private RbdRefRelationMapRepo rbdRefRelationMapRepo;
+    
+    @Autowired
+   	private RbdRefOccupationMapRepo rbdRefOccupationMapRepo;
+    
+    @Autowired
+   	private RbdRefEducationMapRepo rbdRefEducationMapRepo;
+    
+    @Autowired
+   	private RbdRefRegistrationNumberRepo rbdRefRegistrationNumberRepo;
+    
+    @Autowired
+   	private RbdRefDocsMapRepo rbdRefDocsMapRepo;
+    
+    @Autowired
+   	private RbdFeeRelaxationListRepo rbdFeeRelaxationListRepo;
+    
+    
+    @Autowired
+   	private HospitalInfoRepo hospitalInfoRepo;
     
     //mst country validation
     @Override
@@ -3069,10 +3140,577 @@ public BaseResponse validatePropertyCategory(PropertyCategory propertyCategory) 
     	
      } catch (Exception e) {
          resultData.setStatus(false);
-         resultData.setMessage("Error validating  OwnerType : " + e.getMessage());
+         resultData.setMessage("Error validating  PropertyCategory : " + e.getMessage());
      }
      return resultData;
 }
+
+@Override
+public BaseResponse validatePropertyType(PropertyType propertyType) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(propertyType.getPropertyTypeCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyTypeCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyType.getPropertyTypeCode()) && propertyTypeRepo
+				.isExistPropertyTypeCode(propertyType.getPropertyTypeCode(), propertyType.getPropertyTypeGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyTypeCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(propertyType.getPropertyTypeNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyTypeNameEn.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyType.getPropertyTypeNameEn())
+				&& propertyTypeRepo.isExistPropertyTypeNameEn(propertyType.getPropertyTypeNameEn(),
+						propertyType.getPropertyTypeGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.PropertyTypeNameEn.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyType.getPropertyTypeNameHi())
+				&& propertyTypeRepo.isExistPropertyTypeNameHi(propertyType.getPropertyTypeNameHi(),
+						propertyType.getPropertyTypeGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.PropertyTypeNameHi.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyType.getPropertyTypeNameRl())
+				&& propertyTypeRepo.isExistPropertyTypeNameRl(propertyType.getPropertyTypeNameRl(),
+						propertyType.getPropertyTypeGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.PropertyTypeNameRl.unique"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PropertyType : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdMstCommonList(RbdMstCommonList rbdMstCommonList) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdMstCommonList.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.assessmentYear.required"));
+			return resultData;
+		}
+
+		if (Util.isNullOrEmpty(rbdMstCommonList.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.requestSubmissionType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdMstCommonList.getCommonListCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstCommonList.getCommonListCode())
+				&& rbdMstCommonListRepo.isExistRbdMstCommonListCode(rbdMstCommonList.getCommonListCode(),
+						rbdMstCommonList.getCommonListGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdMstCommonList.getCommonListNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListNameEn.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstCommonList.getCommonListNameEn())
+				&& rbdMstCommonListRepo.isExistRbdMstCommonListNameEn(rbdMstCommonList.getCommonListNameEn(),
+						rbdMstCommonList.getCommonListGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListNameEn.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdMstCommonList.getCommonListNameHi())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListNameHi.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstCommonList.getCommonListNameHi())
+				&& rbdMstCommonListRepo.isExistRbdMstCommonListNameHi(rbdMstCommonList.getCommonListNameHi(),
+						rbdMstCommonList.getCommonListGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListNameHi.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdMstCommonList.getCommonListNameRl())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListNameRl.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstCommonList.getCommonListNameRl())
+				&& rbdMstCommonListRepo.isExistRbdMstCommonListNameRl(rbdMstCommonList.getCommonListNameRl(),
+						rbdMstCommonList.getCommonListGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListNameRl.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdMstCommonList.getCommonListDesc())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.commonListDesc.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdMstCommonList.getCommonListRequireType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstCommonList.CommonListRequireType.required"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdMstCommonList : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdMstDocsCategory(RbdMstDocsCategory rbdMstDocsCategory) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdMstDocsCategory.getDocsCategoryCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstDocsCategoryCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstDocsCategory.getDocsCategoryCode())
+				&& rbdMstDocsCategoryRepo.isExistRbdMstDocsCategoryCode(rbdMstDocsCategory.getDocsCategoryCode(),
+						rbdMstDocsCategory.getMstDocsCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstDocsCategoryCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdMstDocsCategory.getDocsCategoryNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstDocsCategoryNameEn.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstDocsCategory.getDocsCategoryNameEn())
+				&& rbdMstDocsCategoryRepo.isExistRbdMstDocsCategoryNameEn(rbdMstDocsCategory.getDocsCategoryNameEn(),
+						rbdMstDocsCategory.getMstDocsCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstDocsCategoryNameEn.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstDocsCategory.getDocsCategoryNameHi())
+				&& rbdMstDocsCategoryRepo.isExistRbdMstDocsCategoryNameHi(rbdMstDocsCategory.getDocsCategoryNameHi(),
+						rbdMstDocsCategory.getMstDocsCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstDocsCategoryNameHi.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(rbdMstDocsCategory.getDocsCategoryNameRl())
+				&& rbdMstDocsCategoryRepo.isExistRbdMstDocsCategoryNameRl(rbdMstDocsCategory.getDocsCategoryNameRl(),
+						rbdMstDocsCategory.getMstDocsCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMstDocsCategoryNameRl.unique"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdMstDocsCategory : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefBirthDocsMap(RbdRefBirthDocsMap rbdRefBirthDocsMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdRefBirthDocsMap.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdBirthDocsMap.assessmentYear.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefBirthDocsMap.getDocsSubmissionInfo())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdBirthDocsMap.docsSubmissioninfo.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefBirthDocsMap.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdBirthDocsMap.requestSubmissionType.required"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdRefBirthDocsMap : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefDeathDocsMap(RbdRefDeathDocsMap rbdRefDeathDocsMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdRefDeathDocsMap.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdDeathDocsMap.assessmentYear.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefDeathDocsMap.getDocsSubmissionInfo())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdDeathDocsMap.docsSubmissioninfo.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefDeathDocsMap.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdDeathDocsMap.requestSubmissionType.required"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdRefDeathDocsMap : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefChargeMap(RbdRefChargeMap rbdRefChargeMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdRefChargeMap.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.assessmentYear.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefChargeMap.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.requestSubmissionType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefChargeMap.getChargeMapSubmittedForType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.chargeMapSubmittedForType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefChargeMap.getApplicableFactor())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.applicableFactor.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefChargeMap.getChargesFactor())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.chargeFactor.required"));
+			return resultData;
+		}
+		if(rbdRefChargeMap.getRegistrationFeeValue().signum() < 0 ) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.registrationFeeValue.positive"));
+			return resultData;
+		}
+		if(rbdRefChargeMap.getProcessingFeeValue().signum() < 0 ) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.processingFeeValue.positive"));
+			return resultData;
+		}
+		if(rbdRefChargeMap.getPrintRequestFeeValue().signum() < 0 ) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefChargeMap.printRequestFeeValue.positive"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdRefChargeMap : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePersRelation(PersRelation persRelation) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if(Util.isNullOrEmpty(persRelation.getRelationCode()))
+		{
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.relation.code.required"));
+		}if(!Util.isNullOrEmpty(persRelation.getRelationCode()) && persRelationRepo.isExistRelationCode(persRelation.getRelationCode(),persRelation.getPersRelationGuid()) ){
+					resultData.setStatus(false);
+					resultData.setMessage(PropertyReader.getFormMessage("master.relation.code.unique"));
+					return resultData;
+		} if(!Util.isNullOrEmpty(persRelation.getRelationName()) && persRelationRepo.isExistRelationName(persRelation.getRelationName(),persRelation.getPersRelationGuid())){
+				resultData.setStatus(false);
+				resultData.setMessage(PropertyReader.getFormMessage("master.relation.name.unique"));
+				return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PersRelation : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefRelationMap(RbdRefRelationMap rbdRefRelationMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdRefRelationMap.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRelationMap.assessmentYear.required"));
+			return resultData;
+		}
+
+		if (Util.isNullOrEmpty(rbdRefRelationMap.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRelationMap.requestSubmissionType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefRelationMap.getPersRelation())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRelationMap.relation.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefRelationMap.getRelationMapSubmittedForType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRelationMap.relationMapSubmittedForType.required"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PersRelation : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefOccupationMap(RbdRefOccupationMap rbdRefOccupationMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdRefOccupationMap.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefOccupationMap.assessmentYear.required"));
+			return resultData;
+		}
+
+		if (Util.isNullOrEmpty(rbdRefOccupationMap.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefOccupationMap.requestSubmissionType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefOccupationMap.getOccupationType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefOccupationMap.occupationType.required"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdRefOccupationMap : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefEducationMap(RbdRefEducationMap rbdRefEducationMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdRefEducationMap.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefEducationMap.assessmentYear.required"));
+			return resultData;
+		}
+
+		if (Util.isNullOrEmpty(rbdRefEducationMap.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefEducationMap.requestSubmissionType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefEducationMap.getEducationLevel())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefEducationMap.educationLevel.required"));
+			return resultData;
+		}
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdRefEducationMap : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefRegistrationNumber(RbdRefRegistrationNumber rbdRefRegistrationNumber) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdRefRegistrationNumber.getAssessmentYear())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.assessmentYear.required"));
+			return resultData;
+		}
+//		if (Util.isNullOrEmpty(obj.getHospitalZone())) {
+//			resultData.setStatus(false);
+//			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.zone.required"));
+//			return resultData;
+//		}
+		if (Util.isNullOrEmpty(rbdRefRegistrationNumber.getOrgPrimary())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.primaryOrg.required"));
+			return resultData;
+		}
+//		if (!Util.isNullOrZero(obj.getGeneratedNumber())
+//				&& masterMCDValidationDAO.isExistRbdRefGeneratedNumber(obj.getGeneratedNumber(),
+//						obj.getRefRegistrationNumberGuid())) {
+//			resultData.setStatus(false);
+//			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.generatedNumber.unique"));
+//			return resultData;
+//		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdRefRegistrationNumber : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateRbdRefDocsMap(RbdRefDocsMap rbdRefDocsMap) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 	//	if (Util.isNullOrEmpty(rbdRefDocsMap.getAssessmentYear())) {
+//			resultData.setStatus(false);
+//			resultData.setMessage(PropertyReader.getFormMessage("master.vtlRefDocsMap.assessmentYear.required"));
+//			return resultData;
+//		}
+		if (Util.isNullOrEmpty(rbdRefDocsMap.getDocsSubmissionInfo())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefDocsMap.docsSubmissionInfo.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdRefDocsMap.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdRefDocsMap.requestSubmissionType.required"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdRefDocsMap : " + e.getMessage());
+     }
+     return resultData;
+}
+
+
+@Override
+public BaseResponse validateRbdFeeRelaxationList(RbdFeeRelaxationList rbdFeeRelaxationList) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getHospitalInfo())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.hospitalInfo.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getRequestSubmissionType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.requestSubmissionType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getTypeOfHospital())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.typeOfHospital.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getSubmittedForType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.submittedForType.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getListRequireForType())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.listRequireForType.required"));
+			return resultData;
+		}
+		if (rbdFeeRelaxationList.getRelaxedAmount().signum() < 0) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.relaxedAmount.positive"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getListCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.listCode.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getListNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.listNameEn.required"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getListCode())
+				&& rbdFeeRelaxationListRepo.isExistRbdListCode(rbdFeeRelaxationList.getListCode(),
+						rbdFeeRelaxationList.getListGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.listCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(rbdFeeRelaxationList.getListNameEn())
+				&& rbdFeeRelaxationListRepo.isExistRbdListNameEn(rbdFeeRelaxationList.getListNameEn(),
+						rbdFeeRelaxationList.getListGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.rbdMaster.listNameEn.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  RbdFeeRelaxationList : " + e.getMessage());
+     }
+     return resultData;
+}
+
+
+@Override
+public BaseResponse validateHospitalInfo(HospitalInfo hospitalInfo) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 	
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  HospitalInfo : " + e.getMessage());
+     }
+     return resultData;
+}
+
 
 
 

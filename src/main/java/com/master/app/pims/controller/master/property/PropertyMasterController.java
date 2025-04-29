@@ -29,6 +29,7 @@ import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyType;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.property.OwnerCategoryRepo;
@@ -38,6 +39,7 @@ import com.master.app.pims.repositories.property.PropertyCategoryRepo;
 import com.master.app.pims.repositories.property.PropertyExemptionRepo;
 import com.master.app.pims.repositories.property.PropertyFloorRepo;
 import com.master.app.pims.repositories.property.PropertyOccupancyFactorRepo;
+import com.master.app.pims.repositories.property.PropertyTypeRepo;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
@@ -79,6 +81,9 @@ public class PropertyMasterController {
 	  
 	  @Autowired
 	   	private PropertyCategoryRepo propertyCategoryRepo;
+	  
+	  @Autowired
+	   	private PropertyTypeRepo propertyTypeRepo;
 	
 	
 	  /////////////////////////////////////PropertyAgeFactor Start///////////////////////////////////
@@ -936,4 +941,123 @@ return new ResponseEntity<>(propertyCategory, HttpStatus.OK);
 }
 
 ////////////////////////////////////////////PropertyCategory End //////////////////////////
+
+/////////////////////////////////////PropertyType Start///////////////////////////////////
+
+//get all data from table
+@GetMapping("/getPropertyTypeList")
+public ResponseEntity<BaseResponse> getPropertyTypeList() {
+BaseResponse response = new BaseResponse();
+//Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+List<PropertyType> list = propertyTypeRepo.findAll();
+response.setMessage("success");
+response.setStatus(true);
+response.setTotalDataCount(list.size());
+response.setPropertyType(list);
+return ResponseEntity.ok(response);
+}
+
+//Create New Data And Update
+@PostMapping("/submitPropertyType")
+public BaseResponse submitPropertyType(@RequestBody PropertyType propertyType, HttpServletRequest request) {
+BaseResponse resultData = new BaseResponse();
+
+//Check if guid is provided (indicating an update)
+if (propertyType.getPropertyTypeGuid() == null || propertyType.getPropertyTypeGuid().isEmpty()) {
+
+//Add new data
+	propertyType.setCreatedIpAddr(request.getRemoteAddr());
+	propertyType.setPropertyTypeGuid(UUID.randomUUID().toString());
+	propertyType.setCreatedDate(new Date());
+	propertyType.setModifiedIpAddr(null);
+	propertyType.setModifiedByGuid(null);
+	propertyType.setModifiedDate(null);
+	propertyType.setCreatedByGuid(request.getRemoteAddr());
+
+
+if (propertyType.getIsHeadquarter() == null)
+	propertyType.setIsHeadquarter(false);
+
+if (propertyType.getIsActive() == null)
+	propertyType.setIsActive(false);
+//propertyType.setCreatedByGuid(userSessionParam.getEmpBasicGUID());
+//propertyType.setCreaterRemarks(userSessionParam.getUserFullName());
+//propertyType.setCreaterMacId(HttpSessionHelper.getMacAddress());
+//propertyType.setCreaterIp(HttpSessionHelper.getClientIPAddress(request));
+} else {
+//Update existing data
+	PropertyType existingPropertyType = commonMasterService.getPropertyTypeById(propertyType.getPropertyTypeGuid());
+
+if (existingPropertyType != null) {
+	existingPropertyType.setPropertyTypeCode(!Util.isNullOrEmpty(propertyType.getPropertyTypeCode()) ? propertyType.getPropertyTypeCode().toUpperCase().trim() : null);
+	existingPropertyType.setPropertyTypeNameEn(!Util.isNullOrEmpty(propertyType.getPropertyTypeNameEn()) ? propertyType.getPropertyTypeNameEn().toUpperCase().trim() : null);
+
+	existingPropertyType.setPropertyTypeNameHi(!Util.isNullOrEmpty(propertyType.getPropertyTypeNameHi()) ? propertyType.getPropertyTypeNameHi().toUpperCase().trim() : null);
+	existingPropertyType.setPropertyTypeNameRl(!Util.isNullOrEmpty(propertyType.getPropertyTypeNameRl()) ? propertyType.getPropertyTypeNameRl() : null);
+	existingPropertyType.setPropertyTypeDesc(!Util.isNullOrEmpty(propertyType.getPropertyTypeDesc()) ? propertyType.getPropertyTypeDesc().trim() : null);
+	existingPropertyType.setIsHeadquarter(propertyType.getIsHeadquarter() != null ? propertyType.getIsHeadquarter() : existingPropertyType.getIsActive());
+	existingPropertyType.setIsActive(propertyType.getIsActive() != null ? propertyType.getIsActive() : existingPropertyType.getIsActive());
+
+	existingPropertyType.setModifiedIpAddr(request.getRemoteAddr());
+	existingPropertyType.setModifiedDate(new Date());
+	existingPropertyType.setModifiedByGuid("admin");
+
+
+
+if (existingPropertyType.getIsHeadquarter() == null)
+	existingPropertyType.setIsHeadquarter(false);
+
+if (existingPropertyType.getIsActive() == null)
+	existingPropertyType.setIsActive(false);
+
+propertyType = existingPropertyType; // Use the updated existing country object
+} else {
+log.error("Property Type not found");
+resultData.setStatus(false);
+resultData.setMessage("Property Type not found");
+return resultData;
+}
+}
+
+//Validation
+resultData = validator.validatePropertyType(propertyType);
+if (resultData != null && !resultData.getStatus()) {
+log.error("Validation failed: {}", resultData.getMessage());
+return resultData;
+}
+
+//If validation passes, proceed to save or update
+if (propertyType.getIsActive() == null) propertyType.setIsActive(false);
+if (propertyType.getIsHeadquarter() == null) propertyType.setIsHeadquarter(false);
+
+propertyType.setPropertyTypeCode(!Util.isNullOrEmpty(propertyType.getPropertyTypeCode()) ? propertyType.getPropertyTypeCode().toUpperCase().trim() : null);
+propertyType.setPropertyTypeNameEn(!Util.isNullOrEmpty(propertyType.getPropertyTypeNameEn()) ? propertyType.getPropertyTypeNameEn().toUpperCase().trim() : null);
+
+propertyType.setPropertyTypeNameHi(!Util.isNullOrEmpty(propertyType.getPropertyTypeNameHi()) ? propertyType.getPropertyTypeNameHi().toUpperCase().trim() : null);
+propertyType.setPropertyTypeNameRl(!Util.isNullOrEmpty(propertyType.getPropertyTypeNameRl()) ? propertyType.getPropertyTypeNameRl() : null);
+propertyType.setPropertyTypeDesc(!Util.isNullOrEmpty(propertyType.getPropertyTypeDesc()) ? propertyType.getPropertyTypeDesc().trim() : null);
+
+if (propertyType.getIsActive() == null) propertyType.setIsActive(false);
+try {
+	propertyTypeRepo.save(propertyType);
+log.info("Record SaveOrUpdate Successfully");
+resultData.setStatus(true);
+resultData.setMessage("Record saved or updated successfully");
+} catch (Exception e) {
+log.error("Error saving or updating record: {}", e.getMessage());
+resultData.setStatus(false);
+resultData.setMessage("Error saving or updating record: " + e.getMessage());
+}
+
+return resultData;
+}
+
+//get data by id
+@GetMapping("/getPropertyTypeByGuid/{propertyTypeGuid}")
+public ResponseEntity<PropertyType> getPropertyTypeGuid(@PathVariable("propertyTypeGuid") String propertyTypeGuid) {
+	PropertyType propertyType = propertyTypeRepo.findById(propertyTypeGuid).orElseThrow(() -> new ResourceNotFoundException("Resource not found with propertyTypeGuid : " + propertyTypeGuid));
+return new ResponseEntity<>(propertyType, HttpStatus.OK);
+}
+
+/////////////////////////////////////PropertyType End///////////////////////////////////
 }
