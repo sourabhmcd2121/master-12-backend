@@ -9,10 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 @SpringBootApplication
-public class Master12Application  {
+public class Master12Application extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(Master12Application.class, args);
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(Master12Application.class);
     }
 
     @Bean
@@ -22,5 +27,4 @@ public class Master12Application  {
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
-
 }

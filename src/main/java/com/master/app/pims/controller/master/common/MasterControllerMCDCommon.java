@@ -183,8 +183,8 @@ public class MasterControllerMCDCommon {
 	}
 
 	// Create New Data And Update
-	@PostMapping("/submitOrUpdateApplicationMaster")
-	public BaseResponse submitOrUpdateApplicationMaster(@RequestBody ApplicationMaster appMaster,
+	@PostMapping("/submitApplicationMaster")
+	public BaseResponse submitApplicationMaster(@RequestBody ApplicationMaster appMaster,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -323,8 +323,8 @@ public class MasterControllerMCDCommon {
 	}
 
 	// Create New Data And Update
-	@PostMapping("/submitOrUpdateAssesmentYear")
-	public BaseResponse submitOrUpdateAssesmentYear(@RequestBody AssessmentYear assessmentYear,
+	@PostMapping("/submitAssesmentYear")
+	public BaseResponse submitAssesmentYear(@RequestBody AssessmentYear assessmentYear,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -452,8 +452,8 @@ public class MasterControllerMCDCommon {
 	}
 
 	// Create New Data And Update
-	@PostMapping("/submitOrUpdateAssociatedChargesInfo")
-	public BaseResponse submitOrUpdateAssociatedChargesInfo(@RequestBody AssociatedChargesInfo associatedChargesInfo,
+	@PostMapping("/submitAssociatedChargesInfo")
+	public BaseResponse submitAssociatedChargesInfo(@RequestBody AssociatedChargesInfo associatedChargesInfo,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -586,8 +586,8 @@ public class MasterControllerMCDCommon {
 	}
 
 	// Create New Data And Update
-	@PostMapping("/submitOrUpdateDocsSubmissionInfo")
-	public BaseResponse submitOrUpdateDocsSubmissionInfo(@RequestBody DocsSubmissionInfo docsSubmissionInfo,
+	@PostMapping("/submitDocsSubmissionInfo")
+	public BaseResponse submitDocsSubmissionInfo(@RequestBody DocsSubmissionInfo docsSubmissionInfo,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -719,8 +719,8 @@ public class MasterControllerMCDCommon {
 	}
 
 // Create New Data And Update
-	@PostMapping("/submitOrUpdatRequestSubmissionType")
-	public BaseResponse submitOrUpdatRequestSubmissionType(@RequestBody RequestSubmissionType requestSubmissionType,
+	@PostMapping("/submitRequestSubmissionType")
+	public BaseResponse submitRequestSubmissionType(@RequestBody RequestSubmissionType requestSubmissionType,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -863,7 +863,7 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateSubmittedRequestStage")
+	@PostMapping("/submitSubmittedRequestStage")
 	public BaseResponse submitSubmittedRequestStage(@RequestBody SubmittedRequestStage submittedRequestStage,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
@@ -1007,8 +1007,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateUnitArea")
-	public BaseResponse submitOrUpdateUnitArea(@RequestBody UnitArea unitArea, HttpServletRequest request) {
+	@PostMapping("/submitUnitArea")
+	public BaseResponse submitUnitArea(@RequestBody UnitArea unitArea, HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
 //Check if guid is provided (indicating an update)
@@ -1130,8 +1130,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateMstChargeDetails")
-	public BaseResponse submitOrUpdateMstChargeDetails(@RequestBody MstChargeDetails mstChargeDetails,
+	@PostMapping("/submitMstChargeDetails")
+	public BaseResponse submitMstChargeDetails(@RequestBody MstChargeDetails mstChargeDetails,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -1266,8 +1266,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateOccupationType")
-	public BaseResponse submitOrUpdateOccupationType(@RequestBody OccupationType occupationType,
+	@PostMapping("/submitOccupationType")
+	public BaseResponse submitOccupationType(@RequestBody OccupationType occupationType,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -1398,8 +1398,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateEducationLevel")
-	public BaseResponse submitOrUpdateEducationLevel(@RequestBody EducationLevel educationLevel,
+	@PostMapping("/submitEducationLevel")
+	public BaseResponse submitEducationLevel(@RequestBody EducationLevel educationLevel,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -1542,8 +1542,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateReligiousPlaces")
-	public BaseResponse submitOrUpdateReligiousPlaces(@RequestBody ReligiousPlaces religiousPlaces,
+	@PostMapping("/submitReligiousPlaces")
+	public BaseResponse submitReligiousPlaces(@RequestBody ReligiousPlaces religiousPlaces,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -1690,8 +1690,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateDocsCategoryInfo")
-	public BaseResponse submitOrUpdateDocsCategoryInfo(@RequestBody DocsCategoryInfo docsCategoryInfo,
+	@PostMapping("/submitDocsCategoryInfo")
+	public BaseResponse submitDocsCategoryInfo(@RequestBody DocsCategoryInfo docsCategoryInfo,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -1837,8 +1837,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateCommonMasterProcessStatus")
-	public BaseResponse submitOrUpdateCommonMasterProcessStatus(
+	@PostMapping("/submitCommonMasterProcessStatus")
+	public BaseResponse submitCommonMasterProcessStatus(
 			@RequestBody CommonMasterProcessStatus commonMasterProcessStatus, HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 
@@ -1961,8 +1961,8 @@ public class MasterControllerMCDCommon {
 	}
 
 //Create New Data And Update
-	@PostMapping("/submitOrUpdateSmsEmailTemplate")
-	public BaseResponse submitOrUpdateSmsEmailTemplate(@RequestBody SmsEmailTemplate smsEmailTemplate,
+	@PostMapping("/submitSmsEmailTemplate")
+	public BaseResponse submitSmsEmailTemplate(@RequestBody SmsEmailTemplate smsEmailTemplate,
 			HttpServletRequest request) {
 		BaseResponse resultData = new BaseResponse();
 

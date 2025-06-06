@@ -18,13 +18,11 @@ import com.master.app.pims.repositories.mst.GeoColonyCategoryRepository;
 import com.master.app.pims.repositories.mst.GeoColonyMCDRepo;
 import com.master.app.pims.repositories.mst.GeoCountryMstRepository;
 import com.master.app.pims.repositories.mst.GeoWardMCDRepo;
-import com.master.app.pims.repositories.mst.GeoWardViewRepository;
 import com.master.app.pims.repositories.mst.GeoZoneMCDRepository;
 import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,9 +41,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
-@Slf4j
 @RequestMapping("/web/master")
 @CrossOrigin(origins = "http://localhost:3000")
+@Slf4j
 public class MasterControllerMCDGeo {
 
     @Autowired
@@ -266,8 +264,8 @@ public class MasterControllerMCDGeo {
     }
 
 
-    @PostMapping("/submitOrUpdateMasterState")
-    public BaseResponse submitOrUpdateMasterState(@RequestBody GeoStateMaster state, HttpServletRequest request) {
+    @PostMapping("/submitMasterState")
+    public BaseResponse submitMasterState(@RequestBody GeoStateMaster state, HttpServletRequest request) {
         BaseResponse resultData = new BaseResponse();
 
         // Check if guid is provided (indicating an update)
@@ -387,8 +385,8 @@ public class MasterControllerMCDGeo {
     }
 
     // Create New Data And Update
-    @PostMapping("/submitOrUpdateGeoColonyCategory")
-    public BaseResponse submitOrUpdateGeoColonyCategory(@RequestBody GeoColonyCategory colonyCategory, HttpServletRequest request) {
+    @PostMapping("/submitGeoColonyCategory")
+    public BaseResponse submitGeoColonyCategory(@RequestBody GeoColonyCategory colonyCategory, HttpServletRequest request) {
         BaseResponse resultData = new BaseResponse();
 
         // Check if guid is provided (indicating an update)
@@ -879,5 +877,15 @@ return new ResponseEntity<>(geoColonyMCD, HttpStatus.OK);
 }
 
 /////////////////////////////////////GeoColonyMCD End///////////////////////////////////
+
+
+@GetMapping(value = "/applicationUp")
+public String testapplicationUp(){
+     
+	String message="application up and running";
+
+    return message;
+}
+
 
 }

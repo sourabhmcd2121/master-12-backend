@@ -51,14 +51,21 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.ManualReceiptSeries;
 import com.master.app.pims.entities.schemas.property.OwnerCategory;
 import com.master.app.pims.entities.schemas.property.OwnerType;
 import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
 import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyMasterRebate;
+import com.master.app.pims.entities.schemas.property.PropertyMstSr;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyOtherCharges;
+import com.master.app.pims.entities.schemas.property.PropertyStructureFactor;
+import com.master.app.pims.entities.schemas.property.PropertyTaxCategory;
 import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.property.PropertyUseFactor;
 import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
@@ -252,6 +259,38 @@ public interface Validator {
     
     //PropertyType validation
     BaseResponse validatePropertyType(PropertyType propertyType);
+    
+    //PropertyStructureFactor validation
+    BaseResponse validatePropertyStructureFactor(PropertyStructureFactor propertyStructureFactor);
+    
+    //PropertyTaxCategory validation
+    BaseResponse validatePropertyTaxCategory(PropertyTaxCategory propertyTaxCategory);
+    
+    //PropertyUseFactor validation
+    BaseResponse validatePropertyUseFactor(PropertyUseFactor propertyUseFactor);
+    
+    //PropertyMasterRebate validation
+    BaseResponse validatePropertyMasterRebate(PropertyMasterRebate propertyMasterRebate);
+    
+    //PropertyOtherCharges validation
+    BaseResponse validatePropertyOtherCharges(PropertyOtherCharges propertyOtherCharges);
+    
+    //ManualReceiptSeries validation
+    BaseResponse validateManualReceiptSeries(ManualReceiptSeries manualReceiptSeries);
+    
+    //ManualReceiptSeries validation
+    BaseResponse validatePropertyMstSr(PropertyMstSr propertyMstSr);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     ////////////////////////////////////////////RBD Master////////////////////////////////
    

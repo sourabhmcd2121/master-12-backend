@@ -51,14 +51,21 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.ManualReceiptSeries;
 import com.master.app.pims.entities.schemas.property.OwnerCategory;
 import com.master.app.pims.entities.schemas.property.OwnerType;
 import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
 import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyMasterRebate;
+import com.master.app.pims.entities.schemas.property.PropertyMstSr;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyOtherCharges;
+import com.master.app.pims.entities.schemas.property.PropertyStructureFactor;
+import com.master.app.pims.entities.schemas.property.PropertyTaxCategory;
 import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.property.PropertyUseFactor;
 import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
@@ -310,6 +317,45 @@ public interface CommonMasterService {
     ///for PropertyType join with property schema
     PropertyType savePropertyType(PropertyType propertyType);
     PropertyType getPropertyTypeById(String id);
+    
+    ///for propertyStructureFactor join with property schema
+    PropertyStructureFactor savePropertyStructureFactor(PropertyStructureFactor propertyStructureFactor);
+    PropertyStructureFactor getPropertyStructureFactorById(String id);
+    
+    ///for PropertyTaxCategory join with property schema
+    PropertyTaxCategory savePropertyTaxCategory(PropertyTaxCategory propertyTaxCategory);
+    PropertyTaxCategory getPropertyTaxCategoryById(String id);
+    
+    ///for PropertyUseFactor join with property schema
+    PropertyUseFactor savePropertyUseFactor(PropertyUseFactor propertyUseFactor);
+    PropertyUseFactor getPropertyUseFactorById(String id);
+    
+    ///for PropertyMasterRebate join with property schema
+    PropertyMasterRebate savePropertyMasterRebate(PropertyMasterRebate propertyMasterRebate);
+    PropertyMasterRebate getPropertyMasterRebateById(String id);
+    
+    ///for PropertyMasterRebate join with property schema
+    PropertyOtherCharges savePropertyOtherCharges(PropertyOtherCharges propertyOtherCharges);
+    PropertyOtherCharges getPropertyOtherChargesById(String id);
+    
+    ///for ManualReceiptSeries join with property schema
+    ManualReceiptSeries saveManualReceiptSeries(ManualReceiptSeries manualReceiptSeries);
+    ManualReceiptSeries getManualReceiptSeriesById(String id);
+    
+    ///for ManualReceiptSeries join with property schema
+    PropertyMstSr savePropertyMstSr(PropertyMstSr propertyMstSr);
+    PropertyMstSr getPropertyMstSrById(String id);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     ///for RbdMstCommonList join with rbd schema
     RbdMstCommonList saveRbdMstCommonList(RbdMstCommonList rbdMstCommonList);

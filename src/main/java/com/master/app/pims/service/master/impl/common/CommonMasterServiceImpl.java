@@ -50,14 +50,21 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.ManualReceiptSeries;
 import com.master.app.pims.entities.schemas.property.OwnerCategory;
 import com.master.app.pims.entities.schemas.property.OwnerType;
 import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
 import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyMasterRebate;
+import com.master.app.pims.entities.schemas.property.PropertyMstSr;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyOtherCharges;
+import com.master.app.pims.entities.schemas.property.PropertyStructureFactor;
+import com.master.app.pims.entities.schemas.property.PropertyTaxCategory;
 import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.property.PropertyUseFactor;
 import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
@@ -120,14 +127,21 @@ import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
+import com.master.app.pims.repositories.property.ManualReceiptSeriesRepo;
 import com.master.app.pims.repositories.property.OwnerCategoryRepo;
 import com.master.app.pims.repositories.property.OwnerTypeRepo;
 import com.master.app.pims.repositories.property.PropertyAgeFactorRepo;
 import com.master.app.pims.repositories.property.PropertyCategoryRepo;
 import com.master.app.pims.repositories.property.PropertyExemptionRepo;
 import com.master.app.pims.repositories.property.PropertyFloorRepo;
+import com.master.app.pims.repositories.property.PropertyMasterRebateRepo;
+import com.master.app.pims.repositories.property.PropertyMstSrRepo;
 import com.master.app.pims.repositories.property.PropertyOccupancyFactorRepo;
+import com.master.app.pims.repositories.property.PropertyOtherChargesRepo;
+import com.master.app.pims.repositories.property.PropertyStructureFactorRepo;
+import com.master.app.pims.repositories.property.PropertyTaxCategoryRepo;
 import com.master.app.pims.repositories.property.PropertyTypeRepo;
+import com.master.app.pims.repositories.property.PropertyUseFactorRepo;
 import com.master.app.pims.repositories.rbd.RbdFeeRelaxationListRepo;
 import com.master.app.pims.repositories.rbd.RbdMstCommonListRepo;
 import com.master.app.pims.repositories.rbd.RbdMstDocsCategoryRepo;
@@ -323,6 +337,32 @@ public class CommonMasterServiceImpl implements CommonMasterService {
     
     @Autowired
    	private PropertyTypeRepo propertyTypeRepo;
+    
+    @Autowired
+   	private PropertyStructureFactorRepo propertyStructureFactorRepo;
+    
+    @Autowired
+   	private PropertyTaxCategoryRepo propertyTaxCategoryRepo;
+    
+    @Autowired
+   	private PropertyUseFactorRepo propertyUseFactorRepo;
+    
+    @Autowired
+   	private PropertyMasterRebateRepo propertyMasterRebateRepo;
+    
+    @Autowired
+   	private PropertyOtherChargesRepo propertyOtherChargesRepo;
+    
+    @Autowired
+   	private ManualReceiptSeriesRepo manualReceiptSeriesRepo;
+       
+    @Autowired
+   	private PropertyMstSrRepo propertyMstSrRepo;
+    
+    
+    
+    
+    
     
     
     @Autowired
@@ -1146,6 +1186,85 @@ public class CommonMasterServiceImpl implements CommonMasterService {
 	@Override
 	public RbdFeeRelaxationList getRbdFeeRelaxationListById(String id) {
 		  return rbdFeeRelaxationListRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyStructureFactor savePropertyStructureFactor(PropertyStructureFactor propertyStructureFactor) {
+		 return propertyStructureFactorRepo.save(propertyStructureFactor);
+	}
+
+	@Override
+	public PropertyStructureFactor getPropertyStructureFactorById(String id) {
+		  return propertyStructureFactorRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyTaxCategory savePropertyTaxCategory(PropertyTaxCategory propertyTaxCategory) {
+		 return propertyTaxCategoryRepo.save(propertyTaxCategory);
+	}
+
+	@Override
+	public PropertyTaxCategory getPropertyTaxCategoryById(String id) {
+		  return propertyTaxCategoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyUseFactor savePropertyUseFactor(PropertyUseFactor propertyUseFactor) {
+		 return propertyUseFactorRepo.save(propertyUseFactor);
+	}
+
+	@Override
+	public PropertyUseFactor getPropertyUseFactorById(String id) {
+		  return propertyUseFactorRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyMasterRebate savePropertyMasterRebate(PropertyMasterRebate propertyMasterRebate) {
+		 return propertyMasterRebateRepo.save(propertyMasterRebate);
+	}
+
+	@Override
+	public PropertyMasterRebate getPropertyMasterRebateById(String id) {
+		  return propertyMasterRebateRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyOtherCharges savePropertyOtherCharges(PropertyOtherCharges propertyOtherCharges) {
+		 return propertyOtherChargesRepo.save(propertyOtherCharges);
+	}
+
+	@Override
+	public PropertyOtherCharges getPropertyOtherChargesById(String id) {
+		  return propertyOtherChargesRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public ManualReceiptSeries saveManualReceiptSeries(ManualReceiptSeries manualReceiptSeries) {
+		 return manualReceiptSeriesRepo.save(manualReceiptSeries);
+
+	}
+
+	@Override
+	public ManualReceiptSeries getManualReceiptSeriesById(String id) {
+		  return manualReceiptSeriesRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
+
+	}
+
+	@Override
+	public PropertyMstSr savePropertyMstSr(PropertyMstSr propertyMstSr) {
+		 return propertyMstSrRepo.save(propertyMstSr);
+
+	}
+
+	@Override
+	public PropertyMstSr getPropertyMstSrById(String id) {
+		  return propertyMstSrRepo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found with guidId : " + id));
 
 	}
 

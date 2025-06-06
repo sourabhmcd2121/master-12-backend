@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/web/master")
 @CrossOrigin(origins = "http://localhost:3000")
 public class HospitalMasterController {
-private Logger logger = LoggerFactory.getLogger(MasterControllerCitizen.class);
+private Logger logger = LoggerFactory.getLogger(HospitalMasterController.class);
 	
 	@Autowired
 	private Validator validator;

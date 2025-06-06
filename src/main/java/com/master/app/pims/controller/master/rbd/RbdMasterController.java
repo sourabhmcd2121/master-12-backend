@@ -54,6 +54,7 @@ import com.master.app.pims.entities.schemas.rbd.RbdRefRegistrationNumber;
 import com.master.app.pims.entities.schemas.rbd.RbdRefRelationMap;
 import com.master.app.pims.entities.schemas.usr.RefUserDocsMap;
 import com.master.app.pims.exceptions.ResourceNotFoundException;
+import com.master.app.pims.helper.HttpSessionHelper;
 import com.master.app.pims.models.common.response.BaseResponse;
 import com.master.app.pims.repositories.property.OwnerCategoryRepo;
 import com.master.app.pims.repositories.property.OwnerTypeRepo;
@@ -78,6 +79,7 @@ import com.master.app.pims.service.master.common.CommonMasterService;
 import com.master.app.pims.utils.Util;
 import com.master.app.pims.validators.Validator;
 
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,7 +88,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/web/master")
 @CrossOrigin(origins = "http://localhost:3000")
 public class RbdMasterController {
-private Logger logger = LoggerFactory.getLogger(MasterControllerCitizen.class);
+private Logger logger = LoggerFactory.getLogger(RbdMasterController.class);
 	
 	@Autowired
 	private Validator validator;
@@ -418,8 +420,12 @@ return ResponseEntity.ok(response);
 
 //Create New Data And Update
 @PostMapping("/submitRbdRefBirthDocsMap")
-public BaseResponse submitRbdRefBirthDocsMap(@RequestBody RbdRefBirthDocsMap rbdRefBirthDocsMap, HttpServletRequest request) {
+public BaseResponse submitRbdRefBirthDocsMap(@RequestBody RbdRefBirthDocsMap rbdRefBirthDocsMap, HttpServletRequest request, ServletRequest httpSession) {
 BaseResponse resultData = new BaseResponse();
+
+String loginId = (String) request.getSession().getAttribute("loginID");
+String clientIp = HttpSessionHelper.getClientIPAddress(request);
+String macAddress = HttpSessionHelper.getMacAddress();
 
 //Check if guid is provided (indicating an update)
 if (rbdRefBirthDocsMap.getBirthDocsMapGuid() == null || rbdRefBirthDocsMap.getBirthDocsMapGuid().isEmpty()) {
@@ -478,6 +484,8 @@ if (rbdRefBirthDocsMap.getIsActive() == null)
 	RbdRefBirthDocsMap existingRbdRefBirthDocsMap = commonMasterService.getRbdRefBirthDocsMapById(rbdRefBirthDocsMap.getBirthDocsMapGuid());
 
 if (existingRbdRefBirthDocsMap != null) {
+	logger.info("\n New Values added by Login-id || "+httpSession.getAttribute("loginID")+" || IP-Address "
+			+HttpSessionHelper.getClientIPAddress(request)+" || Mac-Address : "+HttpSessionHelper.getMacAddress());
 	existingRbdRefBirthDocsMap.setIsExtraDocInfoRequired(rbdRefBirthDocsMap.getIsExtraDocInfoRequired() != null ? rbdRefBirthDocsMap.getIsExtraDocInfoRequired() : existingRbdRefBirthDocsMap.getIsExtraDocInfoRequired());
 	existingRbdRefBirthDocsMap.setIsMandatory(rbdRefBirthDocsMap.getIsMandatory() != null ? rbdRefBirthDocsMap.getIsMandatory() : existingRbdRefBirthDocsMap.getIsMandatory());	
 	existingRbdRefBirthDocsMap.setIsActive(rbdRefBirthDocsMap.getIsActive() != null ? rbdRefBirthDocsMap.getIsActive() : existingRbdRefBirthDocsMap.getIsActive());
@@ -547,7 +555,7 @@ if (rbdRefBirthDocsMap.getIsActive() == null) rbdRefBirthDocsMap.setIsActive(fal
 
 try {
 	rbdRefBirthDocsMapRepo.save(rbdRefBirthDocsMap);
-log.info("Record SaveOrUpdate Successfully");
+	 logger.info("Record {} successfully by Login-ID:" );
 resultData.setStatus(true);
 resultData.setMessage("Record saved or updated successfully");
 } catch (Exception e) {

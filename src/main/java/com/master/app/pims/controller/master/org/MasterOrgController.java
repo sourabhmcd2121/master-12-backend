@@ -70,8 +70,8 @@ public class MasterOrgController {
 	    }
 	    
 	    // Create New Data And Update
-	    @PostMapping("/submitOrUpdateOrgPrimary")
-	    public BaseResponse submitOrUpdateOrgPrimary(@RequestBody OrgPrimary orgPrimary, HttpServletRequest request) {
+	    @PostMapping("/submitOrgPrimary")
+	    public BaseResponse submitOrgPrimary(@RequestBody OrgPrimary orgPrimary, HttpServletRequest request) {
 	        BaseResponse resultData = new BaseResponse();
 
 	        // Check if guid is provided (indicating an update)

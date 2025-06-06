@@ -24,14 +24,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/authenticate").permitAll() // Allow public access
-                .anyRequest().authenticated() // Secure all other endpoints
+                .requestMatchers(
+                    "/api/authenticate",           // your login/auth endpoint
+                    "/swagger-ui/**",              // swagger UI files
+                    "/v3/api-docs/**",             // OpenAPI spec
+                    "/swagger-ui.html"             // Swagger HTML entrypoint
+                ).permitAll()
+                .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
 
-        // Add JWT filter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -47,3 +51,42 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
+
+
+
+
+//before swagger enable code(by sachin)
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfig {
+//
+//    @Autowired
+//    private JwtRequestFilter jwtRequestFilter;
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.csrf().disable()
+//            .authorizeHttpRequests(auth -> auth
+//                .requestMatchers("/api/authenticate").permitAll() // Allow public access
+//                .anyRequest().authenticated() // Secure all other endpoints
+//            )
+//            .sessionManagement(session -> session
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session
+//            );
+//
+//        // Add JWT filter
+//        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new Md5PasswordEncoder(); 
+//    }
+//
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
+//}

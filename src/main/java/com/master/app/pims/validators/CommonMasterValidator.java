@@ -49,14 +49,21 @@ import com.master.app.pims.entities.schemas.mst.RequestSubmissionType;
 import com.master.app.pims.entities.schemas.mst.SmsEmailTemplate;
 import com.master.app.pims.entities.schemas.mst.SubmittedRequestStage;
 import com.master.app.pims.entities.schemas.mst.UnitArea;
+import com.master.app.pims.entities.schemas.property.ManualReceiptSeries;
 import com.master.app.pims.entities.schemas.property.OwnerCategory;
 import com.master.app.pims.entities.schemas.property.OwnerType;
 import com.master.app.pims.entities.schemas.property.PropertyAgeFactor;
 import com.master.app.pims.entities.schemas.property.PropertyCategory;
 import com.master.app.pims.entities.schemas.property.PropertyExemption;
 import com.master.app.pims.entities.schemas.property.PropertyFloor;
+import com.master.app.pims.entities.schemas.property.PropertyMasterRebate;
+import com.master.app.pims.entities.schemas.property.PropertyMstSr;
 import com.master.app.pims.entities.schemas.property.PropertyOccupancyFactor;
+import com.master.app.pims.entities.schemas.property.PropertyOtherCharges;
+import com.master.app.pims.entities.schemas.property.PropertyStructureFactor;
+import com.master.app.pims.entities.schemas.property.PropertyTaxCategory;
 import com.master.app.pims.entities.schemas.property.PropertyType;
+import com.master.app.pims.entities.schemas.property.PropertyUseFactor;
 import com.master.app.pims.entities.schemas.rbd.RbdFeeRelaxationList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstCommonList;
 import com.master.app.pims.entities.schemas.rbd.RbdMstDocsCategory;
@@ -120,14 +127,21 @@ import com.master.app.pims.repositories.mst.RequestSubmissionTypeRepository;
 import com.master.app.pims.repositories.mst.SmsEmailTemplateRepository;
 import com.master.app.pims.repositories.mst.SubmittedRequestStageRepository;
 import com.master.app.pims.repositories.mst.UnitAreaRepository;
+import com.master.app.pims.repositories.property.ManualReceiptSeriesRepo;
 import com.master.app.pims.repositories.property.OwnerCategoryRepo;
 import com.master.app.pims.repositories.property.OwnerTypeRepo;
 import com.master.app.pims.repositories.property.PropertyAgeFactorRepo;
 import com.master.app.pims.repositories.property.PropertyCategoryRepo;
 import com.master.app.pims.repositories.property.PropertyExemptionRepo;
 import com.master.app.pims.repositories.property.PropertyFloorRepo;
+import com.master.app.pims.repositories.property.PropertyMasterRebateRepo;
+import com.master.app.pims.repositories.property.PropertyMstSrRepo;
 import com.master.app.pims.repositories.property.PropertyOccupancyFactorRepo;
+import com.master.app.pims.repositories.property.PropertyOtherChargesRepo;
+import com.master.app.pims.repositories.property.PropertyStructureFactorRepo;
+import com.master.app.pims.repositories.property.PropertyTaxCategoryRepo;
 import com.master.app.pims.repositories.property.PropertyTypeRepo;
+import com.master.app.pims.repositories.property.PropertyUseFactorRepo;
 import com.master.app.pims.repositories.rbd.RbdFeeRelaxationListRepo;
 import com.master.app.pims.repositories.rbd.RbdMstCommonListRepo;
 import com.master.app.pims.repositories.rbd.RbdMstDocsCategoryRepo;
@@ -326,6 +340,31 @@ public class CommonMasterValidator implements Validator {
     
     @Autowired
    	private PropertyTypeRepo propertyTypeRepo;
+   
+    @Autowired
+   	private PropertyStructureFactorRepo propertyStructureFactorRepo;
+    
+    @Autowired
+   	private PropertyTaxCategoryRepo propertyTaxCategoryRepo;
+    
+    @Autowired
+   	private PropertyUseFactorRepo propertyUseFactorRepo;
+    
+    @Autowired
+   	private PropertyMasterRebateRepo propertyMasterRebateRepo;
+    
+    @Autowired
+   	private PropertyOtherChargesRepo propertyOtherChargesRepo;
+    
+    @Autowired
+   	private ManualReceiptSeriesRepo manualReceiptSeriesRepo;
+    
+    @Autowired
+   	private PropertyMstSrRepo propertyMstSrRepo;
+    
+    
+    
+    
     
     @Autowired
    	private RbdMstCommonListRepo rbdMstCommonListRepo;
@@ -3707,6 +3746,344 @@ public BaseResponse validateHospitalInfo(HospitalInfo hospitalInfo) {
      } catch (Exception e) {
          resultData.setStatus(false);
          resultData.setMessage("Error validating  HospitalInfo : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePropertyStructureFactor(PropertyStructureFactor propertyStructureFactor) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(propertyStructureFactor.getStructureFactorCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.structureFactorCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyStructureFactor.getStructureFactorCode())
+				&& propertyStructureFactorRepo.isExistStructureFactorCode(propertyStructureFactor.getStructureFactorCode(),
+						propertyStructureFactor.getStructureFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.structureFactorCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(propertyStructureFactor.getStructureFactorNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.structureFactorNameEn.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyStructureFactor.getStructureFactorNameEn())
+				&& propertyStructureFactorRepo.isExistStructureFactorNameEn(propertyStructureFactor.getStructureFactorNameEn(),
+						propertyStructureFactor.getStructureFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(
+					PropertyReader.getFormMessage("master.structureFactorNameEn.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyStructureFactor.getStructureFactorNameHi())
+				&& propertyStructureFactorRepo.isExistStructureFactorNameHi(propertyStructureFactor.getStructureFactorNameHi(),
+						propertyStructureFactor.getStructureFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(
+					PropertyReader.getFormMessage("master.structureFactorNameHi.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyStructureFactor.getStructureFactorNameRl())
+				&& propertyStructureFactorRepo.isExistStructureFactorNameRl(propertyStructureFactor.getStructureFactorNameRl(),
+						propertyStructureFactor.getStructureFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(
+					PropertyReader.getFormMessage("master.structureFactorNameRl.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PropertyStructureFactor : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePropertyTaxCategory(PropertyTaxCategory propertyTaxCategory) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(propertyTaxCategory.getTaxCategoryCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.taxCategoryCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyTaxCategory.getTaxCategoryCode()) && propertyTaxCategoryRepo
+				.isExistTaxCategoryCode(propertyTaxCategory.getTaxCategoryCode(), propertyTaxCategory.getTaxCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.taxCategoryCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(propertyTaxCategory.getTaxCategoryNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.taxCategoryNameEn.required"));
+			return resultData;
+		}
+
+		if (!Util.isNullOrEmpty(propertyTaxCategory.getTaxCategoryNameEn()) && propertyTaxCategoryRepo
+				.isExistTaxCategoryNameEn(propertyTaxCategory.getTaxCategoryNameEn(), propertyTaxCategory.getTaxCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.taxCategoryNameEn.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyTaxCategory.getTaxCategoryNameHi()) && propertyTaxCategoryRepo
+				.isExistTaxCategoryNameHi(propertyTaxCategory.getTaxCategoryNameHi(), propertyTaxCategory.getTaxCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.taxCategoryNameHi.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyTaxCategory.getTaxCategoryNameRl()) && propertyTaxCategoryRepo
+				.isExistTaxCategoryNameRl(propertyTaxCategory.getTaxCategoryNameRl(), propertyTaxCategory.getTaxCategoryGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.taxCategoryNameRl.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PropertyTaxCategory : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePropertyUseFactor(PropertyUseFactor propertyUseFactor) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(propertyUseFactor.getUseFactorCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.useFactorCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyUseFactor.getUseFactorCode()) && propertyUseFactorRepo
+				.isExistUseFactorCode(propertyUseFactor.getUseFactorCode(), propertyUseFactor.getUseFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.useFactorCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(propertyUseFactor.getUseFactorNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.useFactorNameEn.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyUseFactor.getUseFactorNameEn()) && propertyUseFactorRepo
+				.isExistUseFactorNameEn(propertyUseFactor.getUseFactorNameEn(), propertyUseFactor.getUseFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.useFactorNameEn.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyUseFactor.getUseFactorNameHi()) && propertyUseFactorRepo
+				.isExistUseFactorNameHi(propertyUseFactor.getUseFactorNameHi(), propertyUseFactor.getUseFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.useFactorNameHi.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyUseFactor.getUseFactorNameRl()) && propertyUseFactorRepo
+				.isExistUseFactorNameRl(propertyUseFactor.getUseFactorNameRl(), propertyUseFactor.getUseFactorGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.useFactorNameRl.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PropertyUseFactor : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePropertyMasterRebate(PropertyMasterRebate propertyMasterRebate) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(propertyMasterRebate.getRebateCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyRebateCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyMasterRebate.getRebateCode())
+				&& propertyMasterRebateRepo.isExistPropertyRebateCode(propertyMasterRebate.getRebateCode(),
+						propertyMasterRebate.getRebateGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyRebateCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(propertyMasterRebate.getRebateNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyRebateNameEn.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyMasterRebate.getRebateNameEn())
+				&& propertyMasterRebateRepo.isExistPropertyRebateNameEn(
+						propertyMasterRebate.getRebateNameEn(), propertyMasterRebate.getRebateGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(
+					PropertyReader.getFormMessage("master.propertyRebateNameEn.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyMasterRebate.getRebateNameHi())
+				&& propertyMasterRebateRepo.isExistPropertyRebateNameHi(
+						propertyMasterRebate.getRebateNameHi(), propertyMasterRebate.getRebateGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(
+					PropertyReader.getFormMessage("master.propertyRebateNameHi.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyMasterRebate.getRebateNameRl())
+				&& propertyMasterRebateRepo.isExistPropertyRebateNameRl(
+						propertyMasterRebate.getRebateNameRl(), propertyMasterRebate.getRebateGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(
+					PropertyReader.getFormMessage("master.propertyRebateNameRl.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PropertyMasterRebate : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePropertyOtherCharges(PropertyOtherCharges propertyOtherCharges) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(propertyOtherCharges.getOtherChargesCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.otherChargesCode.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyOtherCharges.getOtherChargesCode())
+				&& propertyOtherChargesRepo.isExistOtherChargesCode(propertyOtherCharges.getOtherChargesCode(),
+						propertyOtherCharges.getOtherChargesGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.otherChargesCode.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(propertyOtherCharges.getOtherChargesNameEn())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.otherChargesNameEn.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyOtherCharges.getOtherChargesNameEn())
+				&& propertyOtherChargesRepo.isExistOtherChargesNameEn(
+						propertyOtherCharges.getOtherChargesNameEn(), propertyOtherCharges.getOtherChargesGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.otherChargesNameEn.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyOtherCharges.getOtherChargesNameHi())
+				&& propertyOtherChargesRepo.isExistOtherChargesNameHi(
+						propertyOtherCharges.getOtherChargesNameHi(), propertyOtherCharges.getOtherChargesGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.otherChargesNameHi.unique"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyOtherCharges.getOtherChargesNameRl())
+				&& propertyOtherChargesRepo.isExistOtherChargesNameRl(
+						propertyOtherCharges.getOtherChargesNameRl(), propertyOtherCharges.getOtherChargesGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.otherChargesNameRl.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PropertyOtherCharges : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validateManualReceiptSeries(ManualReceiptSeries manualReceiptSeries) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(manualReceiptSeries.getReceiptSeriesCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.manualReceiptSeries.code.required"));
+			return resultData;
+		}
+//		if (!Util.isNullOrEmpty(obj.getReceiptSeriesCode()) && masterMCDValidationDAO
+//				.isExistReceiptSeriesCode(obj.getReceiptSeriesCode(), obj.getReceiptSeriesGuid())) {
+//			resultData.setStatus(false);
+//			resultData.setMessage(PropertyReader.getFormMessage("master.manualReceiptSeries.code.unique"));
+//			return resultData;
+//		}
+		if (manualReceiptSeries.getReceiptSeriesFrom() == null) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.manualReceiptSeries.receiptSeriesFrom.required"));
+			return resultData;
+		}
+		if (manualReceiptSeries.getReceiptSeriesFrom().signum() < 0) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.manualReceiptSeries.receiptSeriesFrom.positive"));
+			return resultData;
+		}
+		if (manualReceiptSeries.getReceiptSeriesTo() == null) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.manualReceiptSeries.receiptSeriesTo.required"));
+			return resultData;
+		}
+		if (manualReceiptSeries.getReceiptSeriesTo().compareTo(manualReceiptSeries.getReceiptSeriesFrom()) != 1) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.manualReceiptSeries.receiptSeriesTo.positive"));
+			return resultData;
+		}
+		if (manualReceiptSeriesRepo.isManualReceiptSeriesUk(manualReceiptSeries)) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.manualReceiptSeries.manualReceiptSeriesUk.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  ManualReceiptSeries : " + e.getMessage());
+     }
+     return resultData;
+}
+
+@Override
+public BaseResponse validatePropertyMstSr(PropertyMstSr propertyMstSr) {
+	 BaseResponse resultData = new BaseResponse();
+     resultData.setStatus(true);
+     resultData.setMessage("Record SaveOrUpdate Successfully");
+ 	try {
+ 		if (Util.isNullOrEmpty(propertyMstSr.getSrCode())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyMstSr.code.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyMstSr.getSrCode()) && propertyMstSrRepo
+				.isExistMstSrCode(propertyMstSr.getSrCode(), propertyMstSr.getMstSrGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyMstSr.code.unique"));
+			return resultData;
+		}
+		if (Util.isNullOrEmpty(propertyMstSr.getSrName())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyMstSr.name.required"));
+			return resultData;
+		}
+		if (!Util.isNullOrEmpty(propertyMstSr.getSrName()) && propertyMstSrRepo
+				.isExistMstSrName(propertyMstSr.getSrName(), propertyMstSr.getMstSrGuid())) {
+			resultData.setStatus(false);
+			resultData.setMessage(PropertyReader.getFormMessage("master.propertyMstSr.name.unique"));
+			return resultData;
+		}
+     } catch (Exception e) {
+         resultData.setStatus(false);
+         resultData.setMessage("Error validating  PropertyMstSr : " + e.getMessage());
      }
      return resultData;
 }

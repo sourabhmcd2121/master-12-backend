@@ -80,6 +80,11 @@ public class PropertyStructureFactor implements Serializable {
     
     @Column(name = "modified_remarks")
     private String modifedRemarks;
+
+	public PropertyStructureFactor(String structureFactorGuid) {
+		super();
+		this.structureFactorGuid = structureFactorGuid;
+	}
     
   
 
